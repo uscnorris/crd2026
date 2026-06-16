@@ -131,12 +131,23 @@ function parseCSVLine(line) {
 
 // ── IDENTITY ──────────────────────────────────
 
+function onRoleChange() {
+  const role = document.getElementById('user-role').value;
+  const programRow = document.getElementById('program-row');
+  // Show program field for roles where it matters for Coffee Consult
+  const needsProgram = role === 'PhD Student' || role === "Master's Student" || role === 'Postdoctoral Fellow';
+  programRow.style.display = needsProgram ? 'block' : 'none';
+}
+
 function saveIdentity() {
   const name = document.getElementById('user-name').value.trim();
   const roleEl = document.getElementById('user-role');
   const role = roleEl.options[roleEl.selectedIndex] ? roleEl.options[roleEl.selectedIndex].value : roleEl.value;
   if (!name) { alert('Please enter your name.'); return; }
-  user = { name, role: role || 'Attendee' };
+  if (!role) { alert('Please select your role.'); return; }
+  const programEl = document.getElementById('user-program');
+  const program = programEl ? (programEl.options[programEl.selectedIndex] ? programEl.options[programEl.selectedIndex].value : '') : '';
+  user = { name, role, program };
   saveState();
   if (allParticipants.length === 0) {
     setTimeout(showPostIdentity, 300);
@@ -353,9 +364,15 @@ function getParticipant(id) {
 
 // ── PROFILE ───────────────────────────────────
 
-function isViewerCoffeeEligible(role) {
-  // Viewer eligibility: role alone (they self-identified at sign-in)
-  return role === "PhD Student" || role === "Clinical Fellow / Resident";
+function isViewerCoffeeEligible(role, program) {
+  // Clinical Fellows: eligible by role alone
+  if (role === "Clinical Fellow / Resident") return true;
+  // PhD Students: only eligible if they are in CBG
+  if (role === "PhD Student") {
+    const prog = (program || '').toLowerCase();
+    return prog.includes('cancer biology') || prog.includes('cbg');
+  }
+  return false;
 }
 
 function isParticipantCBGPhD(role, program, department) {
@@ -367,15 +384,14 @@ function isParticipantCBGPhD(role, program, department) {
   return prog.includes('cancer biology') || prog.includes('cbg');
 }
 
-function isCoffeeEligiblePair(viewerRole, participantRole, participantProgram, participantDept) {
-  // Coffee Consult: PhD Students <-> Clinical Fellows/Residents
-  // Participant must be CBG PhD or Clinical Fellow; viewer is trusted by role
-  const viewerIsPhD = viewerRole === "PhD Student";
+function isCoffeeEligiblePair(viewerRole, participantRole, viewerProgram, participantProgram, participantDept) {
+  // Coffee Consult: CBG PhD Students <-> Clinical Fellows/Residents only
+  const viewerIsCBGPhD = isViewerCoffeeEligible(viewerRole, viewerProgram) && viewerRole === "PhD Student";
   const viewerIsFellow = viewerRole === "Clinical Fellow / Resident";
   const participantIsCBGPhD = isParticipantCBGPhD(participantRole, participantProgram, participantDept);
   const participantIsFellow = participantRole === "Clinical Fellow / Resident";
 
-  return (viewerIsPhD && participantIsFellow) || (viewerIsFellow && participantIsCBGPhD);
+  return (viewerIsCBGPhD && participantIsFellow) || (viewerIsFellow && participantIsCBGPhD);
 }
 
 function draftEmail(participant) {
@@ -406,7 +422,8 @@ function showProfile(participant) {
   const talked = conversations[participant.id];
   const selected = coffeeSelections.has(participant.id);
   const viewerRole = user ? user.role : '';
-  const canCoffee = isCoffeeEligiblePair(viewerRole, participant.role, participant.research_program, participant.department);
+  const viewerProgram = user ? (user.program || '') : '';
+  const canCoffee = isCoffeeEligiblePair(viewerRole, participant.role, viewerProgram, participant.research_program, participant.department);
 
   // Log button
   const logBtn = talked
@@ -516,7 +533,7 @@ function renderMyList() {
   empty.style.display = 'none';
 
   const viewerRole = user ? user.role : '';
-  const isCoffeeUser = isViewerCoffeeEligible(viewerRole);
+  const isCoffeeUser = isViewerCoffeeEligible(viewerRole, user ? user.program : '');
 
   // Subtitle: context-aware based on whether user can request Coffee Consults
   const coffeeSubtitle = `People you talked to today. Use the coffee cup icon to request a Coffee Consult (up to ${CONFIG.max_selections}). CRTEC will coordinate within 48 hours.`;
@@ -526,7 +543,8 @@ function renderMyList() {
   wrap.innerHTML = talkedIds.map(id => {
     const p = allParticipants.find(x => x.id === id);
     if (!p) return '';
-    const canCoffee = isCoffeeEligiblePair(viewerRole, p.role, p.research_program, p.department);
+    const viewerProg = user ? (user.program || '') : '';
+    const canCoffee = isCoffeeEligiblePair(viewerRole, p.role, viewerProg, p.research_program, p.department);
     const selected = coffeeSelections.has(id);
     const time = conversations[id] ? new Date(conversations[id]).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
 
@@ -542,7 +560,7 @@ function renderMyList() {
         <div class="mylist-actions">
           ${p.linkedin_url ? `<a class="ml-action-btn ml-li" href="${p.linkedin_url}" target="_blank" title="Connect on LinkedIn">in</a>` : ''}
           <button class="ml-action-btn ml-email" onclick="event.stopPropagation(); draftEmail(getParticipant('${id}'))" title="Send follow-up email">✉</button>
-          ${canCoffee ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove from Coffee Consult' : 'Add to Coffee Consult'}">${selected ? '★' : '☆'}</button>` : ''}
+          ${canCoffee ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove from Coffee Consult' : 'Add to Coffee Consult'}">☕${selected ? '✓' : ''}</button>` : ''}
         </div>
       </div>`;
   }).join('');
