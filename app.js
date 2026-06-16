@@ -131,12 +131,101 @@ function parseCSVLine(line) {
 
 // ── IDENTITY ──────────────────────────────────
 
+// Program options by role — curated for Cancer Research Day / Keck / NCCC attendees
+const PROGRAMS_BY_ROLE = {
+  "PhD Student": [
+    "Cancer Biology & Genomics (CBG) — PIBBS",
+    "Biochemistry & Molecular Medicine — PIBBS",
+    "Molecular and Computational Biology — PIBBS",
+    "Genetic, Molecular & Cellular Biology — PIBBS",
+    "Neuroscience — PIBBS",
+    "Pharmaceutical Sciences — PIBBS",
+    "Epidemiology",
+    "Biostatistics",
+    "Preventive Medicine",
+    "Population, Health & Place",
+    "Computational Biology & Bioinformatics",
+    "Biomedical Engineering",
+    "Chemical Engineering",
+    "Other"
+  ],
+  "Master's Student": [
+    "Applied Biostatistics/Epidemiology (MS)",
+    "Biochemistry and Molecular Medicine (MS)",
+    "Biomedical Data Analytics (MS)",
+    "Biomedical Engineering (MS)",
+    "Biomedical Sciences (MS)",
+    "Biostatistics (MS)",
+    "Clinical, Biomedical and Translational Investigations (MS)",
+    "Clinical and Experimental Therapeutics (MS)",
+    "Computational Molecular Biology (MS)",
+    "Global Medicine (MS)",
+    "Healthcare Data Science (MS)",
+    "Management of Drug Development (MS)",
+    "Molecular and Computational Biology (MS)",
+    "Molecular Epidemiology (MS)",
+    "Molecular Genetics and Biochemistry (MS)",
+    "Molecular Microbiology and Immunology (MS)",
+    "Molecular Pharmacology and Toxicology (MS)",
+    "Neuroimaging and Informatics (MS)",
+    "Neuroscience (MS)",
+    "Nutrition, Healthspan and Longevity (MS)",
+    "Other"
+  ],
+  "Postdoctoral Fellow": [
+    "Cancer Biology & Genomics",
+    "Tumor Immunology & Microenvironment",
+    "Epigenetic Regulation in Cancer",
+    "Translational & Clinical Sciences",
+    "Cancer Prevention & Control",
+    "Cancer Health Disparities",
+    "Computational & Data Sciences",
+    "Other"
+  ],
+  "Faculty": [
+    "Tumor Immunology & Microenvironment Program",
+    "Epigenetic Regulation in Cancer Program",
+    "Translational and Clinical Sciences Program",
+    "Cancer Epidemiology Program",
+    "Cancer Control Research Program",
+    "Cancer Biology & Genomics (CBG)",
+    "Division of Medical Oncology",
+    "Department of Medicine",
+    "Biochemistry & Molecular Medicine",
+    "Molecular Microbiology & Immunology",
+    "Population & Public Health Sciences",
+    "Other"
+  ]
+};
+
 function onRoleChange() {
   const role = document.getElementById('user-role').value;
   const programRow = document.getElementById('program-row');
-  // Show program field for roles where it matters for Coffee Consult
-  const needsProgram = role === 'PhD Student' || role === "Master's Student" || role === 'Postdoctoral Fellow';
-  programRow.style.display = needsProgram ? 'block' : 'none';
+  const programOtherRow = document.getElementById('program-other-row');
+  const programSelect = document.getElementById('user-program');
+  const programLabel = document.getElementById('program-label');
+  const options = PROGRAMS_BY_ROLE[role];
+
+  if (options) {
+    // Populate the dropdown with role-specific options
+    programSelect.innerHTML = '<option value="" selected disabled>Select your program</option>' +
+      options.map(o => `<option value="${o}">${o}</option>`).join('');
+    programLabel.textContent = role === 'Faculty' ? 'Research Program / Department' : 'Program';
+    programRow.style.display = 'block';
+    programOtherRow.style.display = 'none';
+    // Show text field when Other is selected
+    programSelect.onchange = function() {
+      programOtherRow.style.display = this.value === 'Other' ? 'block' : 'none';
+    };
+  } else {
+    // Roles without a curated dropdown: show open text field instead
+    programRow.style.display = 'none';
+    programOtherRow.style.display = 'block';
+    const otherLabel = document.getElementById('program-other-label');
+    if (otherLabel) otherLabel.textContent = 'Program / Department (optional)';
+    const otherInput = document.getElementById('user-program-other');
+    if (otherInput) { otherInput.value = ''; otherInput.placeholder = 'e.g. Norris Cancer Center, Community Advisory Board'; }
+  }
 }
 
 function saveIdentity() {
@@ -146,7 +235,13 @@ function saveIdentity() {
   if (!name) { alert('Please enter your name.'); return; }
   if (!role) { alert('Please select your role.'); return; }
   const programEl = document.getElementById('user-program');
-  const program = programEl ? (programEl.options[programEl.selectedIndex] ? programEl.options[programEl.selectedIndex].value : '') : '';
+  const programRowVisible = document.getElementById('program-row') && document.getElementById('program-row').style.display !== 'none';
+  let program = (programRowVisible && programEl) ? (programEl.options[programEl.selectedIndex] ? programEl.options[programEl.selectedIndex].value : '') : '';
+  if (program === 'Other' || !program) {
+    const otherEl = document.getElementById('user-program-other');
+    const otherVisible = document.getElementById('program-other-row') && document.getElementById('program-other-row').style.display !== 'none';
+    if (otherVisible && otherEl && otherEl.value.trim()) program = otherEl.value.trim();
+  }
   user = { name, role, program };
   saveState();
   if (allParticipants.length === 0) {
@@ -367,21 +462,20 @@ function getParticipant(id) {
 function isViewerCoffeeEligible(role, program) {
   // Clinical Fellows: eligible by role alone
   if (role === "Clinical Fellow / Resident") return true;
-  // PhD Students: only eligible if they are in CBG
+  // PhD Students: only eligible if they selected a CBG-related program
   if (role === "PhD Student") {
     const prog = (program || '').toLowerCase();
-    return prog.includes('cancer biology') || prog.includes('cbg');
+    return prog.includes('cancer biology') || prog.includes('cbg') || prog.includes('genomics');
   }
   return false;
 }
 
 function isParticipantCBGPhD(role, program, department) {
-  // Participant eligibility: must be PhD Student in CBG specifically (checked against data)
+  // Participant eligibility: PhD Student in CBG (checked against sheet data)
   if (role !== "PhD Student") return false;
   const prog = (program || department || '').toLowerCase();
-  // If no program data, trust the role (sample data / incomplete data case)
-  if (!prog) return true;
-  return prog.includes('cancer biology') || prog.includes('cbg');
+  if (!prog) return true; // trust role if no program data
+  return prog.includes('cancer biology') || prog.includes('cbg') || prog.includes('genomics');
 }
 
 function isCoffeeEligiblePair(viewerRole, participantRole, viewerProgram, participantProgram, participantDept) {

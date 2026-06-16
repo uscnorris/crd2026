@@ -7,7 +7,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=11">
 <script>
   // Force reload if cached version is stale
   if (window.APP_VERSION !== 4) { window.APP_VERSION = 4; }
@@ -57,19 +57,14 @@
       </select>
     </div>
     <div class="field-row" id="program-row" style="display:none">
-      <label>Program / Department</label>
+      <label id="program-label">Program</label>
       <select id="user-program">
         <option value="" selected disabled>Select your program</option>
-        <option value="Cancer Biology &amp; Genomics">Cancer Biology &amp; Genomics (CBG)</option>
-        <option value="Tumor Immunology &amp; Microenvironment">Tumor Immunology &amp; Microenvironment</option>
-        <option value="Epigenetic Regulation in Cancer">Epigenetic Regulation in Cancer</option>
-        <option value="Cancer Health Disparities">Cancer Health Disparities</option>
-        <option value="Community Outreach &amp; Engagement">Community Outreach &amp; Engagement</option>
-        <option value="Translational &amp; Clinical Sciences">Translational &amp; Clinical Sciences</option>
-        <option value="Cancer Prevention &amp; Control">Cancer Prevention &amp; Control</option>
-        <option value="Computational &amp; Data Sciences">Computational &amp; Data Sciences</option>
-        <option value="Other">Other</option>
       </select>
+    </div>
+    <div class="field-row" id="program-other-row" style="display:none">
+      <label id="program-other-label">Please specify</label>
+      <input type="text" id="user-program-other" placeholder="Your program or department (optional)">
     </div>
     <button class="btn-primary" onclick="saveIdentity()">Continue →</button>
   </div>
@@ -167,8 +162,8 @@
   </button>
 </nav>
 
-<script src="config.js?v=9"></script>
-<script src="data.js?v=9"></script>
-<script src="app.js?v=9"></script>
+<script src="config.js?v=11"></script>
+<script src="data.js?v=11"></script>
+<script src="app.js?v=11"></script>
 </body>
 </html>
