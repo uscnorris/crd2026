@@ -14,7 +14,7 @@ const CONFIG = {
   // Step 1: Publish your Google Sheet (File → Share → Publish to web → CSV)
   // Step 2: Paste the published CSV URL below
   // Format: https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/export?format=csv&gid=0
-  sheet_url: "PASTE_YOUR_GOOGLE_SHEET_CSV_URL_HERE",
+  sheet_url: https://docs.google.com/spreadsheets/d/e/2PACX-1vTj6gbHwLk4_RffTa8lTHvjk-RkTAE1fQoIYmpIIleV-qAnmPN3P6xeXggoQk8JGPbqyejNqnSW28fQ/pub?gid=0&single=true&output=csv,
 
   // If sheet_url is not set, the app uses the sample data in data.js
   use_sample_data: true,
@@ -35,7 +35,7 @@ const CONFIG = {
   // BASE URL for QR codes
   // After deploying to GitHub Pages, paste your URL here
   // e.g. "https://crtec.github.io/crd2026"
-  base_url: "https://crtec.github.io/crd2026",
+  base_url: "https://uscnorris.github.io/crd2026",
 
   // DISEASE AREAS (shown as filter chips — edit to match your data)
   disease_areas: [
