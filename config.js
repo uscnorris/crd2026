@@ -21,6 +21,8 @@ const CONFIG = {
 
   // COFFEE CONSULT SETTINGS
   // Only these roles see the Coffee Consult option
+  // Coffee Consult is restricted to CBG PhD Students <-> Clinical Fellows/Residents
+  // Program matching is enforced in app.js isCoffeeEligiblePair() — edit there, not here
   coffee_consult_roles: ["PhD Student", "Clinical Fellow / Resident"],
 
   // Max Coffee Consult selections per person

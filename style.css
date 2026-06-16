@@ -42,7 +42,8 @@ header { background: var(--cardinal); color: white; padding: 14px 16px 12px; pos
 .screen.active { display: block; }
 
 /* ── IDENTITY ── */
-#identity-screen { display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px; min-height: calc(100vh - 60px); }
+#identity-screen { align-items: flex-start; justify-content: center; padding: 24px 16px; min-height: calc(100vh - 60px); }
+.screen.active#identity-screen { display: flex; }
 .identity-card { background: white; border-radius: var(--radius); padding: 28px 22px; max-width: 420px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
 .identity-icon { font-size: 36px; margin-bottom: 12px; }
 .identity-card h2 { font-size: 22px; color: var(--cardinal); margin-bottom: 8px; font-family: Georgia, serif; }
@@ -170,3 +171,18 @@ input:focus, select:focus { outline: none; border-color: var(--cardinal); }
 .loading-state, .empty-state { text-align: center; padding: 48px 20px; color: var(--text-light); }
 .empty-icon { font-size: 36px; margin-bottom: 10px; }
 .empty-state p { font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
+
+/* ── EMAIL BUTTON (profile) ── */
+.btn-email { width: 100%; padding: 12px; background: white; color: #333; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+.btn-email:active { background: var(--off-white); }
+
+/* ── MY LIST COMPACT ACTION BUTTONS ── */
+.mylist-card { display: flex; align-items: center; gap: 10px; background: white; border-radius: var(--radius); padding: 12px; margin-bottom: 8px; border: 1.5px solid var(--border); }
+.mylist-card.selected { border-color: var(--cardinal); background: #FFFAFA; }
+.mylist-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+.ml-action-btn { width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid var(--border); background: white; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #333; font-weight: 700; flex-shrink: 0; }
+.ml-action-btn:active { opacity: 0.7; }
+.ml-li { background: #0A66C2; color: white; border-color: #0A66C2; font-size: 13px; font-family: Georgia, serif; }
+.ml-email { color: var(--text-mid); }
+.ml-coffee { color: var(--text-mid); font-size: 13px; }
+.ml-coffee.on { background: var(--cardinal-light); border-color: var(--cardinal); color: var(--cardinal-dark); }

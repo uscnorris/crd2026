@@ -4,7 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Cancer Research Day 2026 — USC Norris</title>
-<link rel="stylesheet" href="style.css">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="stylesheet" href="style.css?v=6">
+<script>
+  // Force reload if cached version is stale
+  if (window.APP_VERSION !== 4) { window.APP_VERSION = 4; }
+</script>
 </head>
 <body>
 
@@ -12,7 +19,7 @@
   <div class="header-inner">
     <div class="header-top">
       <span class="header-label">USC NORRIS · CRTEC</span>
-      <button class="my-list-btn" onclick="showView('mylist')" id="mylist-header-btn" style="display:none">
+      <button class="my-list-btn" onclick="showView('mylist')" id="mylist-header-btn" style="display:none!important;visibility:hidden;">
         My List <span class="list-count" id="list-count-badge">0</span>
       </button>
     </div>
@@ -141,8 +148,8 @@
   </button>
 </nav>
 
-<script src="config.js"></script>
-<script src="data.js"></script>
-<script src="app.js"></script>
+<script src="config.js?v=6"></script>
+<script src="data.js?v=6"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>

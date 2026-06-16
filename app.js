@@ -2,7 +2,6 @@
 // Cancer Research Day 2026 — App Logic
 // ─────────────────────────────────────────────
 
-// FILTER DEFINITIONS
 const ROLES = [
   "PhD Student",
   "Master's Student",
@@ -42,28 +41,18 @@ const DISEASES = [
 let allParticipants = [];
 let currentSearch = '';
 let user = null;
-let conversations = {};
+let conversations = {};   // id -> ISO timestamp
 let coffeeSelections = new Set();
 
-// Active filters — each is a Set of selected values; empty = no filter on that group
-let activeFilters = {
-  role: new Set(),
-  program: new Set(),
-  disease: new Set(),
-  clinical: new Set()
-};
-
-// Pending filters (inside the panel before Apply is tapped)
-let pendingFilters = {
-  role: new Set(),
-  program: new Set(),
-  disease: new Set(),
-  clinical: new Set()
-};
+let activeFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
+let pendingFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
 
 // ── INIT ──────────────────────────────────────
 
 window.addEventListener('DOMContentLoaded', () => {
+  // Clear stale session so identity screen always shows fresh while debugging
+  // Remove the next line once the app is stable
+  localStorage.removeItem('crd2026_user');
   loadState();
   buildFilterPanel();
   loadData();
@@ -149,14 +138,31 @@ function saveIdentity() {
   if (!name) { alert('Please enter your name.'); return; }
   user = { name, role: role || 'Attendee' };
   saveState();
-  showPostIdentity();
+  if (allParticipants.length === 0) {
+    setTimeout(showPostIdentity, 300);
+  } else {
+    showPostIdentity();
+  }
 }
 
 function showPostIdentity() {
-  document.getElementById('bottom-nav').style.display = 'flex';
-  const isCoffeeEligible = CONFIG.coffee_consult_roles.includes(user.role);
-  document.getElementById('mylist-header-btn').style.display = isCoffeeEligible ? 'flex' : 'none';
-  document.getElementById('nav-mylist').style.display = isCoffeeEligible ? 'flex' : 'none';
+  // Show bottom nav for everyone
+  const nav = document.getElementById('bottom-nav');
+  nav.removeAttribute('style');
+  nav.style.display = 'flex';
+
+  // My List is visible to EVERYONE — tracks conversations, LinkedIn, email
+  const mlBtn = document.getElementById('mylist-header-btn');
+  mlBtn.removeAttribute('style');
+  mlBtn.style.display = 'flex';
+  mlBtn.style.visibility = 'visible';
+
+  const mlNav = document.getElementById('nav-mylist');
+  if (mlNav) {
+    mlNav.removeAttribute('style');
+    mlNav.style.display = 'flex';
+  }
+
   if (window._pendingProfile) {
     const id = window._pendingProfile;
     window._pendingProfile = null;
@@ -182,7 +188,6 @@ function showView(view) {
   if (view === 'directory') renderDirectory();
   if (view === 'mylist') renderMyList();
   window.scrollTo(0, 0);
-  // Update URL — remove profile param when going back to directory
   if (view === 'directory') history.replaceState(null, '', window.location.pathname);
 }
 
@@ -274,19 +279,14 @@ function filterDirectory() {
 
 function getFilteredParticipants() {
   return allParticipants.filter(p => {
-    // Search
     if (currentSearch) {
       const haystack = [p.name, p.title, p.disease_area, p.research_program, p.department, p.summary, p.role]
         .join(' ').toLowerCase();
       if (!haystack.includes(currentSearch)) return false;
     }
-    // Role filter
     if (activeFilters.role.size > 0 && !activeFilters.role.has(p.role)) return false;
-    // Program filter
     if (activeFilters.program.size > 0 && !activeFilters.program.has(p.research_program)) return false;
-    // Disease filter
     if (activeFilters.disease.size > 0 && !activeFilters.disease.has(p.disease_area)) return false;
-    // Clinical input filter
     if (activeFilters.clinical.size > 0 && activeFilters.clinical.has('true') && !p.clinical_input) return false;
     return true;
   });
@@ -312,7 +312,7 @@ function renderDirectory() {
         <div class="card-body">
           <div class="card-name-row">
             <span class="card-name">${p.name}</span>
-            ${talked ? '<span class="talked-badge">✓ Talked</span>' : ''}
+            ${talked ? '<span class="talked-badge">✓ Logged</span>' : ''}
           </div>
           <div class="card-meta">${p.role}${p.year ? ' · ' + p.year : ''}${p.department ? ' · ' + p.department : ''}</div>
           <div class="card-title">${p.title || ''}</div>
@@ -332,13 +332,72 @@ function getParticipant(id) {
 
 // ── PROFILE ───────────────────────────────────
 
+function isCBGPhD(role, program, department) {
+  // Must be a PhD Student in the Cancer Biology & Genomics program
+  if (role !== "PhD Student") return false;
+  const prog = (program || department || '').toLowerCase();
+  return prog.includes('cancer biology') || prog.includes('cbg');
+}
+
+function isCoffeeEligiblePair(viewerRole, participantRole, viewerProgram, participantProgram, participantDept) {
+  // Coffee Consult: CBG PhD Students <-> Clinical Fellows/Residents only
+  const viewerIsCBG = isCBGPhD(viewerRole, viewerProgram, '');
+  const viewerIsFellow = viewerRole === "Clinical Fellow / Resident";
+  const participantIsCBG = isCBGPhD(participantRole, participantProgram, participantDept);
+  const participantIsFellow = participantRole === "Clinical Fellow / Resident";
+
+  // Valid pairs: CBG PhD viewing a Fellow, or Fellow viewing a CBG PhD
+  return (viewerIsCBG && participantIsFellow) || (viewerIsFellow && participantIsCBG);
+}
+
+function draftEmail(participant) {
+  const subject = encodeURIComponent(`Nice meeting you at Cancer Research Day 2026`);
+  const from = user ? user.name : 'a fellow attendee';
+  const body = encodeURIComponent(
+`Hi ${participant.name.split(' ')[0]},
+
+It was great meeting you at Cancer Research Day 2026 at USC Norris. ${participant.title ? `I enjoyed learning about your work on "${participant.title}".` : 'I enjoyed our conversation.'}
+
+I would love to stay in touch — please feel free to reach out any time.
+
+Best,
+${from}`
+  );
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
 function showProfile(participant) {
   if (!participant) return;
   const talked = conversations[participant.id];
   const selected = coffeeSelections.has(participant.id);
-  const eligible = user && CONFIG.coffee_consult_roles.includes(user.role) &&
-                   CONFIG.coffee_consult_roles.includes(participant.role) &&
-                   user.role !== participant.role;
+  const viewerRole = user ? user.role : '';
+  const viewerProgram = user ? (user.program || user.department || '') : '';
+  const canCoffee = isCoffeeEligiblePair(viewerRole, participant.role, viewerProgram, participant.research_program, participant.department);
+
+  // Log button
+  const logBtn = talked
+    ? `<button class="btn-talked-done" disabled>✓ Conversation logged</button>`
+    : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`;
+
+  // Coffee Consult — only for eligible pairs
+  let coffeeBtn = '';
+  if (canCoffee) {
+    if (talked) {
+      coffeeBtn = selected
+        ? `<button class="btn-coffee-selected" onclick="toggleCoffee('${participant.id}')">✓ Added to Coffee Consult list — tap to remove</button>`
+        : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">Add to Coffee Consult list</button>`;
+    } else {
+      coffeeBtn = `<p class="coffee-hint">Log this conversation first to add to your Coffee Consult list.</p>`;
+    }
+  }
+
+  // LinkedIn — shown to everyone if URL exists
+  const linkedinBtn = participant.linkedin_url
+    ? `<a href="${participant.linkedin_url}" target="_blank" class="btn-linkedin">Connect on LinkedIn</a>`
+    : '';
+
+  // Email — shown to everyone, always
+  const emailBtn = `<button class="btn-email" onclick="draftEmail(getParticipant('${participant.id}'))">Send a follow-up email</button>`;
 
   document.getElementById('profile-content').innerHTML = `
     <div class="profile-wrap">
@@ -362,19 +421,10 @@ function showProfile(participant) {
         ${participant.clinical_input ? '<span class="clinical-badge">Open to clinical input</span>' : ''}
       </div>
       <div class="profile-actions">
-        ${talked
-          ? `<button class="btn-talked-done" disabled>✓ Conversation logged</button>`
-          : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`}
-        ${eligible && talked
-          ? selected
-            ? `<button class="btn-coffee-selected" onclick="toggleCoffee('${participant.id}')">✓ Added to Coffee Consult list — tap to remove</button>`
-            : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">Add to Coffee Consult list</button>`
-          : eligible && !talked
-          ? `<p class="coffee-hint">Log this conversation first to add to your Coffee Consult list.</p>`
-          : ''}
-        ${participant.linkedin_url
-          ? `<a href="${participant.linkedin_url}" target="_blank" class="btn-linkedin">Connect on LinkedIn</a>`
-          : ''}
+        ${logBtn}
+        ${coffeeBtn}
+        ${linkedinBtn}
+        ${emailBtn}
       </div>
     </div>`;
 
@@ -431,35 +481,40 @@ function renderMyList() {
   }
   empty.style.display = 'none';
 
-  const eligible = user && CONFIG.coffee_consult_roles.includes(user.role);
-  document.getElementById('mylist-sub').textContent = eligible
-    ? `Select up to ${CONFIG.max_selections} for a Coffee Consult — CRTEC will reach out within 48 hours.`
-    : 'Your conversations today.';
+  const viewerRole = user ? user.role : '';
+  const viewerProgram2 = user ? (user.program || user.department || '') : '';
+  const isCoffeeUser = isCBGPhD(viewerRole, viewerProgram2, '') || viewerRole === "Clinical Fellow / Resident";
+
+  // Subtitle changes based on whether user can do Coffee Consult
+  document.getElementById('mylist-sub').textContent = isCoffeeUser
+    ? `Tap ☕ to add someone to your Coffee Consult list (up to ${CONFIG.max_selections}). Everyone gets LinkedIn and email options.`
+    : 'Everyone you logged a conversation with. Connect on LinkedIn or send a follow-up email.';
 
   wrap.innerHTML = talkedIds.map(id => {
     const p = allParticipants.find(x => x.id === id);
     if (!p) return '';
-    const canCoffee = eligible && CONFIG.coffee_consult_roles.includes(p.role) && user.role !== p.role;
+    const canCoffee = isCoffeeEligiblePair(viewerRole, p.role, viewerProgram2, p.research_program, p.department);
     const selected = coffeeSelections.has(id);
     const time = conversations[id] ? new Date(conversations[id]).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+
     return `
-      <div class="mylist-card ${selected ? 'selected' : ''}" onclick="showProfile(getParticipant('${id}'))">
-        <div class="mylist-avatar ${avatarClass(p.role)}">${initials(p.name)}</div>
-        <div class="mylist-info">
+      <div class="mylist-card ${selected ? 'selected' : ''}">
+        <div class="mylist-avatar ${avatarClass(p.role)}" onclick="showProfile(getParticipant('${id}'))">${initials(p.name)}</div>
+        <div class="mylist-info" onclick="showProfile(getParticipant('${id}'))">
           <div class="mylist-name">${p.name}</div>
           <div class="mylist-meta">${p.role}${p.year ? ' · ' + p.year : ''}</div>
-          <div class="mylist-title">${(p.title || '').substring(0, 70)}${(p.title || '').length > 70 ? '…' : ''}</div>
+          <div class="mylist-title">${(p.title || '').substring(0, 65)}${(p.title || '').length > 65 ? '…' : ''}</div>
           ${time ? `<div class="mylist-time">Logged at ${time}</div>` : ''}
         </div>
-        ${canCoffee ? `
-          <button class="coffee-toggle ${selected ? 'on' : ''}"
-            onclick="event.stopPropagation(); toggleCoffee('${id}')" aria-label="Toggle Coffee Consult">
-            ${selected ? '☕✓' : '☕'}
-          </button>` : ''}
+        <div class="mylist-actions">
+          ${p.linkedin_url ? `<a class="ml-action-btn ml-li" href="${p.linkedin_url}" target="_blank" title="Connect on LinkedIn">in</a>` : ''}
+          <button class="ml-action-btn ml-email" onclick="event.stopPropagation(); draftEmail(getParticipant('${id}'))" title="Send follow-up email">✉</button>
+          ${canCoffee ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove from Coffee Consult' : 'Add to Coffee Consult'}">☕${selected ? '✓' : ''}</button>` : ''}
+        </div>
       </div>`;
   }).join('');
 
-  if (eligible && coffeeSelections.size > 0) {
+  if (isCoffeeUser && coffeeSelections.size > 0) {
     submitWrap.style.display = 'block';
     document.getElementById('submit-btn').textContent =
       `Submit ${coffeeSelections.size} Coffee Consult selection${coffeeSelections.size > 1 ? 's' : ''}`;
