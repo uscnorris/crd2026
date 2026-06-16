@@ -186,3 +186,13 @@ input:focus, select:focus { outline: none; border-color: var(--cardinal); }
 .ml-email { color: var(--text-mid); }
 .ml-coffee { color: var(--text-mid); font-size: 13px; }
 .ml-coffee.on { background: var(--cardinal-light); border-color: var(--cardinal); color: var(--cardinal-dark); }
+
+/* ── HEADER ROLE CHIP ── */
+.header-role-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.header-role-chip { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); color: white; border-radius: 20px; padding: 3px 10px; font-size: 11px; opacity: 0.95; }
+.header-role-switch { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 11px; cursor: pointer; padding: 0; text-decoration: underline; }
+.header-role-switch:active { opacity: 0.5; }
+
+/* ── COFFEE CONSULT STAR ICON ── */
+.ml-coffee { font-size: 17px; color: var(--text-light); }
+.ml-coffee.on { background: var(--cardinal-light); border-color: var(--cardinal); color: var(--cardinal); }

@@ -163,6 +163,8 @@ function showPostIdentity() {
     mlNav.style.display = 'flex';
   }
 
+  showRoleInHeader();
+
   if (window._pendingProfile) {
     const id = window._pendingProfile;
     window._pendingProfile = null;
@@ -170,6 +172,25 @@ function showPostIdentity() {
     if (p) { showProfile(p); return; }
   }
   showView('directory');
+}
+
+function showRoleInHeader() {
+  const row = document.getElementById('header-role-row');
+  const chip = document.getElementById('header-role-chip');
+  if (!row || !chip || !user) return;
+  chip.textContent = user.name + (user.role ? ' · ' + user.role : '');
+  row.style.display = 'flex';
+}
+
+function switchRole() {
+  // Clear user so identity screen shows again
+  localStorage.removeItem('crd2026_user');
+  user = null;
+  document.getElementById('header-role-row').style.display = 'none';
+  document.getElementById('bottom-nav').style.display = 'none';
+  document.getElementById('mylist-header-btn').style.display = 'none';
+  // Pre-fill name if we remember it
+  showView('identity');
 }
 
 function decideStartView() {
@@ -332,38 +353,52 @@ function getParticipant(id) {
 
 // ── PROFILE ───────────────────────────────────
 
-function isCBGPhD(role, program, department) {
-  // Must be a PhD Student in the Cancer Biology & Genomics program
+function isViewerCoffeeEligible(role) {
+  // Viewer eligibility: role alone (they self-identified at sign-in)
+  return role === "PhD Student" || role === "Clinical Fellow / Resident";
+}
+
+function isParticipantCBGPhD(role, program, department) {
+  // Participant eligibility: must be PhD Student in CBG specifically (checked against data)
   if (role !== "PhD Student") return false;
   const prog = (program || department || '').toLowerCase();
+  // If no program data, trust the role (sample data / incomplete data case)
+  if (!prog) return true;
   return prog.includes('cancer biology') || prog.includes('cbg');
 }
 
-function isCoffeeEligiblePair(viewerRole, participantRole, viewerProgram, participantProgram, participantDept) {
-  // Coffee Consult: CBG PhD Students <-> Clinical Fellows/Residents only
-  const viewerIsCBG = isCBGPhD(viewerRole, viewerProgram, '');
+function isCoffeeEligiblePair(viewerRole, participantRole, participantProgram, participantDept) {
+  // Coffee Consult: PhD Students <-> Clinical Fellows/Residents
+  // Participant must be CBG PhD or Clinical Fellow; viewer is trusted by role
+  const viewerIsPhD = viewerRole === "PhD Student";
   const viewerIsFellow = viewerRole === "Clinical Fellow / Resident";
-  const participantIsCBG = isCBGPhD(participantRole, participantProgram, participantDept);
+  const participantIsCBGPhD = isParticipantCBGPhD(participantRole, participantProgram, participantDept);
   const participantIsFellow = participantRole === "Clinical Fellow / Resident";
 
-  // Valid pairs: CBG PhD viewing a Fellow, or Fellow viewing a CBG PhD
-  return (viewerIsCBG && participantIsFellow) || (viewerIsFellow && participantIsCBG);
+  return (viewerIsPhD && participantIsFellow) || (viewerIsFellow && participantIsCBGPhD);
 }
 
 function draftEmail(participant) {
   const subject = encodeURIComponent(`Nice meeting you at Cancer Research Day 2026`);
   const from = user ? user.name : 'a fellow attendee';
-  const body = encodeURIComponent(
-`Hi ${participant.name.split(' ')[0]},
+  const firstName = (participant.name || '').replace('Dr. ', '').split(' ')[0];
+  const bodyText = `Hi ${firstName},
 
-It was great meeting you at Cancer Research Day 2026 at USC Norris. ${participant.title ? `I enjoyed learning about your work on "${participant.title}".` : 'I enjoyed our conversation.'}
+It was great meeting you at Cancer Research Day 2026 at USC Norris. ${participant.title ? 'I enjoyed learning about your work on "' + participant.title + '".' : 'I enjoyed our conversation.'}
 
 I would love to stay in touch — please feel free to reach out any time.
 
 Best,
-${from}`
-  );
-  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+${from}`;
+  const mailto = `mailto:?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+  // Use a temporary anchor click — more reliable than window.location across browsers
+  const a = document.createElement('a');
+  a.href = mailto;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function showProfile(participant) {
@@ -371,8 +406,7 @@ function showProfile(participant) {
   const talked = conversations[participant.id];
   const selected = coffeeSelections.has(participant.id);
   const viewerRole = user ? user.role : '';
-  const viewerProgram = user ? (user.program || user.department || '') : '';
-  const canCoffee = isCoffeeEligiblePair(viewerRole, participant.role, viewerProgram, participant.research_program, participant.department);
+  const canCoffee = isCoffeeEligiblePair(viewerRole, participant.role, participant.research_program, participant.department);
 
   // Log button
   const logBtn = talked
@@ -482,18 +516,17 @@ function renderMyList() {
   empty.style.display = 'none';
 
   const viewerRole = user ? user.role : '';
-  const viewerProgram2 = user ? (user.program || user.department || '') : '';
-  const isCoffeeUser = isCBGPhD(viewerRole, viewerProgram2, '') || viewerRole === "Clinical Fellow / Resident";
+  const isCoffeeUser = isViewerCoffeeEligible(viewerRole);
 
-  // Subtitle changes based on whether user can do Coffee Consult
-  document.getElementById('mylist-sub').textContent = isCoffeeUser
-    ? `Tap ☕ to add someone to your Coffee Consult list (up to ${CONFIG.max_selections}). Everyone gets LinkedIn and email options.`
-    : 'Everyone you logged a conversation with. Connect on LinkedIn or send a follow-up email.';
+  // Subtitle: context-aware based on whether user can request Coffee Consults
+  const coffeeSubtitle = `People you talked to today. Use the coffee cup icon to request a Coffee Consult (up to ${CONFIG.max_selections}). CRTEC will coordinate within 48 hours.`;
+  const genericSubtitle = 'People you talked to today. Use the icons to connect on LinkedIn or send a follow-up email.';
+  document.getElementById('mylist-sub').textContent = isCoffeeUser ? coffeeSubtitle : genericSubtitle;
 
   wrap.innerHTML = talkedIds.map(id => {
     const p = allParticipants.find(x => x.id === id);
     if (!p) return '';
-    const canCoffee = isCoffeeEligiblePair(viewerRole, p.role, viewerProgram2, p.research_program, p.department);
+    const canCoffee = isCoffeeEligiblePair(viewerRole, p.role, p.research_program, p.department);
     const selected = coffeeSelections.has(id);
     const time = conversations[id] ? new Date(conversations[id]).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
 
@@ -509,7 +542,7 @@ function renderMyList() {
         <div class="mylist-actions">
           ${p.linkedin_url ? `<a class="ml-action-btn ml-li" href="${p.linkedin_url}" target="_blank" title="Connect on LinkedIn">in</a>` : ''}
           <button class="ml-action-btn ml-email" onclick="event.stopPropagation(); draftEmail(getParticipant('${id}'))" title="Send follow-up email">✉</button>
-          ${canCoffee ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove from Coffee Consult' : 'Add to Coffee Consult'}">☕${selected ? '✓' : ''}</button>` : ''}
+          ${canCoffee ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove from Coffee Consult' : 'Add to Coffee Consult'}">${selected ? '★' : '☆'}</button>` : ''}
         </div>
       </div>`;
   }).join('');
@@ -533,7 +566,12 @@ function submitCoffeeConsult() {
     window.open(CONFIG.form_url, '_blank');
   } else {
     const body = `Coffee Consult Selections\n\nSubmitted by: ${user.name} (${user.role})\nSelections: ${names.join(', ')}\nTime: ${new Date().toLocaleString()}`;
-    window.location.href = `mailto:crtec@usc.edu?subject=Coffee Consult — ${user.name}&body=${encodeURIComponent(body)}`;
+    const a = document.createElement('a');
+    a.href = `mailto:crtec@usc.edu?subject=${encodeURIComponent('Coffee Consult — ' + user.name)}&body=${encodeURIComponent(body)}`;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
   alert(`Submitted! CRTEC will confirm your match${coffeeSelections.size > 1 ? 'es' : ''} within 48 hours.`);
 }

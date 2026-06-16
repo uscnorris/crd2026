@@ -7,7 +7,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=8">
 <script>
   // Force reload if cached version is stale
   if (window.APP_VERSION !== 4) { window.APP_VERSION = 4; }
@@ -20,11 +20,15 @@
     <div class="header-top">
       <span class="header-label">USC NORRIS · CRTEC</span>
       <button class="my-list-btn" onclick="showView('mylist')" id="mylist-header-btn" style="display:none!important;visibility:hidden;">
-        My List <span class="list-count" id="list-count-badge">0</span>
+        👥 My List <span class="list-count" id="list-count-badge">0</span>
       </button>
     </div>
     <div class="header-title">Cancer Research Day 2026</div>
     <div class="header-sub">Poster Session Directory</div>
+    <div class="header-role-row" id="header-role-row" style="display:none">
+      <span class="header-role-chip" id="header-role-chip"></span>
+      <button class="header-role-switch" onclick="switchRole()">Switch role</button>
+    </div>
   </div>
 </header>
 
@@ -143,13 +147,13 @@
     <span>Directory</span>
   </button>
   <button class="nav-btn" id="nav-mylist" onclick="showView('mylist')">
-    <span class="nav-icon">☕</span>
+    <span class="nav-icon">👥</span>
     <span>My List <span id="nav-count" class="nav-badge" style="display:none">0</span></span>
   </button>
 </nav>
 
-<script src="config.js?v=6"></script>
-<script src="data.js?v=6"></script>
-<script src="app.js?v=6"></script>
+<script src="config.js?v=8"></script>
+<script src="data.js?v=8"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>
