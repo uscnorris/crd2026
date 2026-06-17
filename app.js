@@ -543,22 +543,6 @@ function isCoffeeEligiblePair(viewerRole, participantRole, viewerProgram, partic
   return (viewerIsCBGPhD && participantIsFellow) || (viewerIsFellow && participantIsCBGPhD);
 }
 
-
-I would love to stay in touch — please feel free to reach out any time.
-
-Best,
-${from}`;
-  const mailto = `mailto:?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
-  // Use a temporary anchor click — more reliable than window.location across browsers
-  const a = document.createElement('a');
-  a.href = mailto;
-  a.target = '_blank';
-  a.rel = 'noopener';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
 function showProfile(participant) {
   if (!participant) return;
   const talked = conversations[participant.id];
