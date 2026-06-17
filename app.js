@@ -75,6 +75,14 @@ let pendingFilters = { role: new Set(), program: new Set(), disease: new Set(), 
 // ── INIT ──────────────────────────────────────
 
 window.addEventListener('DOMContentLoaded', () => {
+  // Clear stale localStorage from previous app versions
+  const savedVersion = localStorage.getItem('crd2026_app_version');
+  if (savedVersion !== '20') {
+    localStorage.removeItem('crd2026_user');
+    localStorage.removeItem('crd2026_conversations');
+    localStorage.removeItem('crd2026_selections');
+    localStorage.setItem('crd2026_app_version', '20');
+  }
   loadState();
   buildFilterPanel();
   loadData();
