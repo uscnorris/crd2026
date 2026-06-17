@@ -10,15 +10,20 @@ const CONFIG = {
   event_date: "October 14, 2026",
   event_location: "USC Norris Comprehensive Cancer Center",
 
+  // APPS SCRIPT BACKEND
+  // Paste your deployed Apps Script web app URL here (see Code.gs setup instructions)
+  script_url: "PASTE_YOUR_APPS_SCRIPT_URL_HERE",
+
   // GOOGLE SHEETS
-  // Step 1: Publish your Google Sheet (File → Share → Publish to web → CSV)
-  // Step 2: Paste the published CSV URL below
-  sheet_url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj6gbHwLk4_RffTa8lTHvjk-RkTAE1fQoIYmpIIleV-qAnmPN3P6xeXggoQk8JGPbqyejNqnSW28fQ/pub?gid=786211893&single=true&output=csv",
-  // If sheet_url is not set, the app uses the sample data in data.js
-  use_sample_data: false,
+  // Paste the published CSV URL below.
+  // Get it from: File → Share → Publish to web → Sheet1 → CSV → Publish → copy URL
+  // The URL must start with https://docs.google.com/spreadsheets/d/e/... and contain /pub?
+  sheet_url: "PASTE_YOUR_PUBLISHED_CSV_URL_HERE",
+
+  // Set to false once your sheet URL is pasted above
+  use_sample_data: true,
 
   // COFFEE CONSULT SETTINGS
-  // Only these roles see the Coffee Consult option
   // Coffee Consult is restricted to CBG PhD Students <-> Clinical Fellows/Residents
   // Program matching is enforced in app.js isCoffeeEligiblePair() — edit there, not here
   coffee_consult_roles: ["PhD Student", "Clinical Fellow / Resident"],
@@ -26,16 +31,13 @@ const CONFIG = {
   // Max Coffee Consult selections per person
   max_selections: 2,
 
-  // Where Coffee Consult selections get emailed
-  // Use a Google Form URL to collect submissions (see README for setup)
+  // Where Coffee Consult selections get emailed (Google Form URL — see README)
   form_url: "PASTE_YOUR_GOOGLE_FORM_URL_HERE",
 
-  // BASE URL for QR codes
-  // After deploying to GitHub Pages, paste your URL here
-  // e.g. "https://crtec.github.io/crd2026"
+  // BASE URL for QR codes — your GitHub Pages URL
   base_url: "https://uscnorris.github.io/crd2026",
 
-  // DISEASE AREAS (shown as filter chips — edit to match your data)
+  // DISEASE AREAS (filter options — edit to match your data)
   disease_areas: [
     "Breast",
     "GI / Colorectal",
@@ -52,9 +54,13 @@ const CONFIG = {
   // RESEARCH PROGRAMS (shown in profile cards)
   research_programs: [
     "Cancer Biology & Genomics",
-    "Tumor Microenvironment & Immunology",
+    "Tumor Immunology & Microenvironment",
+    "Epigenetic Regulation in Cancer",
+    "Translational & Clinical Sciences",
+    "Cancer Epidemiology",
+    "Cancer Health Disparities",
     "Cancer Prevention & Control",
-    "Translational & Clinical Research",
+    "Community Outreach & Engagement",
     "Computational & Data Sciences"
   ]
 

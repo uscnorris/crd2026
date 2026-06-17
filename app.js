@@ -44,6 +44,31 @@ let user = null;
 let conversations = {};   // id -> ISO timestamp
 let coffeeSelections = new Set();
 
+// Session ID — unique per browser, persists across the day
+function getSessionId() {
+  let sid = localStorage.getItem('crd2026_session');
+  if (!sid) {
+    sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem('crd2026_session', sid);
+  }
+  return sid;
+}
+
+// Silent POST to Apps Script backend — fire and forget
+function track(payload) {
+  if (!CONFIG.script_url || CONFIG.script_url === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') return;
+  payload.session_id = getSessionId();
+  payload.viewer_name  = user ? user.name    : '';
+  payload.viewer_role  = user ? user.role    : '';
+  payload.viewer_program = user ? user.program : '';
+  fetch(CONFIG.script_url, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {}); // silent — never block the UI
+}
+
 let activeFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
 let pendingFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
 
@@ -284,6 +309,7 @@ function saveIdentity() {
   }
   user = { name, role, program };
   saveState();
+  track({ action: 'identify', name, role, program });
   if (allParticipants.length === 0) {
     setTimeout(showPostIdentity, 300);
   } else {
@@ -620,11 +646,18 @@ function showProfile(participant) {
 
   showView('profile');
   history.replaceState(null, '', `?p=${participant.id}`);
+  // Track profile view silently
+  track({
+    action: 'view_profile',
+    participant_id: participant.id,
+    participant_name: participant.name,
+    participant_role: participant.role,
+    participant_program: participant.research_program || participant.department || ''
+  });
 }
 
 function logConversation(id) {
   if (!user) {
-    // Prompt identity before logging — store which profile to return to
     window._pendingLog = id;
     showView('identity');
     return;
@@ -633,21 +666,39 @@ function logConversation(id) {
   saveState();
   updateBadgeCounts();
   const p = allParticipants.find(x => x.id === id);
-  if (p) showProfile(p);
+  if (p) {
+    track({
+      action: 'log_convo',
+      participant_id: p.id,
+      participant_name: p.name,
+      participant_role: p.role,
+      participant_program: p.research_program || p.department || ''
+    });
+    showProfile(p);
+  }
 }
 
 function undoConversation(id) {
   delete conversations[id];
-  // Also remove from coffee selections if it was selected
   coffeeSelections.delete(id);
   saveState();
   updateBadgeCounts();
   const p = allParticipants.find(x => x.id === id);
-  if (p) showProfile(p);
+  if (p) {
+    track({
+      action: 'undo_convo',
+      participant_id: p.id,
+      participant_name: p.name,
+      participant_role: p.role,
+      participant_program: p.research_program || p.department || ''
+    });
+    showProfile(p);
+  }
 }
 
 function toggleCoffee(id) {
-  if (coffeeSelections.has(id)) {
+  const wasSelected = coffeeSelections.has(id);
+  if (wasSelected) {
     coffeeSelections.delete(id);
   } else {
     if (coffeeSelections.size >= CONFIG.max_selections) {
@@ -659,7 +710,20 @@ function toggleCoffee(id) {
   saveState();
   updateBadgeCounts();
   const p = allParticipants.find(x => x.id === id);
-  if (p) showProfile(p);
+  if (p) {
+    track({
+      action: 'coffee',
+      action_type: wasSelected ? 'removed' : 'selected',
+      requester_name: user ? user.name : '',
+      requester_role: user ? user.role : '',
+      requester_program: user ? user.program : '',
+      participant_id: p.id,
+      participant_name: p.name,
+      participant_role: p.role,
+      participant_program: p.research_program || p.department || ''
+    });
+    showProfile(p);
+  }
 }
 
 function updateBadgeCounts() {
