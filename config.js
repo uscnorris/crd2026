@@ -14,7 +14,7 @@ const CONFIG = {
   // Step 1: Publish your Google Sheet (File → Share → Publish to web → CSV)
   // Step 2: Paste the published CSV URL below
   // Format: https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/export?format=csv&gid=0
-  sheet_url: https://docs.google.com/spreadsheets/d/e/2PACX-1vTj6gbHwLk4_RffTa8lTHvjk-RkTAE1fQoIYmpIIleV-qAnmPN3P6xeXggoQk8JGPbqyejNqnSW28fQ/pub?gid=0&single=true&output=csv,
+  sheet_url: https://docs.google.com/spreadsheets/d/e/2PACX-1vTj6gbHwLk4_RffTa8lTHvjk-RkTAE1fQoIYmpIIleV-qAnmPN3P6xeXggoQk8JGPbqyejNqnSW28fQ/pub?gid=786211893&single=true&output=csv,
 
   // If sheet_url is not set, the app uses the sample data in data.js
   use_sample_data: true,
