@@ -7,7 +7,7 @@
 // GOOGLE SHEET COLUMN ORDER (must match exactly, row 1 headers):
 // id | name | role | year | department | poster_number |
 // title | summary | disease_area | research_program |
-// clinical_input | linkedin_url | photo_url
+// clinical_input | linkedin_url | photo_url | email
 // ─────────────────────────────────────────────
 
 const SAMPLE_DATA = [
@@ -24,7 +24,8 @@ const SAMPLE_DATA = [
     research_program: "Tumor Immunology & Microenvironment",
     clinical_input: true,
     linkedin_url: "https://linkedin.com/in/sarahchen",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "cbg-002",
@@ -39,7 +40,8 @@ const SAMPLE_DATA = [
     research_program: "Cancer Biology & Genomics",
     clinical_input: true,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "cbg-003",
@@ -54,7 +56,8 @@ const SAMPLE_DATA = [
     research_program: "Tumor Immunology & Microenvironment",
     clinical_input: true,
     linkedin_url: "https://linkedin.com/in/priyanair",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "cbg-004",
@@ -69,7 +72,8 @@ const SAMPLE_DATA = [
     research_program: "Epigenetic Regulation in Cancer",
     clinical_input: true,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "cbg-005",
@@ -84,7 +88,8 @@ const SAMPLE_DATA = [
     research_program: "Cancer Biology & Genomics",
     clinical_input: false,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "cbg-006",
@@ -99,7 +104,8 @@ const SAMPLE_DATA = [
     research_program: "Cancer Biology & Genomics",
     clinical_input: true,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "cbg-007",
@@ -114,7 +120,8 @@ const SAMPLE_DATA = [
     research_program: "Tumor Immunology & Microenvironment",
     clinical_input: true,
     linkedin_url: "https://linkedin.com/in/luismorales",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "cbg-008",
@@ -129,7 +136,8 @@ const SAMPLE_DATA = [
     research_program: "Tumor Immunology & Microenvironment",
     clinical_input: true,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "pphs-001",
@@ -144,7 +152,8 @@ const SAMPLE_DATA = [
     research_program: "Cancer Epidemiology",
     clinical_input: false,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "pphs-002",
@@ -159,7 +168,8 @@ const SAMPLE_DATA = [
     research_program: "Cancer Health Disparities",
     clinical_input: true,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "ms-001",
@@ -174,7 +184,8 @@ const SAMPLE_DATA = [
     research_program: "Translational & Clinical Sciences",
     clinical_input: false,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "fellow-001",
@@ -189,7 +200,8 @@ const SAMPLE_DATA = [
     research_program: "Translational & Clinical Sciences",
     clinical_input: false,
     linkedin_url: "https://linkedin.com/in/aliciareyes",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "fellow-002",
@@ -204,7 +216,8 @@ const SAMPLE_DATA = [
     research_program: "Translational & Clinical Sciences",
     clinical_input: false,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "fellow-003",
@@ -219,7 +232,8 @@ const SAMPLE_DATA = [
     research_program: "Translational & Clinical Sciences",
     clinical_input: false,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "postdoc-001",
@@ -234,7 +248,8 @@ const SAMPLE_DATA = [
     research_program: "Tumor Immunology & Microenvironment",
     clinical_input: true,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "postdoc-002",
@@ -249,7 +264,8 @@ const SAMPLE_DATA = [
     research_program: "Epigenetic Regulation in Cancer",
     clinical_input: false,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "fac-001",
@@ -264,7 +280,8 @@ const SAMPLE_DATA = [
     research_program: "Translational & Clinical Sciences",
     clinical_input: false,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "fac-002",
@@ -279,7 +296,8 @@ const SAMPLE_DATA = [
     research_program: "Translational & Clinical Sciences",
     clinical_input: false,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   },
   {
     id: "comm-001",
@@ -294,6 +312,7 @@ const SAMPLE_DATA = [
     research_program: "Community Outreach & Engagement",
     clinical_input: false,
     linkedin_url: "",
-    photo_url: ""
+    photo_url: "",
+    email: ""
   }
 ];

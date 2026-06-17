@@ -297,7 +297,7 @@ function showPostIdentity() {
   nav.removeAttribute('style');
   nav.style.display = 'flex';
 
-  // My List is visible to EVERYONE — tracks conversations, LinkedIn, email
+  // My List is visible to EVERYONE — tracks conversations and connections
   const mlBtn = document.getElementById('mylist-header-btn');
   mlBtn.removeAttribute('style');
   mlBtn.style.display = 'flex';
@@ -590,9 +590,17 @@ function showProfile(participant) {
     }
   }
 
-  // LinkedIn — shown to everyone if URL exists
+  // LinkedIn — shown if URL exists
   const linkedinBtn = participant.linkedin_url
     ? `<a href="${participant.linkedin_url}" target="_blank" class="btn-linkedin">Connect on LinkedIn</a>`
+    : '';
+
+  // Email field — copyable, shown if email column populated in sheet
+  const emailField = participant.email
+    ? `<div class="email-field">
+        <span class="email-label">Email</span>
+        <a class="email-value" href="mailto:${participant.email}">${participant.email}</a>
+       </div>`
     : '';
 
 
@@ -622,6 +630,7 @@ function showProfile(participant) {
         ${logBtn}
         ${coffeeBtn}
         ${linkedinBtn}
+        ${emailField}
       </div>
     </div>`;
 
