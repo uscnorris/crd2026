@@ -12,13 +12,13 @@ const CONFIG = {
 
   // APPS SCRIPT BACKEND
   // Paste your deployed Apps Script web app URL here (see Code.gs setup instructions)
-  script_url: "PASTE_YOUR_APPS_SCRIPT_URL_HERE",
+  script_url: "https://script.google.com/macros/s/AKfycbweU1LwtmJFcwvDfmWQ-XJNPu2KhGd5n8afKIIllrTK7LqwoZuk-JFXVkzlUIh1CU9heg/exec",
 
   // GOOGLE SHEETS
   // Paste the published CSV URL below.
   // Get it from: File → Share → Publish to web → Sheet1 → CSV → Publish → copy URL
   // The URL must start with https://docs.google.com/spreadsheets/d/e/... and contain /pub?
-  sheet_url: "PASTE_YOUR_PUBLISHED_CSV_URL_HERE",
+  sheet_url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj6gbHwLk4_RffTa8lTHvjk-RkTAE1fQoIYmpIIleV-qAnmPN3P6xeXggoQk8JGPbqyejNqnSW28fQ/pub?gid=786211893&single=true&output=csv",
 
   // Set to false once your sheet URL is pasted above
   use_sample_data: true,
