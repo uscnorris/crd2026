@@ -50,9 +50,6 @@ let pendingFilters = { role: new Set(), program: new Set(), disease: new Set(), 
 // ── INIT ──────────────────────────────────────
 
 window.addEventListener('DOMContentLoaded', () => {
-  // Clear stale session so identity screen always shows fresh while debugging
-  // Remove the next line once the app is stable
-  localStorage.removeItem('crd2026_user');
   loadState();
   buildFilterPanel();
   loadData();
@@ -131,45 +128,51 @@ function parseCSVLine(line) {
 
 // ── IDENTITY ──────────────────────────────────
 
-// Program options by role — curated for Cancer Research Day / Keck / NCCC attendees
+// Program options by role — sourced from keck.usc.edu/education/phd-programs,
+// keck.usc.edu/pphs/education/doctoral-programs, keck.usc.edu/education/masters-programs,
+// keck.usc.edu/pphs/education/masters-programs, keck.usc.edu/residencies-and-fellowships
 const PROGRAMS_BY_ROLE = {
   "PhD Student": [
+    // PIBBS programs (keck.usc.edu/pibbs/phd-programs)
     "Cancer Biology & Genomics (CBG) — PIBBS",
-    "Biochemistry & Molecular Medicine — PIBBS",
-    "Molecular and Computational Biology — PIBBS",
-    "Genetic, Molecular & Cellular Biology — PIBBS",
-    "Neuroscience — PIBBS",
-    "Pharmaceutical Sciences — PIBBS",
-    "Epidemiology",
-    "Biostatistics",
-    "Preventive Medicine",
-    "Population, Health & Place",
-    "Computational Biology & Bioinformatics",
-    "Biomedical Engineering",
-    "Chemical Engineering",
+    "Development, Stem Cells & Regenerative Medicine — PIBBS",
+    "Infectious Diseases, Immunology & Pathogenesis — PIBBS",
+    "Medical Biophysics — PIBBS",
+    // Population & Public Health Sciences (keck.usc.edu/pphs/education/doctoral-programs)
+    "Biostatistics — PPHS",
+    "Epidemiology — PPHS",
+    "Health Behavior Research — PPHS",
+    // Other Keck PhD programs
+    "Integrative Anatomical Sciences",
+    "MD-PhD (USC-Caltech)",
     "Other"
   ],
   "Master's Student": [
-    "Applied Biostatistics/Epidemiology (MS)",
-    "Biochemistry and Molecular Medicine (MS)",
-    "Biomedical Data Analytics (MS)",
-    "Biomedical Engineering (MS)",
-    "Biomedical Sciences (MS)",
-    "Biostatistics (MS)",
-    "Clinical, Biomedical and Translational Investigations (MS)",
-    "Clinical and Experimental Therapeutics (MS)",
-    "Computational Molecular Biology (MS)",
+    // Keck master's programs (keck.usc.edu/education/masters-programs)
+    "Cancer Biology & Molecular Medicine (MS)",
+    "Clinical, Biomedical & Translational Investigations (MS)",
     "Global Medicine (MS)",
-    "Healthcare Data Science (MS)",
-    "Management of Drug Development (MS)",
-    "Molecular and Computational Biology (MS)",
-    "Molecular Epidemiology (MS)",
-    "Molecular Genetics and Biochemistry (MS)",
-    "Molecular Microbiology and Immunology (MS)",
-    "Molecular Pharmacology and Toxicology (MS)",
-    "Neuroimaging and Informatics (MS)",
+    "Integrative Anatomical Sciences (MS)",
+    "Molecular Microbiology & Immunology (MS)",
+    "Molecular Pathology & Experimental Medicine (MS)",
+    "Narrative Medicine (MS)",
+    "Neuroimaging & Informatics (MS)",
+    "Stem Cell Biology & Regenerative Medicine (MS)",
+    "Translational Biomedical Informatics (MS)",
+    "Translational Biotechnology (MS)",
+    // PPHS master's programs (keck.usc.edu/pphs/education/masters-programs)
+    "Applied Biostatistics & Epidemiology (MS)",
+    "Biostatistics (MS)",
+    "Clinical Translational Research (MS)",
+    "Master of Public Health (MPH)",
+    "Public Health Data Science (MS)",
+    "Addiction Science (MAS)",
+    // Dornsife / other USC programs relevant to CRD
+    "Biomedical Engineering (MS)",
+    "Computational Molecular Biology (MS)",
+    "Molecular Genetics & Biochemistry (MS)",
+    "Molecular Pharmacology & Toxicology (MS)",
     "Neuroscience (MS)",
-    "Nutrition, Healthspan and Longevity (MS)",
     "Other"
   ],
   "Postdoctoral Fellow": [
@@ -178,22 +181,49 @@ const PROGRAMS_BY_ROLE = {
     "Epigenetic Regulation in Cancer",
     "Translational & Clinical Sciences",
     "Cancer Prevention & Control",
+    "Cancer Epidemiology",
     "Cancer Health Disparities",
     "Computational & Data Sciences",
     "Other"
   ],
+  "Clinical Fellow / Resident": [
+    // Oncology-adjacent fellowships most likely at Cancer Research Day
+    // sourced from keck.usc.edu/residencies-and-fellowships
+    "Medical Oncology Fellowship",
+    "Hematology Fellowship",
+    "Hematology/Oncology Fellowship",
+    "Gynecologic Oncology Fellowship",
+    "Radiation Oncology Residency",
+    "Breast Surgical Oncology Fellowship",
+    "Breast Imaging Fellowship",
+    "Surgical Oncology Fellowship",
+    "Pediatric Hematology/Oncology Fellowship",
+    "Palliative Medicine Fellowship",
+    "Pathology Residency",
+    "Internal Medicine Residency",
+    "General Surgery Residency",
+    "Dermatology Residency",
+    "Other"
+  ],
   "Faculty": [
+    // NCCC research programs (from image 3 in prior conversation)
     "Tumor Immunology & Microenvironment Program",
     "Epigenetic Regulation in Cancer Program",
-    "Translational and Clinical Sciences Program",
+    "Translational & Clinical Sciences Program",
     "Cancer Epidemiology Program",
     "Cancer Control Research Program",
-    "Cancer Biology & Genomics (CBG)",
+    // Keck departments most likely at CRD
     "Division of Medical Oncology",
+    "Division of Hematology",
     "Department of Medicine",
+    "Department of Pathology",
+    "Department of Radiation Oncology",
+    "Department of Surgery",
+    "Department of Pediatrics",
     "Biochemistry & Molecular Medicine",
     "Molecular Microbiology & Immunology",
     "Population & Public Health Sciences",
+    "Cancer Biology & Genomics (CBG)",
     "Other"
   ]
 };
@@ -210,7 +240,9 @@ function onRoleChange() {
     // Populate the dropdown with role-specific options
     programSelect.innerHTML = '<option value="" selected disabled>Select your program</option>' +
       options.map(o => `<option value="${o}">${o}</option>`).join('');
-    programLabel.textContent = role === 'Faculty' ? 'Research Program / Department' : 'Program';
+    if (role === 'Faculty') programLabel.textContent = 'Research Program / Department';
+    else if (role === 'Clinical Fellow / Resident') programLabel.textContent = 'Fellowship / Residency Program';
+    else programLabel.textContent = 'Program';
     programRow.style.display = 'block';
     programOtherRow.style.display = 'none';
     // Show text field when Other is selected
@@ -277,6 +309,12 @@ function showPostIdentity() {
     const p = allParticipants.find(x => x.id === id);
     if (p) { showProfile(p); return; }
   }
+  if (window._pendingLog) {
+    const id = window._pendingLog;
+    window._pendingLog = null;
+    logConversation(id);
+    return;
+  }
   showView('directory');
 }
 
@@ -300,8 +338,16 @@ function switchRole() {
 }
 
 function decideStartView() {
-  if (user) showPostIdentity();
-  else showView('identity');
+  if (user) {
+    showPostIdentity();
+  } else {
+    // Show directory immediately — identity is prompted when someone tries to log a conversation
+    showView('directory');
+    // Show bottom nav with My List hidden until they identify
+    document.getElementById('bottom-nav').style.display = 'flex';
+    document.getElementById('nav-mylist').style.display = 'none';
+    document.getElementById('mylist-header-btn').style.display = 'none';
+  }
 }
 
 // ── NAVIGATION ────────────────────────────────
@@ -578,6 +624,12 @@ function showProfile(participant) {
 }
 
 function logConversation(id) {
+  if (!user) {
+    // Prompt identity before logging — store which profile to return to
+    window._pendingLog = id;
+    showView('identity');
+    return;
+  }
   conversations[id] = new Date().toISOString();
   saveState();
   updateBadgeCounts();
