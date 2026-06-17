@@ -543,13 +543,6 @@ function isCoffeeEligiblePair(viewerRole, participantRole, viewerProgram, partic
   return (viewerIsCBGPhD && participantIsFellow) || (viewerIsFellow && participantIsCBGPhD);
 }
 
-function draftEmail(participant) {
-  const subject = encodeURIComponent(`Nice meeting you at Cancer Research Day 2026`);
-  const from = user ? user.name : 'a fellow attendee';
-  const firstName = (participant.name || '').replace('Dr. ', '').split(' ')[0];
-  const bodyText = `Hi ${firstName},
-
-It was great meeting you at Cancer Research Day 2026 at USC Norris. ${participant.title ? 'I enjoyed learning about your work on "' + participant.title + '".' : 'I enjoyed our conversation.'}
 
 I would love to stay in touch — please feel free to reach out any time.
 
@@ -587,7 +580,10 @@ function showProfile(participant) {
   if (canCoffee) {
     if (talked) {
       coffeeBtn = selected
-        ? `<button class="btn-coffee-selected" onclick="toggleCoffee('${participant.id}')">✓ Added to Coffee Consult list — tap to remove</button>`
+        ? `<div class="log-done-row">
+            <button class="btn-talked-done coffee-done" disabled>☕ Added to Coffee Consult list</button>
+            <button class="btn-undo-log" onclick="toggleCoffee('${participant.id}')" title="Remove">✕ Undo</button>
+           </div>`
         : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">Add to Coffee Consult list</button>`;
     } else {
       coffeeBtn = `<p class="coffee-hint">Log this conversation first to add to your Coffee Consult list.</p>`;
@@ -599,8 +595,7 @@ function showProfile(participant) {
     ? `<a href="${participant.linkedin_url}" target="_blank" class="btn-linkedin">Connect on LinkedIn</a>`
     : '';
 
-  // Email — shown to everyone, always
-  const emailBtn = `<button class="btn-email" onclick="draftEmail(getParticipant('${participant.id}'))">Send a follow-up email</button>`;
+
 
   document.getElementById('profile-content').innerHTML = `
     <div class="profile-wrap">
@@ -627,7 +622,6 @@ function showProfile(participant) {
         ${logBtn}
         ${coffeeBtn}
         ${linkedinBtn}
-        ${emailBtn}
       </div>
     </div>`;
 
@@ -704,8 +698,8 @@ function renderMyList() {
   const isCoffeeUser = isViewerCoffeeEligible(viewerRole, user ? user.program : '');
 
   // Subtitle: context-aware based on whether user can request Coffee Consults
-  const coffeeSubtitle = `People you talked to today. Use the coffee cup icon to request a Coffee Consult (up to ${CONFIG.max_selections}). CRTEC will coordinate within 48 hours.`;
-  const genericSubtitle = 'People you talked to today. Use the icons to connect on LinkedIn or send a follow-up email.';
+  const coffeeSubtitle = `People you talked to today. Use ☕ to add someone to your Coffee Consult list (up to ${CONFIG.max_selections}). CRTEC will coordinate within 48 hours.`;
+  const genericSubtitle = 'People you talked to today. Connect on LinkedIn or tap a name to view their research.';
   document.getElementById('mylist-sub').textContent = isCoffeeUser ? coffeeSubtitle : genericSubtitle;
 
   wrap.innerHTML = talkedIds.map(id => {
@@ -727,7 +721,7 @@ function renderMyList() {
         </div>
         <div class="mylist-actions">
           ${p.linkedin_url ? `<a class="ml-action-btn ml-li" href="${p.linkedin_url}" target="_blank" title="Connect on LinkedIn">in</a>` : ''}
-          <button class="ml-action-btn ml-email" onclick="event.stopPropagation(); draftEmail(getParticipant('${id}'))" title="Send follow-up email">✉</button>
+
           ${canCoffee ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove from Coffee Consult' : 'Add to Coffee Consult'}">☕${selected ? '✓' : ''}</button>` : ''}
         </div>
       </div>`;

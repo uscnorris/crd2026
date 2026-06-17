@@ -172,9 +172,6 @@ input:focus, select:focus { outline: none; border-color: var(--cardinal); }
 .empty-icon { font-size: 36px; margin-bottom: 10px; }
 .empty-state p { font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
 
-/* ── EMAIL BUTTON (profile) ── */
-.btn-email { width: 100%; padding: 12px; background: white; color: #333; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-.btn-email:active { background: var(--off-white); }
 
 /* ── MY LIST COMPACT ACTION BUTTONS ── */
 .mylist-card { display: flex; align-items: center; gap: 10px; background: white; border-radius: var(--radius); padding: 12px; margin-bottom: 8px; border: 1.5px solid var(--border); }
@@ -183,7 +180,6 @@ input:focus, select:focus { outline: none; border-color: var(--cardinal); }
 .ml-action-btn { width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid var(--border); background: white; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #333; font-weight: 700; flex-shrink: 0; }
 .ml-action-btn:active { opacity: 0.7; }
 .ml-li { background: #0A66C2; color: white; border-color: #0A66C2; font-size: 13px; font-family: Georgia, serif; }
-.ml-email { color: var(--text-mid); }
 .ml-coffee { color: var(--text-mid); font-size: 13px; }
 .ml-coffee.on { background: var(--cardinal-light); border-color: var(--cardinal); color: var(--cardinal-dark); }
 
@@ -214,3 +210,6 @@ input:focus, select:focus { outline: none; border-color: var(--cardinal); }
 .log-done-row .btn-talked-done { flex: 1; margin-bottom: 0; }
 .btn-undo-log { flex-shrink: 0; padding: 0 14px; background: white; color: var(--text-light); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; }
 .btn-undo-log:active { background: var(--off-white); color: var(--cardinal); }
+
+/* ── COFFEE DONE STATE ── */
+.btn-talked-done.coffee-done { background: #FFF8E1; color: #856415; border-color: #F0D060; }
