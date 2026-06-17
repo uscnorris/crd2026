@@ -17,7 +17,7 @@ const CONFIG = {
   sheet_url: https://docs.google.com/spreadsheets/d/e/2PACX-1vTj6gbHwLk4_RffTa8lTHvjk-RkTAE1fQoIYmpIIleV-qAnmPN3P6xeXggoQk8JGPbqyejNqnSW28fQ/pub?gid=786211893&single=true&output=csv,
 
   // If sheet_url is not set, the app uses the sample data in data.js
-  use_sample_data: true,
+  use_sample_data: false,
 
   // COFFEE CONSULT SETTINGS
   // Only these roles see the Coffee Consult option
