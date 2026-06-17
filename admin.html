@@ -295,7 +295,8 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
   </div>
 </div>
 
-<script src="config.js?v=19"></script>
+<script src="config.js?v=20"></script>
+<script src="data.js?v=20"></script>
 <script>
 // ── POSTER LAYOUT ──────────────────────────────
 // Edit this to match the actual room layout.
@@ -335,12 +336,11 @@ async function loadAll() {
 
 // Load participant data from Google Sheet (same as main app)
 async function loadSheetData() {
+  // Always seed participantMap from SAMPLE_DATA first as fallback
+  if (typeof SAMPLE_DATA !== 'undefined') {
+    SAMPLE_DATA.forEach(p => { participantMap[p.id] = p; });
+  }
   if (!CONFIG.sheet_url || CONFIG.sheet_url.includes('PASTE')) {
-    // Use sample data
-    participantMap = {};
-    if (typeof SAMPLE_DATA !== 'undefined') {
-      SAMPLE_DATA.forEach(p => { participantMap[p.id] = p; });
-    }
     return;
   }
   try {
