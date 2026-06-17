@@ -87,10 +87,18 @@ async function loadData() {
   if (!CONFIG.use_sample_data && CONFIG.sheet_url && CONFIG.sheet_url !== 'PASTE_YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
     try {
       const resp = await fetch(CONFIG.sheet_url);
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const csv = await resp.text();
-      allParticipants = parseCSV(csv);
+      const parsed = parseCSV(csv);
+      if (parsed.length === 0) throw new Error('CSV parsed 0 rows — check column headers match exactly');
+      allParticipants = parsed;
+      console.log('Sheet loaded:', allParticipants.length, 'participants');
     } catch(e) {
-      console.warn('Sheet load failed, using sample data:', e);
+      console.error('Sheet load failed:', e.message);
+      console.warn('Falling back to sample data. Common causes:\n' +
+        '1. URL is /export?format=csv — use /pub?gid=...&single=true&output=csv instead\n' +
+        '2. Sheet is not published (File → Share → Publish to web)\n' +
+        '3. Column headers in row 1 do not match expected names');
       allParticipants = SAMPLE_DATA;
     }
   } else {
@@ -517,11 +525,12 @@ function isViewerCoffeeEligible(role, program) {
 }
 
 function isParticipantCBGPhD(role, program, department) {
-  // Participant eligibility: PhD Student in CBG (checked against sheet data)
+  // Participant eligibility: PhD Student in CBG
+  // Check BOTH research_program and department — CBG is typically in department column
   if (role !== "PhD Student") return false;
-  const prog = (program || department || '').toLowerCase();
-  if (!prog) return true; // trust role if no program data
-  return prog.includes('cancer biology') || prog.includes('cbg') || prog.includes('genomics');
+  const progStr = ((program || '') + ' ' + (department || '')).toLowerCase();
+  if (!progStr.trim()) return true; // trust role if no data at all
+  return progStr.includes('cancer biology') || progStr.includes('cbg') || progStr.includes('genomics');
 }
 
 function isCoffeeEligiblePair(viewerRole, participantRole, viewerProgram, participantProgram, participantDept) {
@@ -565,9 +574,12 @@ function showProfile(participant) {
   const viewerProgram = user ? (user.program || '') : '';
   const canCoffee = isCoffeeEligiblePair(viewerRole, participant.role, viewerProgram, participant.research_program, participant.department);
 
-  // Log button
+  // Log button — with undo option
   const logBtn = talked
-    ? `<button class="btn-talked-done" disabled>✓ Conversation logged</button>`
+    ? `<div class="log-done-row">
+        <button class="btn-talked-done" disabled>✓ Conversation logged</button>
+        <button class="btn-undo-log" onclick="undoConversation('${participant.id}')" title="Undo">✕ Undo</button>
+       </div>`
     : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`;
 
   // Coffee Consult — only for eligible pairs
@@ -631,6 +643,16 @@ function logConversation(id) {
     return;
   }
   conversations[id] = new Date().toISOString();
+  saveState();
+  updateBadgeCounts();
+  const p = allParticipants.find(x => x.id === id);
+  if (p) showProfile(p);
+}
+
+function undoConversation(id) {
+  delete conversations[id];
+  // Also remove from coffee selections if it was selected
+  coffeeSelections.delete(id);
   saveState();
   updateBadgeCounts();
   const p = allParticipants.find(x => x.id === id);

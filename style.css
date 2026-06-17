@@ -204,3 +204,13 @@ input:focus, select:focus { outline: none; border-color: var(--cardinal); }
 /* ── COFFEE CUP ICON RESTORED ── */
 .ml-coffee { font-size: 16px; color: var(--text-light); }
 .ml-coffee.on { background: var(--cardinal-light); border-color: var(--cardinal); color: var(--cardinal-dark); }
+
+/* ── PROGRAM OTHER FIELD ── */
+#program-other-row { animation: fadein 0.15s ease; }
+#program-other-row input { margin-top: 4px; }
+
+/* ── LOG DONE ROW WITH UNDO ── */
+.log-done-row { display: flex; gap: 8px; align-items: stretch; margin-bottom: 0; }
+.log-done-row .btn-talked-done { flex: 1; margin-bottom: 0; }
+.btn-undo-log { flex-shrink: 0; padding: 0 14px; background: white; color: var(--text-light); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; }
+.btn-undo-log:active { background: var(--off-white); color: var(--cardinal); }
