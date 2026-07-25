@@ -3,7 +3,7 @@
 // The live app pulls from your published Google Sheet (CONFIG.sheet_url).
 // Column order matches CRD2026_Poster_Directory_Template.csv:
 // id, name, role, year, department, poster_number, title, summary,
-// disease_area, research_program, clinical_input, linkedin_url, photo_url, email
+// disease_area, research_program, clinical_input, mentoring, linkedin_url, photo_url, email
 // ─────────────────────────────────────────────
 const SAMPLE_DATA = [
   {
@@ -18,6 +18,7 @@ const SAMPLE_DATA = [
     "disease_area": "Breast",
     "research_program": "Tumor Microenvironment (TIME)",
     "clinical_input": true,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -34,6 +35,7 @@ const SAMPLE_DATA = [
     "disease_area": "GI / Colorectal",
     "research_program": "Tumor Microenvironment (TIME)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -50,6 +52,7 @@ const SAMPLE_DATA = [
     "disease_area": "Multiple / Other",
     "research_program": "Tumor Microenvironment (TIME)",
     "clinical_input": true,
+    "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -66,6 +69,7 @@ const SAMPLE_DATA = [
     "disease_area": "Melanoma / Skin",
     "research_program": "Tumor Microenvironment (TIME)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -82,6 +86,7 @@ const SAMPLE_DATA = [
     "disease_area": "Hematologic",
     "research_program": "Genomic & Epigenomic Regulation (ERC)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -98,6 +103,7 @@ const SAMPLE_DATA = [
     "disease_area": "Pediatric",
     "research_program": "Genomic & Epigenomic Regulation (ERC)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -114,6 +120,7 @@ const SAMPLE_DATA = [
     "disease_area": "Cancer Prevention",
     "research_program": "Genomic & Epigenomic Regulation (ERC)",
     "clinical_input": false,
+    "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -130,6 +137,7 @@ const SAMPLE_DATA = [
     "disease_area": "GU / Prostate",
     "research_program": "Translational & Clinical Sciences (TACS)",
     "clinical_input": true,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -146,6 +154,7 @@ const SAMPLE_DATA = [
     "disease_area": "Hematologic",
     "research_program": "Translational & Clinical Sciences (TACS)",
     "clinical_input": true,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -162,6 +171,7 @@ const SAMPLE_DATA = [
     "disease_area": "Lung",
     "research_program": "Translational & Clinical Sciences (TACS)",
     "clinical_input": true,
+    "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -178,6 +188,7 @@ const SAMPLE_DATA = [
     "disease_area": "Breast",
     "research_program": "Translational & Clinical Sciences (TACS)",
     "clinical_input": true,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -194,6 +205,7 @@ const SAMPLE_DATA = [
     "disease_area": "Lung",
     "research_program": "Cancer Epidemiology (CE)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -210,6 +222,7 @@ const SAMPLE_DATA = [
     "disease_area": "Pediatric",
     "research_program": "Cancer Epidemiology (CE)",
     "clinical_input": false,
+    "mentoring": "FALSE",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -226,6 +239,7 @@ const SAMPLE_DATA = [
     "disease_area": "GI / Colorectal",
     "research_program": "Cancer Epidemiology (CE)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -242,6 +256,7 @@ const SAMPLE_DATA = [
     "disease_area": "Cancer Prevention",
     "research_program": "Cancer Control Research (CCR)",
     "clinical_input": false,
+    "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -258,6 +273,7 @@ const SAMPLE_DATA = [
     "disease_area": "Multiple / Other",
     "research_program": "Cancer Control Research (CCR)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -274,6 +290,7 @@ const SAMPLE_DATA = [
     "disease_area": "Cancer Prevention",
     "research_program": "Cancer Control Research (CCR)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -290,6 +307,7 @@ const SAMPLE_DATA = [
     "disease_area": "Cancer Prevention",
     "research_program": "Community Outreach & Engagement (COE)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -306,6 +324,7 @@ const SAMPLE_DATA = [
     "disease_area": "Breast",
     "research_program": "Community Outreach & Engagement (COE)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -322,6 +341,7 @@ const SAMPLE_DATA = [
     "disease_area": "Cancer Prevention",
     "research_program": "Community Outreach & Engagement (COE)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -338,6 +358,7 @@ const SAMPLE_DATA = [
     "disease_area": "Multiple / Other",
     "research_program": "Education & Training (CRTEC)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -354,6 +375,7 @@ const SAMPLE_DATA = [
     "disease_area": "Multiple / Other",
     "research_program": "Education & Training (CRTEC)",
     "clinical_input": false,
+    "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""
@@ -370,6 +392,7 @@ const SAMPLE_DATA = [
     "disease_area": "Multiple / Other",
     "research_program": "Education & Training (CRTEC)",
     "clinical_input": false,
+    "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
     "email": ""

@@ -25,14 +25,20 @@ const FORM_MAP = {
   disease_area:     'Disease / focus area',
   clinical_input:   'Open to clinical input?',
   linkedin_url:     'LinkedIn URL',
-  consent:          'May we list you in the directory?'
+  consent:          'May we list you in the directory?',
+  // ── new this round ──
+  mentoring:        'Faculty: are you open to Mentor Match consults?',
+  bio:              'Short bio (for connection matching)',
+  attend_mode:      'Will you attend in person or virtually?',
+  accessibility:    'Do you need any accessibility accommodations?',
+  dietary:          'Any dietary restrictions?'
 };
 // Send a confirmation email on registration? (uses the "Email" answer)
 const SEND_CONFIRMATION = false;
 
 // ── Tab names + headers (setup() creates these) ──
 const TABS = {
-  Directory: ['id','name','role','year','department','poster_number','title','summary','disease_area','research_program','clinical_input','linkedin_url','photo_url','email'],
+  Directory: ['id','name','role','year','department','poster_number','title','summary','disease_area','research_program','clinical_input','mentoring','linkedin_url','photo_url','email'],
   Users:     ['session_id','name','role','program','timestamp'],
   Convos:    ['session_id','viewer_name','viewer_role','viewer_program','participant_id','participant_name','participant_role','participant_program','timestamp'],
   Coffee:    ['session_id','requester_name','requester_role','requester_program','participant_id','participant_name','participant_role','participant_program','track_id','track_name','track_aim','action','timestamp'],
@@ -76,8 +82,9 @@ function onFormSubmit(e) {
 
   dir.appendRow([
     id, get('name'), get('role'), get('year'), get('department'),
-    posterNo, get('title'), get('summary'), get('disease_area'), get('research_program'),
+    posterNo, get('title'), get('summary') || get('bio'), get('disease_area'), get('research_program'),
     /^y/i.test(get('clinical_input')) ? 'TRUE' : 'FALSE',
+    (get('role') === 'Faculty') ? (/^y/i.test(get('mentoring')) ? 'TRUE' : 'FALSE') : '',
     get('linkedin_url'), '', get('email')
   ]);
 

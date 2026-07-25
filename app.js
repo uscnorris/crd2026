@@ -426,18 +426,54 @@ function backToProgram() {
   return false;
 }
 
-// Point any registration/poster links at the configured form when set
-function wireRegistrationLinks() {
+// Open registration directly (no intermediate scroll). Falls back gracefully
+// when the form URL isn't configured yet, so buttons never 404.
+function registerNow() {
   const url = CONFIG.form_url;
-  if (!url || url.indexOf('PASTE') === 0) return;
-  document.querySelectorAll('a[href="[[REGISTRATION_FORM_LINK]]"]').forEach(a => {
-    a.setAttribute('href', url); a.setAttribute('target', '_blank');
-  });
+  if (url && url.indexOf('PASTE') !== 0 && /^https?:/i.test(url)) {
+    window.open(url, '_blank');
+  } else {
+    alert("Registration opens soon. Subscribe to Next in Science to be notified — or check back here.");
+    goToSection('newsletter');
+  }
+}
+
+// Nav that works from BOTH modes: leave the directory first, then scroll.
+function goToSection(id) {
+  if (document.body.classList.contains('in-app')) {
+    backToProgram();
+    setTimeout(() => scrollToId(id), 60);
+  } else {
+    scrollToId(id);
+  }
+  return false;
+}
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Wire configured links (newsletter) and register fallback text.
+function wireRegistrationLinks() {
   const contact = (CONFIG.info && CONFIG.info.contact_email);
   if (contact) {
     const fc = document.getElementById('footer-contact');
     if (fc) { fc.textContent = contact; fc.setAttribute('href', 'mailto:' + contact); }
   }
+  const news = (CONFIG.links && CONFIG.links.newsletter) || '';
+  const newsOk = news && news.indexOf('PASTE') !== 0 && /^https?:/i.test(news);
+  document.querySelectorAll('a[href="[[NEWSLETTER_LINK]]"]').forEach(a => {
+    if (newsOk) { a.setAttribute('href', news); }
+    else { a.setAttribute('href', 'mailto:' + (contact || 'crtec@usc.edu') + '?subject=Subscribe%20to%20Next%20in%20Science'); }
+  });
+  const url = CONFIG.form_url;
+  const fb = document.getElementById('reg-fallback');
+  if (fb && (!url || url.indexOf('PASTE') === 0)) {
+    fb.textContent = 'Registration form opening soon.';
+  }
+  // Optional overrides for CE and virtual copy from config
+  if (CONFIG.ce_note) { const c = document.getElementById('ce-note'); if (c) c.textContent = CONFIG.ce_note; }
 }
 
 // ── NAVIGATION ────────────────────────────────
@@ -617,6 +653,11 @@ function personProgramStr(person) {
 function personMatchesSide(person, side) {
   if (!side || !side.roles) return false;
   if (!side.roles.includes(person.role)) return false;
+  // Optional opt-in flag: person must have a truthy flag (e.g. faculty opting into mentoring)
+  if (side.requiresFlag) {
+    const f = String(person[side.requiresFlag] || '').toLowerCase();
+    if (!(f === 'true' || f === 'yes' || f === '1')) return false;
+  }
   if (!side.programMatch) return true;
   const str = personProgramStr(person);
   if (!str.trim()) return true; // trust role when no program data at all
@@ -638,7 +679,7 @@ function matchTrack(viewer, participant) {
 // Track object for a viewer + a participant record (used in profile / mylist)
 function trackForPair(viewerRole, viewerProgram, p) {
   const viewer = { role: viewerRole, program: viewerProgram };
-  const participant = { role: p.role, research_program: p.research_program, department: p.department };
+  const participant = Object.assign({}, p, { role: p.role });
   return matchTrack(viewer, participant);
 }
 

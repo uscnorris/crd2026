@@ -83,8 +83,15 @@ whose options exactly match the app (the 8 roles and your 7 programs) so filters
 connection-track matching stay clean. Recommended questions: Name, Email, Role,
 Research program, Department / lab, Year, "Are you presenting a poster?", Poster title,
 Poster summary, Disease / focus area, PI name, "Open to clinical input?", LinkedIn URL,
-and "May we list you in the directory?" (Yes/No consent). Keep **PI name** on the form —
-it lands in the raw responses and is what turns the event into CCSG numbers.
+and "May we list you in the directory?" (Yes/No consent). Also add, so the site's newer
+features work: "Will you attend in person or virtually?", "Short bio (for connection
+matching)" (used to match virtual attendees who aren't presenting a poster), "Faculty:
+are you open to Mentor Match consults?" (Yes/No — only opted-in faculty appear as Mentor
+Match targets), "Do you need any accessibility accommodations?", and "Any dietary
+restrictions?". Keep **PI name** on the form — it lands in the raw responses and is what
+turns the event into CCSG numbers. (Accessibility, dietary, PI, and attendance mode stay
+in the raw Responses tab for planning; only the directory-relevant fields are copied to
+the Directory tab.)
 
 **B. Link the form to a spreadsheet.** In the Form: Responses → Link to Sheets → create
 a new spreadsheet. This is the one spreadsheet everything uses.

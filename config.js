@@ -14,20 +14,20 @@ const CONFIG = {
 
   // APPS SCRIPT BACKEND (event tracking)
   // Paste your deployed Apps Script web app URL here (see Code.gs setup instructions)
-  script_url: "https://script.google.com/macros/s/AKfycbzm3v4EXQ2VwnmOEAUAyLteeAv4HGFfugMfDO22BbwWNBkT-w4rhgXg7x4rKURrpGo3jQ/exec",
+  script_url: "PASTE_YOUR_APPS_SCRIPT_URL_HERE",
 
   // GOOGLE SHEETS (directory data)
   // File → Share → Publish to web → Sheet1 → CSV → Publish → copy URL
-  sheet_url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQksITlntkPc60L__OSZomcBTOpjGXHI5kEEErmZLjFl3qe1KOPN6E80yExao-4El3fgYJ79PjI2ZGS/pub?gid=1334489619&single=true&output=csv",
+  sheet_url: "PASTE_YOUR_PUBLISHED_CSV_URL_HERE",
 
   // Set to false once your sheet URL is pasted above
-  use_sample_data: false,
+  use_sample_data: true,
 
   // Max follow-up connection requests per person (across all tracks)
   max_selections: 2,
 
   // Where connection requests get sent (Google Form URL — see README)
-  form_url: "https://forms.gle/NScGUCFhKD9d4qv19",
+  form_url: "PASTE_YOUR_GOOGLE_FORM_URL_HERE",
 
   // BASE URL for QR codes — your GitHub Pages URL
   base_url: "https://uscnorris.github.io/crd2026",
@@ -61,7 +61,7 @@ const CONFIG = {
       purpose: "Career and research advice. A trainee sits down with a faculty mentor for a short, focused consult.",
       cta: "Request Mentor Match",
       sideA: { roles: ["PhD Student", "Master's Student", "Postdoctoral Fellow", "Clinical Fellow / Resident", "Undergraduate Student"], programMatch: null },
-      sideB: { roles: ["Faculty"], programMatch: null }
+      sideB: { roles: ["Faculty"], programMatch: null, requiresFlag: "mentoring" }
     },
     {
       id: "advocate",
@@ -108,6 +108,16 @@ const CONFIG = {
     contact_email: "crtec@usc.edu",
     parking: "[Add parking details]"
   },
+
+  // External links used on the landing page
+  links: {
+    newsletter: "PASTE_YOUR_NEXT_IN_SCIENCE_SUBSCRIBE_URL_HERE",
+    livestream: ""   // virtual attendee livestream URL (shared with registrants)
+  },
+
+  // Continuing education status shown on the "Plan your visit" section.
+  // Update once CME/CE is confirmed with the Keck CME office.
+  ce_note: "We are pursuing continuing education / CME credit for the day through the Keck School of Medicine CME office. Details and how to claim credit will be posted here and shared with registrants once confirmed.",
 
   // DISEASE AREAS (filter options)
   disease_areas: [
