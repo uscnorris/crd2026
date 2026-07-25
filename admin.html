@@ -150,7 +150,7 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
   <div class="nav-tab active" onclick="showTab('overview')">Overview</div>
   <div class="nav-tab" onclick="showTab('users')">Users & Roles</div>
   <div class="nav-tab" onclick="showTab('heatmap')">Heatmaps</div>
-  <div class="nav-tab" onclick="showTab('coffee')">Coffee Consults</div>
+  <div class="nav-tab" onclick="showTab('coffee')">Connections</div>
   <div class="nav-tab" onclick="showTab('survey')">Survey</div>
 </div>
 
@@ -159,7 +159,7 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
   <div class="grid-4" id="overview-stats">
     <div class="card"><div class="stat-num" id="stat-users">—</div><div class="stat-label">Unique app users</div></div>
     <div class="card"><div class="stat-num" id="stat-convos">—</div><div class="stat-label">Conversations logged</div></div>
-    <div class="card"><div class="stat-num" id="stat-coffee">—</div><div class="stat-label">Coffee Consult selections</div></div>
+    <div class="card"><div class="stat-num" id="stat-coffee">—</div><div class="stat-label">Connection requests</div></div>
     <div class="card"><div class="stat-num" id="stat-views">—</div><div class="stat-label">Profile views</div></div>
   </div>
 
@@ -249,14 +249,25 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
 <!-- COFFEE CONSULTS TAB -->
 <div id="tab-coffee" class="page">
   <div class="grid-3">
-    <div class="card"><div class="stat-num" id="coffee-selections">—</div><div class="stat-label">Net selections</div><div class="stat-sub">Coffee Consults requested</div></div>
+    <div class="card"><div class="stat-num" id="coffee-selections">—</div><div class="stat-label">Net selections</div><div class="stat-sub">Follow-ups requested</div></div>
     <div class="card"><div class="stat-num" id="coffee-mutual">—</div><div class="stat-label">Mutual matches</div><div class="stat-sub">Both sides selected each other</div></div>
     <div class="card"><div class="stat-num" id="coffee-pending">—</div><div class="stat-label">Pending confirmation</div><div class="stat-sub">CRTEC to follow up</div></div>
   </div>
 
   <div class="grid-2">
     <div class="card">
-      <div class="card-title">All Coffee Consult selections</div>
+      <div class="card-title">By connection track</div>
+      <div id="track-breakdown"><div class="empty">No selections yet</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">By CRTEC aim</div>
+      <div id="aim-breakdown"><div class="empty">No selections yet</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">All connection requests</div>
       <div id="coffee-list"></div>
     </div>
     <div class="card">
@@ -295,8 +306,8 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
   </div>
 </div>
 
-<script src="config.js?v=20"></script>
-<script src="data.js?v=20"></script>
+<script src="config.js?v=24"></script>
+<script src="data.js?v=24"></script>
 <script>
 // ── POSTER LAYOUT ──────────────────────────────
 // Edit this to match the actual room layout.
@@ -645,9 +656,34 @@ function renderCoffee() {
   document.getElementById('coffee-mutual').textContent = Math.floor(mutual.length/2);
   document.getElementById('coffee-pending').textContent = pending.length;
 
+  // ── Breakdown by connection track and by CRTEC aim ──
+  const trackDefs = (typeof CONFIG !== 'undefined' && CONFIG.connection_tracks) ? CONFIG.connection_tracks : [];
+  const tById = {}; trackDefs.forEach(t => tById[t.id] = t);
+  const byTrack = {}, byAim = {};
+  net.forEach(c => {
+    const name = c.track_name || (tById[c.track_id] ? tById[c.track_id].name : 'Other');
+    const aim = c.track_aim || (tById[c.track_id] ? tById[c.track_id].aim : 'Unassigned');
+    byTrack[name] = (byTrack[name] || 0) + 1;
+    byAim[aim] = (byAim[aim] || 0) + 1;
+  });
+  const barRows = (obj, iconMap) => {
+    const entries = Object.entries(obj).sort((a,b)=>b[1]-a[1]);
+    if (!entries.length) return '<div class="empty">No selections yet</div>';
+    const max = Math.max(1, ...entries.map(e=>e[1]));
+    return entries.map(([k,v]) => `
+      <div class="bar-row">
+        <div class="bar-label">${iconMap && iconMap[k] ? iconMap[k]+' ' : ''}${k}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/max*100)}%"></div></div>
+        <div class="bar-val">${v}</div>
+      </div>`).join('');
+  };
+  const iconMap = {}; trackDefs.forEach(t => iconMap[t.name] = t.icon);
+  document.getElementById('track-breakdown').innerHTML = barRows(byTrack, iconMap);
+  document.getElementById('aim-breakdown').innerHTML = barRows(byAim, null);
+
   // All selections list
   document.getElementById('coffee-list').innerHTML = net.length === 0
-    ? '<div class="empty">No Coffee Consult selections yet</div>'
+    ? '<div class="empty">No connection requests yet</div>'
     : net.map(c => {
         const isMutual = net.some(b=>b.session_id===c.participant_id&&b.participant_id===c.session_id);
         return `<div class="match-card">
@@ -771,12 +807,17 @@ function getMockData() {
   const coffee = [];
   const cbgUser = users.find(u=>u.role==='PhD Student');
   const fellowUser = users.find(u=>u.role==='Clinical Fellow / Resident');
-  if (cbgUser && fellowParticipants[0]) {
-    coffee.push({ session_id:cbgUser.session_id, requester_name:cbgUser.name, requester_role:cbgUser.role, requester_program:cbgUser.program, participant_id:fellowParticipants[0].id, participant_name:fellowParticipants[0].name, participant_role:fellowParticipants[0].role, participant_program:'', action:'selected', timestamp: new Date().toISOString() });
-  }
-  if (fellowUser && cbgParticipants[0]) {
-    coffee.push({ session_id:fellowUser.session_id, requester_name:fellowUser.name, requester_role:fellowUser.role, requester_program:fellowUser.program, participant_id:cbgParticipants[0].id, participant_name:cbgParticipants[0].name, participant_role:cbgParticipants[0].role, participant_program:cbgParticipants[0].department||'', action:'selected', timestamp: new Date().toISOString() });
-  }
+  const facultyP = participants.find(p=>p.role==='Faculty');
+  const communityP = participants.find(p=>p.role==='Community Member');
+  const postdocP = participants.find(p=>p.role==='Postdoctoral Fellow');
+  const mk = (u, p, track) => ({ session_id:u.session_id, requester_name:u.name, requester_role:u.role, requester_program:u.program, participant_id:p.id, participant_name:p.name, participant_role:p.role, participant_program:p.research_program||p.department||'', track_id:track.id, track_name:track.name, track_aim:track.aim, action:'selected', timestamp: new Date().toISOString() });
+  const T = (id)=> (typeof CONFIG!=='undefined'&&CONFIG.connection_tracks||[]).find(t=>t.id===id) || {id, name:id, aim:''};
+  if (cbgUser && fellowParticipants[0]) coffee.push(mk(cbgUser, fellowParticipants[0], T('coffee')));
+  if (fellowUser && cbgParticipants[0]) coffee.push(mk(fellowUser, cbgParticipants[0], T('coffee')));
+  // Additional tracks so the breakdown demonstrates the full model
+  if (cbgUser && facultyP) coffee.push(mk({session_id:'sess_m1',name:'Priya N',role:'PhD Student',program:'Cancer Biology & Genomics (CBG) — PIBBS'}, facultyP, T('mentor')));
+  if (communityP) coffee.push(mk({session_id:'sess_a1',name:'Marcus W',role:'PhD Student',program:'Cancer Epidemiology'}, communityP, T('advocate')));
+  if (postdocP) coffee.push(mk({session_id:'sess_p1',name:'Andre F',role:'Undergraduate Student',program:''}, postdocP, T('peer')));
 
   const views = Array.from({length:142}, (_,i) => {
     const viewer = users[i % users.length];
@@ -784,7 +825,18 @@ function getMockData() {
     return { session_id:viewer.session_id, viewer_role:viewer.role, viewer_program:viewer.program, participant_id:target.id, participant_name:target.name, participant_role:target.role, participant_program:target.research_program||'', timestamp: new Date(Date.now()-Math.random()*6*3600000).toISOString() };
   });
 
-  return { users, convos, coffee, views, survey:[] };
+  const surveyNames = ['Sarah Chen','David Park','Priya Nair','Dr. Alicia Reyes','James Okonkwo','Kevin Tran','Hannah Levine','Andre Flores','Destiny Brooks','Miguel Santos','Tyler Nguyen','Aisha Mensah'];
+  const surveyRoles = ['PhD Student','Clinical Fellow / Resident','PhD Student','Clinical Fellow / Resident','PhD Student',"Master's Student",'PhD Student','Undergraduate Student','PhD Student','Postdoctoral Fellow','Postdoctoral Fellow',"Master's Student"];
+  const useful = [5,4,5,5,4,5,3,5,4,4,5,4];
+  const cont = ['Yes','Yes','Yes','Yes','No','Yes','No','Yes','Yes','Yes','Yes','Yes'];
+  const most = ['Career advice from a clinician','Understanding the clinical side','Great methods discussion','Learning what bench researchers need','Scheduling was hard','Talking through grad school','Interesting but off-topic','Learned about grad programs','Perspective on survivorship','New collaboration idea','Mentorship on grants','Near-peer advice'];
+  const survey = surveyNames.map((n,i)=>({
+    name:n, role:surveyRoles[i], meeting_happened:'Yes',
+    meeting_useful:useful[i], continue_collaboration:cont[i], most_useful:most[i],
+    timestamp:new Date(Date.now()-Math.random()*20*86400000).toISOString()
+  }));
+
+  return { users, convos, coffee, views, survey };
 }
 
 // ── HELPERS ────────────────────────────────────

@@ -2,168 +2,249 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cancer Research Day 2026 — USC Norris</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<link rel="stylesheet" href="style.css?v=21">
-<script>
-  // Force reload if cached version is stale
-  if (window.APP_VERSION !== 4) { window.APP_VERSION = 4; }
-</script>
+<link rel="stylesheet" href="style.css?v=24">
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <div class="header-top">
-      <span class="header-label">USC NORRIS · CRTEC</span>
-      <button class="my-list-btn" onclick="showView('mylist')" id="mylist-header-btn" style="display:none!important;visibility:hidden;">
-        👥 My List <span class="list-count" id="list-count-badge">0</span>
-      </button>
-    </div>
-    <div class="header-title">Cancer Research Day 2026</div>
-    <div class="header-sub">Poster Session Directory</div>
-    <div class="header-role-row" id="header-role-row" style="display:none">
-      <span class="header-role-chip" id="header-role-chip"></span>
-      <button class="header-role-switch" onclick="switchRole()">Not you?</button>
+<!-- ══ TOP NAV (both modes) ══ -->
+<header class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top" onclick="backToProgram()">
+      <span class="brand-usc">USC</span> Norris <span class="brand-sub">· Cancer Research Day</span>
+    </a>
+    <nav class="nav-links" id="nav-links">
+      <a href="#agenda">Agenda</a>
+      <a href="#posters">Posters</a>
+      <a href="#connect">Connect</a>
+      <a href="#register">Register</a>
+      <a href="#info">Info</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn-outline btn-print" onclick="window.print()">🖨 Print program</button>
+      <button class="btn-solid" onclick="openDirectory()">Open directory →</button>
     </div>
   </div>
 </header>
 
-<!-- IDENTITY PROMPT -->
-<div id="identity-screen" class="screen active">
-  <div class="identity-card">
-    <div class="identity-icon">👋</div>
-    <h2>Who are you?</h2>
-    <p>This lets us log your conversations and help you connect with people you meet today. You only need to do this once.</p>
-    <div class="field-row">
-      <label>Your name</label>
-      <input type="text" id="user-name" placeholder="First Last" autocomplete="name">
-    </div>
-    <div class="field-row">
-      <label>Your role</label>
-      <select id="user-role" onchange="onRoleChange()">
-        <option value="" selected disabled>Select your role</option>
-        <option value="PhD Student">PhD Student</option>
-        <option value="Master's Student">Master's Student</option>
-        <option value="Postdoctoral Fellow">Postdoctoral Fellow</option>
-        <option value="Clinical Fellow / Resident">Clinical Fellow / Resident</option>
-        <option value="Faculty">Faculty</option>
-        <option value="Community Member">Community Member</option>
-        <option value="Staff / Other">Staff / Other</option>
-        <option value="Attendee">General Attendee</option>
-      </select>
-    </div>
-    <div class="field-row" id="program-row" style="display:none">
-      <label id="program-label">Program</label>
-      <select id="user-program">
-        <option value="" selected disabled>Select your program</option>
-      </select>
-    </div>
-    <div class="field-row" id="program-other-row" style="display:none">
-      <label id="program-other-label">Please specify</label>
-      <input type="text" id="user-program-other" placeholder="Your program or department (optional)">
-    </div>
-    <button class="btn-primary" onclick="saveIdentity()">Continue →</button>
-  </div>
-</div>
+<!-- ══════════ PROGRAM MODE (landing / print target) ══════════ -->
+<main id="program-mode">
+  <a id="top"></a>
 
-<!-- DIRECTORY VIEW -->
-<div id="directory-screen" class="screen">
-
-  <div class="search-filter-bar">
-    <input type="search" id="search-input" placeholder="Search name, title, disease area…" oninput="filterDirectory()" autocomplete="off">
-    <button class="filter-toggle-btn" id="filter-toggle" onclick="openFilterPanel()">
-      <span class="filter-icon">⊞</span>
-      <span id="filter-toggle-label">Filter</span>
-    </button>
-  </div>
-
-  <div class="results-count" id="results-count"></div>
-
-  <div class="card-list" id="directory-list">
-    <div class="loading-state">Loading participants…</div>
-  </div>
-</div>
-
-<!-- FILTER PANEL (full-screen overlay) -->
-<div id="filter-panel" class="filter-panel" style="display:none">
-  <div class="filter-panel-header">
-    <button class="filter-close" onclick="closeFilterPanel()">✕</button>
-    <span class="filter-panel-title">Filter participants</span>
-    <button class="filter-clear" onclick="clearAllFilters()">Clear all</button>
-  </div>
-  <div class="filter-panel-body">
-
-    <div class="filter-section">
-      <div class="filter-section-label">Role</div>
-      <div class="filter-option-grid" id="role-options"></div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Research Program</div>
-      <div class="filter-option-grid" id="program-options"></div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Disease / Focus Area</div>
-      <div class="filter-option-grid" id="disease-options"></div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Clinical Input</div>
-      <div class="filter-option-grid" id="clinical-options">
-        <button class="foption" data-group="clinical" data-val="true" onclick="toggleFilter(this)">Open to clinical input</button>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">4th Annual · USC Norris Comprehensive Cancer Center</div>
+      <h1 class="hero-title">Cancer <em>Research</em> Day</h1>
+      <div class="hero-datebar">
+        <span class="hero-date">Wednesday, October 14, 2026</span>
+        <span class="hero-time">9 AM – 3 PM</span>
+      </div>
+      <div class="hero-loc">Mayer Auditorium, Keith Administration Building &amp; Pappas Quad</div>
+      <div class="hero-cta">
+        <a class="btn-solid btn-lg" href="#register">Register — it's free</a>
+        <a class="btn-outline btn-lg" href="#agenda">See the agenda</a>
       </div>
     </div>
+  </section>
 
+  <section class="band" id="about">
+    <div class="band-inner">
+      <p class="lead">A full day for the whole Cancer Center community — faculty, postdocs, fellows, trainees, staff, and students. Scientific talks in the morning, an interactive poster session in the afternoon, and lunch on the Quad. Everyone is welcome, and registration is free.</p>
+    </div>
+  </section>
+
+  <section class="band alt" id="agenda">
+    <div class="band-inner">
+      <div class="band-label">Agenda</div>
+      <h2>The day at a glance</h2>
+      <p class="muted">Speakers and final times are confirmed closer to the event.</p>
+      <div id="program-agenda" class="agenda-print-list"></div>
+    </div>
+  </section>
+
+  <section class="band" id="posters">
+    <div class="band-inner">
+      <div class="band-label">Poster Session</div>
+      <h2>Share your research</h2>
+      <p>The afternoon poster session is open to trainees and researchers across every program. Three posters receive a scientific award.</p>
+      <div id="program-posters" class="fact-row"></div>
+      <a class="btn-solid" id="poster-submit-btn" href="[[REGISTRATION_FORM_LINK]]">Submit a poster</a>
+      <p class="fineprint">Registration and poster submission use the same form. Trainees: please list your PI when you submit.</p>
+    </div>
+  </section>
+
+  <section class="band alt" id="connect">
+    <div class="band-inner">
+      <div class="band-label">Connect on the day</div>
+      <h2>Meet people worth knowing</h2>
+      <p>During the poster session you can use our directory to find people, log the conversations you have, and request a short follow-up. Each connection is a track that builds our training community.</p>
+      <div id="program-tracks" class="track-cards"></div>
+      <div class="connect-callout">
+        <div>
+          <strong>Ready to connect?</strong>
+          <span>Open the directory to browse posters and people, then log who you meet.</span>
+        </div>
+        <button class="btn-solid btn-lg" onclick="openDirectory()">Open the directory →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="register">
+    <div class="band-inner center">
+      <div class="band-label">Register</div>
+      <h2>Save your spot</h2>
+      <p class="lead">One quick form covers attendance and poster submission.</p>
+      <a class="btn-solid btn-lg" href="[[REGISTRATION_FORM_LINK]]">Register / submit a poster</a>
+    </div>
+  </section>
+
+  <section class="band alt" id="info">
+    <div class="band-inner">
+      <div class="band-label">Good to know</div>
+      <h2>Details &amp; FAQ</h2>
+      <div id="program-info" class="info-list"></div>
+      <div class="faq">
+        <details open><summary>Who can attend?</summary><p>Everyone in the USC Norris Cancer Center community — faculty, postdocs, fellows, trainees, staff, and students. Registration is free.</p></details>
+        <details><summary>Do I have to present a poster?</summary><p>No. You're welcome to come for the talks, the panel, and the networking.</p></details>
+        <details><summary>What are the poster requirements?</summary><p>Posters must be no larger than 4 × 4 feet. Include your title and, if you're a trainee, your PI's name and program when you submit.</p></details>
+        <details><summary>Is lunch provided?</summary><p>Yes — lunch is served on Pappas Quad during the midday break.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-title">4th Annual Cancer Research Day</div>
+        Wednesday, October 14, 2026 · 9 AM – 3 PM<br>Mayer Auditorium &amp; Pappas Quad
+      </div>
+      <div>
+        <div class="footer-title">Hosted by CRTEC</div>
+        USC Norris Comprehensive Cancer Center<br>
+        <a id="footer-contact" href="mailto:crtec@usc.edu">crtec@usc.edu</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<!-- ══════════ DIRECTORY MODE (interactive app) ══════════ -->
+<div id="app-mode" class="app-hidden">
+
+  <div class="appbar">
+    <button class="appbar-back" onclick="backToProgram()">← Back to program</button>
+    <span class="appbar-title">Directory</span>
+    <span class="appbar-role" id="header-role-row" style="display:none">
+      <span class="header-role-chip" id="header-role-chip"></span>
+      <button class="header-role-switch" onclick="switchRole()">Not you?</button>
+    </span>
   </div>
-  <div class="filter-panel-footer">
-    <button class="btn-primary" onclick="applyFilters()">Show results</button>
+
+  <!-- IDENTITY -->
+  <div id="identity-screen" class="screen">
+    <div class="identity-card">
+      <div class="identity-icon">👋</div>
+      <h2>Quick — who are you?</h2>
+      <p>This lets us log the people you meet today and set up your follow-up connections. You only do this once.</p>
+      <div class="field-row">
+        <label>Your name</label>
+        <input type="text" id="user-name" placeholder="First Last" autocomplete="name">
+      </div>
+      <div class="field-row">
+        <label>Your role</label>
+        <select id="user-role" onchange="onRoleChange()">
+          <option value="" selected disabled>Select your role</option>
+          <option value="Undergraduate Student">Undergraduate Student</option>
+          <option value="PhD Student">PhD Student</option>
+          <option value="Master's Student">Master's Student</option>
+          <option value="Postdoctoral Fellow">Postdoctoral Fellow</option>
+          <option value="Clinical Fellow / Resident">Clinical Fellow / Resident</option>
+          <option value="Faculty">Faculty</option>
+          <option value="Community Member">Community Member</option>
+          <option value="Staff / Other">Staff / Other</option>
+          <option value="Attendee">General Attendee</option>
+        </select>
+      </div>
+      <div class="field-row" id="program-row" style="display:none">
+        <label id="program-label">Program</label>
+        <select id="user-program"><option value="" selected disabled>Select your program</option></select>
+      </div>
+      <div class="field-row" id="program-other-row" style="display:none">
+        <label id="program-other-label">Please specify</label>
+        <input type="text" id="user-program-other" placeholder="Your program or department (optional)">
+      </div>
+      <button class="btn-primary" onclick="saveIdentity()">Continue →</button>
+      <button class="btn-text" onclick="backToProgram()">Just browsing — skip for now</button>
+    </div>
   </div>
+
+  <!-- DIRECTORY -->
+  <div id="directory-screen" class="screen">
+    <div class="search-filter-bar">
+      <input type="search" id="search-input" placeholder="Search name, title, disease area…" oninput="filterDirectory()" autocomplete="off">
+      <button class="filter-toggle-btn" id="filter-toggle" onclick="openFilterPanel()">
+        <span class="filter-icon">⊞</span><span id="filter-toggle-label">Filter</span>
+      </button>
+    </div>
+    <div class="results-count" id="results-count"></div>
+    <div class="card-list" id="directory-list"><div class="loading-state">Loading participants…</div></div>
+  </div>
+
+  <!-- FILTER PANEL -->
+  <div id="filter-panel" class="filter-panel" style="display:none">
+    <div class="filter-panel-header">
+      <button class="filter-close" onclick="closeFilterPanel()">✕</button>
+      <span class="filter-panel-title">Filter participants</span>
+      <button class="filter-clear" onclick="clearAllFilters()">Clear all</button>
+    </div>
+    <div class="filter-panel-body">
+      <div class="filter-section"><div class="filter-section-label">Role</div><div class="filter-option-grid" id="role-options"></div></div>
+      <div class="filter-section"><div class="filter-section-label">Research Program</div><div class="filter-option-grid" id="program-options"></div></div>
+      <div class="filter-section"><div class="filter-section-label">Disease / Focus Area</div><div class="filter-option-grid" id="disease-options"></div></div>
+      <div class="filter-section"><div class="filter-section-label">Clinical Input</div><div class="filter-option-grid" id="clinical-options">
+        <button class="foption" data-group="clinical" data-val="true" onclick="toggleFilter(this)">Open to clinical input</button>
+      </div></div>
+    </div>
+    <div class="filter-panel-footer"><button class="btn-primary" onclick="applyFilters()">Show results</button></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="profile-screen" class="screen">
+    <button class="back-btn" onclick="showView('directory')">← Directory</button>
+    <div id="profile-content"></div>
+  </div>
+
+  <!-- MY LIST -->
+  <div id="mylist-screen" class="screen">
+    <button class="back-btn" onclick="showView('directory')">← Directory</button>
+    <div class="mylist-header">
+      <h2>My Connections</h2>
+      <p id="mylist-sub">People you talked to today. Select up to 2 for a follow-up — CRTEC will coordinate.</p>
+    </div>
+    <div id="mylist-content"></div>
+    <div id="mylist-empty" class="empty-state" style="display:none">
+      <div class="empty-icon">☕</div>
+      <p>No conversations logged yet. Tap "I talked to this person" on any profile to add them here.</p>
+      <button class="btn-secondary" onclick="showView('directory')">Browse the directory</button>
+    </div>
+    <div id="submit-wrap" style="display:none">
+      <button class="btn-primary" id="submit-btn" onclick="submitCoffeeConsult()">Submit connection requests</button>
+      <p class="submit-note">You'll hear from CRTEC within 48 hours with a prep guide and gift card.</p>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="nav-btn" id="nav-program" onclick="backToProgram()"><span class="nav-icon">📋</span><span>Program</span></button>
+    <button class="nav-btn active" id="nav-directory" onclick="showView('directory')"><span class="nav-icon">🔍</span><span>Directory</span></button>
+    <button class="nav-btn" id="nav-mylist" onclick="showView('mylist')"><span class="nav-icon">👥</span><span>My List <span id="nav-count" class="nav-badge" style="display:none">0</span></span></button>
+  </nav>
+  <button class="my-list-btn" id="mylist-header-btn" style="display:none" onclick="showView('mylist')">👥 My List <span class="list-count" id="list-count-badge">0</span></button>
 </div>
 
-<!-- PROFILE VIEW -->
-<div id="profile-screen" class="screen">
-  <button class="back-btn" onclick="showView('directory')">← Directory</button>
-  <div id="profile-content"></div>
-</div>
-
-<!-- MY LIST VIEW -->
-<div id="mylist-screen" class="screen">
-  <button class="back-btn" onclick="showView('directory')">← Directory</button>
-  <div class="mylist-header">
-    <h2>My Conversations</h2>
-    <p id="mylist-sub">People you talked to today. Select up to 2 for a Coffee Consult — CRTEC will coordinate.</p>
-  </div>
-  <div id="mylist-content"></div>
-  <div id="mylist-empty" class="empty-state" style="display:none">
-    <div class="empty-icon">☕</div>
-    <p>No conversations logged yet. Tap "I talked to this person" on any profile to add them here.</p>
-    <button class="btn-secondary" onclick="showView('directory')">Browse the directory</button>
-  </div>
-  <div id="submit-wrap" style="display:none">
-    <button class="btn-primary" id="submit-btn" onclick="submitCoffeeConsult()">Submit Coffee Consult selections</button>
-    <p class="submit-note">You'll hear from CRTEC within 48 hours with a prep guide and Starbucks gift card.</p>
-  </div>
-</div>
-
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav" id="bottom-nav" style="display:none">
-  <button class="nav-btn active" id="nav-directory" onclick="showView('directory')">
-    <span class="nav-icon">🔍</span>
-    <span>Directory</span>
-  </button>
-  <button class="nav-btn" id="nav-mylist" onclick="showView('mylist')">
-    <span class="nav-icon">👥</span>
-    <span>My List <span id="nav-count" class="nav-badge" style="display:none">0</span></span>
-  </button>
-</nav>
-
-<script src="config.js?v=21"></script>
-<script src="data.js?v=21"></script>
-<script src="app.js?v=21"></script>
+<script src="config.js?v=24"></script>
+<script src="data.js?v=24"></script>
+<script src="app.js?v=24"></script>
 </body>
 </html>

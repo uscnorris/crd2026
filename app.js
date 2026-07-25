@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────
 
 const ROLES = [
+  "Undergraduate Student",
   "PhD Student",
   "Master's Student",
   "Postdoctoral Fellow",
@@ -87,6 +88,13 @@ window.addEventListener('DOMContentLoaded', () => {
   buildFilterPanel();
   loadData();
   checkForProfileDeepLink();
+  // Expand FAQ answers for print, restore afterward
+  window.addEventListener('beforeprint', () => {
+    document.querySelectorAll('.faq details').forEach(d => { d.dataset.wasOpen = d.open ? '1' : '0'; d.open = true; });
+  });
+  window.addEventListener('afterprint', () => {
+    document.querySelectorAll('.faq details').forEach(d => { d.open = d.dataset.wasOpen === '1'; });
+  });
 });
 
 function loadState() {
@@ -380,15 +388,55 @@ function switchRole() {
 }
 
 function decideStartView() {
+  refreshDataDrivenFilters();
+  renderProgram();
+  wireRegistrationLinks();
+  // Deep link to a profile → jump straight into the directory
+  if (window._pendingProfile) { openDirectory(); return; }
+  showProgramMode();
+}
+
+// ── PROGRAM / DIRECTORY MODE TOGGLE ───────────
+
+function showProgramMode() {
+  document.getElementById('program-mode').style.display = '';
+  document.getElementById('app-mode').classList.add('app-hidden');
+  document.body.classList.remove('in-app');
+  window.scrollTo(0, 0);
+}
+
+function openDirectory() {
+  document.getElementById('program-mode').style.display = 'none';
+  document.getElementById('app-mode').classList.remove('app-hidden');
+  document.body.classList.add('in-app');
+  window.scrollTo(0, 0);
   if (user) {
     showPostIdentity();
   } else {
-    // Show directory immediately — identity is prompted when someone tries to log a conversation
+    // Browse first; identity is prompted only when someone logs a conversation
     showView('directory');
-    // Show bottom nav with My List hidden until they identify
     document.getElementById('bottom-nav').style.display = 'flex';
     document.getElementById('nav-mylist').style.display = 'none';
     document.getElementById('mylist-header-btn').style.display = 'none';
+  }
+}
+
+function backToProgram() {
+  showProgramMode();
+  return false;
+}
+
+// Point any registration/poster links at the configured form when set
+function wireRegistrationLinks() {
+  const url = CONFIG.form_url;
+  if (!url || url.indexOf('PASTE') === 0) return;
+  document.querySelectorAll('a[href="[[REGISTRATION_FORM_LINK]]"]').forEach(a => {
+    a.setAttribute('href', url); a.setAttribute('target', '_blank');
+  });
+  const contact = (CONFIG.info && CONFIG.info.contact_email);
+  if (contact) {
+    const fc = document.getElementById('footer-contact');
+    if (fc) { fc.textContent = contact; fc.setAttribute('href', 'mailto:' + contact); }
   }
 }
 
@@ -410,8 +458,19 @@ function showView(view) {
 
 function buildFilterPanel() {
   buildOptionGroup('role-options', 'role', ROLES);
-  buildOptionGroup('program-options', 'program', PROGRAMS);
-  buildOptionGroup('disease-options', 'disease', DISEASES);
+  buildOptionGroup('program-options', 'program', (CONFIG.research_programs && CONFIG.research_programs.length) ? CONFIG.research_programs : PROGRAMS);
+  buildOptionGroup('disease-options', 'disease', (CONFIG.disease_areas && CONFIG.disease_areas.length) ? CONFIG.disease_areas : DISEASES);
+}
+
+// Rebuild program/disease filters from the values actually present in the data,
+// so the filter always matches the directory (runs after data loads).
+function refreshDataDrivenFilters() {
+  if (!allParticipants || !allParticipants.length) return;
+  const uniq = key => [...new Set(allParticipants.map(p => (p[key] || '').trim()).filter(Boolean))].sort();
+  const progs = uniq('research_program');
+  const dis = uniq('disease_area');
+  if (progs.length) buildOptionGroup('program-options', 'program', progs);
+  if (dis.length) buildOptionGroup('disease-options', 'disease', dis);
 }
 
 function buildOptionGroup(containerId, group, options) {
@@ -547,34 +606,55 @@ function getParticipant(id) {
 
 // ── PROFILE ───────────────────────────────────
 
-function isViewerCoffeeEligible(role, program) {
-  // Clinical Fellows: eligible by role alone
-  if (role === "Clinical Fellow / Resident") return true;
-  // PhD Students: only eligible if they selected a CBG-related program
-  if (role === "PhD Student") {
-    const prog = (program || '').toLowerCase();
-    return prog.includes('cancer biology') || prog.includes('cbg') || prog.includes('genomics');
+// ── CONNECTION TRACKS ENGINE ──────────────────
+// Config-driven. A "person" is {role, program} where program is any string
+// (viewer.program, or participant.research_program + department).
+
+function personProgramStr(person) {
+  return ((person.program || '') + ' ' + (person.research_program || '') + ' ' + (person.department || '')).toLowerCase();
+}
+
+function personMatchesSide(person, side) {
+  if (!side || !side.roles) return false;
+  if (!side.roles.includes(person.role)) return false;
+  if (!side.programMatch) return true;
+  const str = personProgramStr(person);
+  if (!str.trim()) return true; // trust role when no program data at all
+  return side.programMatch.some(sub => str.includes(sub));
+}
+
+// Returns the first applicable track object for a viewer<->participant pair, or null.
+function matchTrack(viewer, participant) {
+  if (!viewer || !participant) return null;
+  const tracks = (CONFIG.connection_tracks || []);
+  for (const t of tracks) {
+    const fwd = personMatchesSide(viewer, t.sideA) && personMatchesSide(participant, t.sideB);
+    const rev = personMatchesSide(viewer, t.sideB) && personMatchesSide(participant, t.sideA);
+    if (fwd || rev) return t;
   }
-  return false;
+  return null;
 }
 
-function isParticipantCBGPhD(role, program, department) {
-  // Participant eligibility: PhD Student in CBG
-  // Check BOTH research_program and department — CBG is typically in department column
-  if (role !== "PhD Student") return false;
-  const progStr = ((program || '') + ' ' + (department || '')).toLowerCase();
-  if (!progStr.trim()) return true; // trust role if no data at all
-  return progStr.includes('cancer biology') || progStr.includes('cbg') || progStr.includes('genomics');
+// Track object for a viewer + a participant record (used in profile / mylist)
+function trackForPair(viewerRole, viewerProgram, p) {
+  const viewer = { role: viewerRole, program: viewerProgram };
+  const participant = { role: p.role, research_program: p.research_program, department: p.department };
+  return matchTrack(viewer, participant);
 }
 
+// Does this viewer have ANY track available across the directory? (subtitle logic)
+function viewerHasAnyTrack(viewerRole, viewerProgram) {
+  const viewer = { role: viewerRole, program: viewerProgram };
+  return (CONFIG.connection_tracks || []).some(t =>
+    personMatchesSide(viewer, t.sideA) || personMatchesSide(viewer, t.sideB));
+}
+
+// Back-compat boolean wrapper (kept so any other call sites still work)
 function isCoffeeEligiblePair(viewerRole, participantRole, viewerProgram, participantProgram, participantDept) {
-  // Coffee Consult: CBG PhD Students <-> Clinical Fellows/Residents only
-  const viewerIsCBGPhD = isViewerCoffeeEligible(viewerRole, viewerProgram) && viewerRole === "PhD Student";
-  const viewerIsFellow = viewerRole === "Clinical Fellow / Resident";
-  const participantIsCBGPhD = isParticipantCBGPhD(participantRole, participantProgram, participantDept);
-  const participantIsFellow = participantRole === "Clinical Fellow / Resident";
-
-  return (viewerIsCBGPhD && participantIsFellow) || (viewerIsFellow && participantIsCBGPhD);
+  return !!matchTrack(
+    { role: viewerRole, program: viewerProgram },
+    { role: participantRole, research_program: participantProgram, department: participantDept }
+  );
 }
 
 function showProfile(participant) {
@@ -583,7 +663,7 @@ function showProfile(participant) {
   const selected = coffeeSelections.has(participant.id);
   const viewerRole = user ? user.role : '';
   const viewerProgram = user ? (user.program || '') : '';
-  const canCoffee = isCoffeeEligiblePair(viewerRole, participant.role, viewerProgram, participant.research_program, participant.department);
+  const track = trackForPair(viewerRole, viewerProgram, participant);
 
   // Log button — with undo option
   const logBtn = talked
@@ -593,18 +673,19 @@ function showProfile(participant) {
        </div>`
     : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`;
 
-  // Coffee Consult — only for eligible pairs
+  // Connection track — only shown when a track applies to this pair
   let coffeeBtn = '';
-  if (canCoffee) {
+  if (track) {
+    const tag = `<div class="track-banner"><span class="track-icon">${track.icon}</span><div><span class="track-name">${track.name}</span><span class="track-aim">${track.aim}</span></div></div><p class="track-purpose">${track.purpose}</p>`;
     if (talked) {
       coffeeBtn = selected
         ? `<div class="log-done-row">
-            <button class="btn-talked-done coffee-done" disabled>☕ Added to Coffee Consult list</button>
+            <button class="btn-talked-done coffee-done" disabled>${track.icon} Requested · ${track.name}</button>
             <button class="btn-undo-log" onclick="toggleCoffee('${participant.id}')" title="Remove">✕ Undo</button>
            </div>`
-        : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">Add to Coffee Consult list</button>`;
+        : `${tag}<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${track.icon} ${track.cta}</button>`;
     } else {
-      coffeeBtn = `<p class="coffee-hint">Log this conversation first to add to your Coffee Consult list.</p>`;
+      coffeeBtn = `${tag}<p class="coffee-hint">Log this conversation first to request the ${track.name}.</p>`;
     }
   }
 
@@ -710,7 +791,7 @@ function toggleCoffee(id) {
     coffeeSelections.delete(id);
   } else {
     if (coffeeSelections.size >= CONFIG.max_selections) {
-      alert(`You can select up to ${CONFIG.max_selections} Coffee Consults. Remove one first.`);
+      alert(`You can request up to ${CONFIG.max_selections} follow-up connections. Remove one first.`);
       return;
     }
     coffeeSelections.add(id);
@@ -719,9 +800,13 @@ function toggleCoffee(id) {
   updateBadgeCounts();
   const p = allParticipants.find(x => x.id === id);
   if (p) {
+    const t = trackForPair(user ? user.role : '', user ? user.program : '', p);
     track({
       action: 'coffee',
       action_type: wasSelected ? 'removed' : 'selected',
+      track_id: t ? t.id : '',
+      track_name: t ? t.name : '',
+      track_aim: t ? t.aim : '',
       requester_name: user ? user.name : '',
       requester_role: user ? user.role : '',
       requester_program: user ? user.program : '',
@@ -760,18 +845,18 @@ function renderMyList() {
   empty.style.display = 'none';
 
   const viewerRole = user ? user.role : '';
-  const isCoffeeUser = isViewerCoffeeEligible(viewerRole, user ? user.program : '');
+  const viewerProg = user ? (user.program || '') : '';
+  const hasTracks = viewerHasAnyTrack(viewerRole, viewerProg);
 
-  // Subtitle: context-aware based on whether user can request Coffee Consults
-  const coffeeSubtitle = `People you talked to today. Use ☕ to add someone to your Coffee Consult list (up to ${CONFIG.max_selections}). CRTEC will coordinate within 48 hours.`;
+  // Subtitle: context-aware based on whether any connection track is open to this user
+  const trackSubtitle = `People you talked to today. Tap a track badge to request a follow-up connection (up to ${CONFIG.max_selections}). CRTEC coordinates the match within 48 hours.`;
   const genericSubtitle = 'People you talked to today. Connect on LinkedIn or tap a name to view their research.';
-  document.getElementById('mylist-sub').textContent = isCoffeeUser ? coffeeSubtitle : genericSubtitle;
+  document.getElementById('mylist-sub').textContent = hasTracks ? trackSubtitle : genericSubtitle;
 
   wrap.innerHTML = talkedIds.map(id => {
     const p = allParticipants.find(x => x.id === id);
     if (!p) return '';
-    const viewerProg = user ? (user.program || '') : '';
-    const canCoffee = isCoffeeEligiblePair(viewerRole, p.role, viewerProg, p.research_program, p.department);
+    const track = trackForPair(viewerRole, viewerProg, p);
     const selected = coffeeSelections.has(id);
     const time = conversations[id] ? new Date(conversations[id]).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
 
@@ -782,20 +867,20 @@ function renderMyList() {
           <div class="mylist-name">${p.name}</div>
           <div class="mylist-meta">${p.role}${p.year ? ' · ' + p.year : ''}</div>
           <div class="mylist-title">${(p.title || '').substring(0, 65)}${(p.title || '').length > 65 ? '…' : ''}</div>
+          ${track ? `<div class="mylist-track">${track.icon} ${track.name}</div>` : ''}
           ${time ? `<div class="mylist-time">Logged at ${time}</div>` : ''}
         </div>
         <div class="mylist-actions">
           ${p.linkedin_url ? `<a class="ml-action-btn ml-li" href="${p.linkedin_url}" target="_blank" title="Connect on LinkedIn">in</a>` : ''}
-
-          ${canCoffee ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove from Coffee Consult' : 'Add to Coffee Consult'}">☕${selected ? '✓' : ''}</button>` : ''}
+          ${track ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove request' : 'Request ' + track.name}">${track.icon}${selected ? '✓' : ''}</button>` : ''}
         </div>
       </div>`;
   }).join('');
 
-  if (isCoffeeUser && coffeeSelections.size > 0) {
+  if (coffeeSelections.size > 0) {
     submitWrap.style.display = 'block';
     document.getElementById('submit-btn').textContent =
-      `Submit ${coffeeSelections.size} Coffee Consult selection${coffeeSelections.size > 1 ? 's' : ''}`;
+      `Submit ${coffeeSelections.size} connection request${coffeeSelections.size > 1 ? 's' : ''}`;
   } else {
     submitWrap.style.display = 'none';
   }
@@ -803,22 +888,73 @@ function renderMyList() {
 
 function submitCoffeeConsult() {
   if (coffeeSelections.size === 0) return;
-  const names = [...coffeeSelections].map(id => {
+  const lines = [...coffeeSelections].map(id => {
     const p = allParticipants.find(x => x.id === id);
-    return p ? p.name : id;
+    const t = p ? trackForPair(user ? user.role : '', user ? user.program : '', p) : null;
+    return p ? `${p.name} (${t ? t.name : 'connection'})` : id;
   });
   if (CONFIG.form_url && CONFIG.form_url !== 'PASTE_YOUR_GOOGLE_FORM_URL_HERE') {
     window.open(CONFIG.form_url, '_blank');
   } else {
-    const body = `Coffee Consult Selections\n\nSubmitted by: ${user.name} (${user.role})\nSelections: ${names.join(', ')}\nTime: ${new Date().toLocaleString()}`;
+    const email = (CONFIG.info && CONFIG.info.contact_email) || 'crtec@usc.edu';
+    const body = `Connection Requests\n\nSubmitted by: ${user.name} (${user.role})\nRequests: ${lines.join('; ')}\nTime: ${new Date().toLocaleString()}`;
     const a = document.createElement('a');
-    a.href = `mailto:crtec@usc.edu?subject=${encodeURIComponent('Coffee Consult — ' + user.name)}&body=${encodeURIComponent(body)}`;
+    a.href = `mailto:${email}?subject=${encodeURIComponent('CRD connection requests — ' + user.name)}&body=${encodeURIComponent(body)}`;
     a.target = '_blank';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   }
-  alert(`Submitted! CRTEC will confirm your match${coffeeSelections.size > 1 ? 'es' : ''} within 48 hours.`);
+  alert(`Submitted! CRTEC will confirm your connection${coffeeSelections.size > 1 ? 's' : ''} within 48 hours.`);
+}
+
+// ── PROGRAM CONTENT (landing / print) ─────────
+
+function renderProgram() {
+  const ag = CONFIG.agenda || [];
+  const agEl = document.getElementById('program-agenda');
+  if (agEl) {
+    agEl.innerHTML = ag.map(s => `
+      <div class="agenda-item ${s.tbd ? 'is-tbd' : ''}">
+        <div class="agenda-time">${s.time}</div>
+        <div class="agenda-body">
+          <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag">${s.tag}</span>` : ''}</div>
+          <div class="agenda-desc">${s.desc || ''}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  const facts = document.getElementById('program-posters');
+  if (facts) {
+    facts.innerHTML = `
+      <div class="fact"><div class="fact-big">4 × 4 ft</div><div class="fact-lbl">Maximum poster size</div></div>
+      <div class="fact"><div class="fact-big">3 × $100</div><div class="fact-lbl">Scientific award prizes</div></div>
+      <div class="fact"><div class="fact-big">Oct 2</div><div class="fact-lbl">Submission deadline</div></div>`;
+  }
+
+  const tracksEl = document.getElementById('program-tracks');
+  if (tracksEl) {
+    tracksEl.innerHTML = (CONFIG.connection_tracks || []).map(t => `
+      <div class="track-card">
+        <span class="track-card-icon">${t.icon}</span>
+        <div class="track-card-name">${t.name}</div>
+        <div class="track-card-aim">${t.aim}</div>
+        <div class="track-card-purpose">${t.purpose}</div>
+      </div>`).join('');
+  }
+
+  const infoEl = document.getElementById('program-info');
+  const info = CONFIG.info || {};
+  if (infoEl) {
+    const rows = [
+      ['Date & time', `${CONFIG.event_date} · ${CONFIG.event_time}`],
+      ['Location', info.location || CONFIG.event_location || ''],
+      ['Wi-Fi', info.wifi || ''],
+      ['Parking', info.parking || ''],
+      ['Questions', `<a href="mailto:${info.contact_email || ''}">${info.contact_email || ''}</a>`]
+    ].filter(r => r[1]);
+    infoEl.innerHTML = rows.map(r => `<div class="info-row"><span class="info-k">${r[0]}</span><span class="info-v">${r[1]}</span></div>`).join('');
+  }
 }
 
 // ── HELPERS ───────────────────────────────────
