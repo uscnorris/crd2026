@@ -14,20 +14,20 @@ const CONFIG = {
 
   // APPS SCRIPT BACKEND (event tracking)
   // Paste your deployed Apps Script web app URL here (see Code.gs setup instructions)
-  script_url: "PASTE_YOUR_APPS_SCRIPT_URL_HERE",
+  script_url: "https://script.google.com/macros/s/AKfycbzm3v4EXQ2VwnmOEAUAyLteeAv4HGFfugMfDO22BbwWNBkT-w4rhgXg7x4rKURrpGo3jQ/exec",
 
   // GOOGLE SHEETS (directory data)
   // File → Share → Publish to web → Sheet1 → CSV → Publish → copy URL
-  sheet_url: "PASTE_YOUR_PUBLISHED_CSV_URL_HERE",
+  sheet_url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQksITlntkPc60L__OSZomcBTOpjGXHI5kEEErmZLjFl3qe1KOPN6E80yExao-4El3fgYJ79PjI2ZGS/pub?gid=1334489619&single=true&output=csv",
 
   // Set to false once your sheet URL is pasted above
-  use_sample_data: true,
+  use_sample_data: false,
 
   // Max follow-up connection requests per person (across all tracks)
   max_selections: 2,
 
   // Where connection requests get sent (Google Form URL — see README)
-  form_url: "PASTE_YOUR_GOOGLE_FORM_URL_HERE",
+  form_url: "https://forms.gle/NScGUCFhKD9d4qv19",
 
   // BASE URL for QR codes — your GitHub Pages URL
   base_url: "https://uscnorris.github.io/crd2026",
