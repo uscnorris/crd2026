@@ -156,8 +156,12 @@ flow into the same spreadsheet and the same dashboard, automatically, via
 
 **A. Build the survey in Qualtrics.** Create questions matching the Survey tab's
 columns: Name, Role, "Did the meeting happen?" (Yes/No), "How useful was it?" (1–5),
-"Would you continue this collaboration?" (Yes/No), and "What was most useful?" (open
-text).
+"Would you continue this collaboration?" (Yes/No), "What was most useful?" (open
+text), "Did you learn about a Shared Resource (Biostatistics Core, Genomics Core,
+etc.) you now plan to use?" (Yes/No), and "Which one?" (open text). The last two are
+worth keeping even though they feel tangential to the meeting itself — CCSG renewal
+review specifically asks how you disseminate awareness of Shared Resources, and this
+is the cheapest way to get that number.
 
 **B. Turn on Question IDs.** In the Qualtrics survey editor: **Tools** (gear icon) →
 **Import/Export** → **Show Question IDs**. Each question now shows its ID (`QID1`,
@@ -178,13 +182,43 @@ form (Extensions → Apps Script, from the registration spreadsheet):
 
 **E. Turn on the sync.** In the Apps Script editor, select `createQualtricsTrigger`
 from the function dropdown and click **Run** (authorize when prompted). This sets up
-an hourly trigger that pulls new Qualtrics responses into the **Survey** tab —
-duplicates are skipped automatically, so it's safe to re-run any time. To pull
-immediately instead of waiting for the next hour, run `syncQualtrics` the same way.
+hourly triggers that pull new Qualtrics responses into the **Survey** tab (and the
+**Outcomes** tab below, once that's configured) — duplicates are skipped
+automatically, so it's safe to re-run any time. To pull immediately instead of
+waiting for the next hour, run `syncQualtrics` the same way.
 
 Once this is set up, the dashboard's Survey tab (and its "% want to continue" /
-"avg usefulness" stats) fills itself as responses come in — refresh `admin.html` and
-they're there.
+"avg usefulness" / "learned about a Shared Resource" stats) fills itself as
+responses come in — refresh `admin.html` and they're there.
+
+### The 6–12 month follow-up survey (downstream impact)
+
+The single most convincing number for a CCSG renewal isn't attendance — it's proof
+that the connections made at the event actually turned into something: a grant, a
+publication, a shared resource used, an ongoing collaboration. That requires asking
+again, months later, which is why it's a **separate** survey from the post-event one
+above.
+
+**A. Build a second Qualtrics survey**, something like "Cancer Research Day —
+6-Month Follow-up," with: Name, Role, "Who did you connect with at CRD?" (open text),
+"Did this lead to a joint grant submission?" (Yes/No), "A co-authored publication?"
+(Yes/No), "Shared use of a Core / Shared Resource?" (Yes/No), "Is the collaboration
+ongoing?" (Yes/No), and "Anything you'd like to tell us about it?" (open text). Turn
+on Question IDs (step B above) the same way.
+
+**B. Configure it in `Code.gs`.** Paste the new survey's ID into `QUALTRICS_FOLLOWUP`
+(it reuses the same API token and datacenter from `QUALTRICS`), and edit
+`QUALTRICS_FOLLOWUP_MAP` to match its QIDs.
+
+**C. Send it 6–12 months after the event** — to everyone who logged a conversation
+or connection request in the app (export the **Convos**/**Coffee** tabs for the
+email list) — then run `createQualtricsTrigger` again (or just wait for the hourly
+trigger already running) to pull responses into the **Outcomes** tab. The dashboard's
+Survey tab shows a "Downstream impact" section with grant/publication/collaboration
+counts once responses start coming in.
+
+Leaving `QUALTRICS_FOLLOWUP.survey_id` unconfigured is fine — everything else keeps
+working, that section just stays empty until you're ready to send this follow-up.
 
 ---
 
