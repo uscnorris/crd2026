@@ -1,10 +1,11 @@
 /*───────────────────────────────────────────────────────────────
   Cancer Research Day 2026 — Apps Script backend (Code.gs)
 
-  One script does three jobs, all against ONE spreadsheet:
+  One script does four jobs, all against ONE spreadsheet:
     1. onFormSubmit  — registration form → "Directory" tab (feeds the app)
-    2. doPost        — the app posts events → tracking tabs (feeds the dashboard)
-    3. doGet ?action=export — dashboard reads tracking data back out
+    2. syncQualtrics — pulls the post-event survey from Qualtrics → "Survey" tab
+    3. doPost        — the app posts events → tracking tabs (feeds the dashboard)
+    4. doGet ?action=export — dashboard reads tracking data back out
 
   SETUP (once): run setup() from the editor, then Deploy → Web app.
   Full step-by-step is in the README.
@@ -36,6 +37,31 @@ const FORM_MAP = {
 // Send a confirmation email on registration? (uses the "Email" answer)
 const SEND_CONFIRMATION = false;
 
+// ── QUALTRICS (post-event survey) ──
+// The post-event survey lives in Qualtrics. syncQualtrics() pulls responses
+// from Qualtrics into the Survey tab below via the Qualtrics REST API, so the
+// dashboard's Survey tab fills itself — no manual export/import. Setup steps
+// are in the README ("Post-event survey — Qualtrics"). Leave api_token blank
+// (or "PASTE...") to disable — nothing breaks, the sync just no-ops.
+const QUALTRICS = {
+  api_token:  'PASTE_YOUR_QUALTRICS_API_TOKEN_HERE',   // Account Settings (top-right avatar) → Qualtrics IDs → API
+  datacenter: 'PASTE_YOUR_QUALTRICS_DATACENTER_ID_HERE', // same page, e.g. "usc1a"
+  survey_id:  'PASTE_YOUR_QUALTRICS_SURVEY_ID_HERE'      // starts with "SV_" — same page, or the survey's URL
+};
+
+// Map YOUR Qualtrics question IDs → Survey tab columns. In the Qualtrics
+// survey editor: Tools (gear icon) → Import/Export → Show Question IDs — each
+// question then displays its QID (e.g. QID1) next to its text. Edit the
+// right-hand strings below to match.
+const QUALTRICS_MAP = {
+  name:                   'QID1',
+  role:                   'QID2',
+  meeting_happened:       'QID3',
+  meeting_useful:         'QID4',
+  continue_collaboration: 'QID5',
+  most_useful:            'QID6'
+};
+
 // ── Tab names + headers (setup() creates these) ──
 const TABS = {
   Directory: ['id','name','role','year','department','poster_number','title','summary','disease_area','research_program','clinical_input','mentoring','linkedin_url','photo_url','email'],
@@ -43,7 +69,7 @@ const TABS = {
   Convos:    ['session_id','viewer_name','viewer_role','viewer_program','participant_id','participant_name','participant_role','participant_program','timestamp'],
   Coffee:    ['session_id','requester_name','requester_role','requester_program','participant_id','participant_name','participant_role','participant_program','track_id','track_name','track_aim','action','timestamp'],
   Views:     ['session_id','viewer_role','viewer_program','participant_id','participant_name','participant_role','participant_program','timestamp'],
-  Survey:    ['name','role','meeting_happened','meeting_useful','continue_collaboration','most_useful','timestamp']
+  Survey:    ['response_id','name','role','meeting_happened','meeting_useful','continue_collaboration','most_useful','timestamp']
 };
 
 // ── Run this ONCE to create all tabs with headers ──
@@ -94,7 +120,70 @@ function onFormSubmit(e) {
   }
 }
 
-// ── 2. App posts events → tracking tabs ──
+// ── 2. Qualtrics survey → Survey tab (feeds the dashboard automatically) ──
+// Run once from the editor (function dropdown → createQualtricsTrigger → Run)
+// to sync every hour. Or run syncQualtrics directly for an on-demand pull.
+function syncQualtrics() {
+  if (!QUALTRICS.api_token || QUALTRICS.api_token.indexOf('PASTE') === 0) return; // not configured yet
+
+  const base = 'https://' + QUALTRICS.datacenter + '.qualtrics.com/API/v3/surveys/' + QUALTRICS.survey_id + '/export-responses';
+  const headers = { 'X-API-TOKEN': QUALTRICS.api_token };
+
+  // Start the export
+  const startResp = UrlFetchApp.fetch(base, {
+    method: 'post',
+    headers: headers,
+    contentType: 'application/json',
+    payload: JSON.stringify({ format: 'json' })
+  });
+  const progressId = JSON.parse(startResp.getContentText()).result.progressId;
+
+  // Poll until Qualtrics finishes building the export
+  let fileId = null;
+  for (let i = 0; i < 20; i++) {
+    Utilities.sleep(1500);
+    const prog = JSON.parse(UrlFetchApp.fetch(base + '/' + progressId, { headers: headers }).getContentText()).result;
+    if (prog.status === 'complete') { fileId = prog.fileId; break; }
+    if (prog.status === 'failed') throw new Error('Qualtrics export failed');
+  }
+  if (!fileId) throw new Error('Qualtrics export timed out');
+
+  // Download the finished export (a zip containing one JSON file) and unzip it
+  const zipBlob = UrlFetchApp.fetch(base + '/' + fileId + '/file', { headers: headers }).getBlob();
+  const files = Utilities.unzip(zipBlob);
+  const data = JSON.parse(files[0].getDataAsString());
+  const responses = data.responses || [];
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = tab(ss, 'Survey');
+  const alreadySynced = sh.getLastRow() > 1
+    ? sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues().flat().map(String)
+    : [];
+
+  responses.forEach(r => {
+    const rid = r.responseId;
+    if (!rid || alreadySynced.includes(rid)) return; // skip ones already synced
+    const v = r.values || {};
+    const get = key => { const qid = QUALTRICS_MAP[key]; return (qid && v[qid] !== undefined) ? String(v[qid]) : ''; };
+    sh.appendRow([
+      rid, get('name'), get('role'), get('meeting_happened'), get('meeting_useful'),
+      get('continue_collaboration'), get('most_useful'), v.recordedDate || new Date()
+    ]);
+  });
+}
+
+// Creates (or resets) an hourly trigger that keeps the Survey tab in sync
+// with Qualtrics automatically. Run this ONCE from the editor after filling
+// in the QUALTRICS constants above.
+function createQualtricsTrigger() {
+  ScriptApp.getProjectTriggers().forEach(t => {
+    if (t.getHandlerFunction() === 'syncQualtrics') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('syncQualtrics').timeBased().everyHours(1).create();
+  SpreadsheetApp.getUi && SpreadsheetApp.getUi().alert('Qualtrics sync scheduled — the Survey tab will update every hour.');
+}
+
+// ── 3. App posts events → tracking tabs ──
 function doPost(e) {
   try {
     const p = JSON.parse(e.postData.contents);   // no-cors POST arrives as text; parse it
@@ -131,7 +220,7 @@ function doPost(e) {
   }
 }
 
-// ── 3. Dashboard reads tracking data ──
+// ── 4. Dashboard reads tracking data ──
 function doGet(e) {
   if (e && e.parameter && e.parameter.action === 'export') {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
