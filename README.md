@@ -20,15 +20,21 @@ Admin dashboard: `https://uscnorris.github.io/crd2026/admin.html`
 | `app.js` | App logic + the tracks engine | No |
 | `admin.html` | Metrics dashboard (self-contained) | No |
 | `Code.gs` | Apps Script backend (registration, tracking, Qualtrics sync) | Only the constants at the top |
-| `assets/logo/usc-norris-logo.svg` | Header logo | **Yes — replace with the official file** |
-| `assets/photos/photo-1.jpg` … `photo-4.jpg` | Homepage photo gallery | **Yes — add real event photos** |
+| `assets/photos/photo-1.jpg` | Homepage feature photo | **Yes — add a real event photo** |
+
+The header carries no logo of its own — the site is designed to sit inside the
+USC Norris WordPress page (see "Integrating the CRD site" below), which already
+supplies the Norris branding around it.
 
 ---
 
-## Branding & photos
+## Photo
 
-- **Logo.** `assets/logo/usc-norris-logo.svg` ships as a plain placeholder wordmark (clearly labeled as such) so the header never looks broken. Download the real USC Norris / Keck Medicine logo from Brand Central (`kecknet.usc.edu/brand_central`, USC intranet login required — email `identity@med.usc.edu` if you don't have access) and save it over that same file path (SVG or PNG both work; if PNG, update the `src` in `index.html`'s `<a class="brand">` accordingly). No other change needed — it swaps in automatically.
-- **Photos.** The homepage gallery (`#gallery` section) looks for `assets/photos/photo-1.jpg` through `photo-4.jpg`. Any file that's missing shows a clean "add a photo" placeholder instead of a broken image, so you can add them one at a time. `photo-1` is the large feature image; `photo-2`–`4` are the smaller tiles.
+The band right under the hero (`#gallery` in `index.html`) looks for one file,
+`assets/photos/photo-1.jpg`. If it's missing, it shows a clean "add a photo"
+placeholder instead of a broken image — drop a real photo from a past Cancer
+Research Day there (a wide shot works best; it's cropped to a ~320px-tall banner)
+and it replaces the placeholder automatically.
 
 ---
 
