@@ -6,7 +6,7 @@
 <title>Cancer Research Day 2026 · USC Norris Comprehensive Cancer Center</title>
 <meta name="description" content="4th Annual Cancer Research Day at USC Norris — Wednesday, October 14, 2026. Talks, an AI featured session, a poster session, and connection opportunities. In person and virtual. Open to the whole Cancer Center community.">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<link rel="stylesheet" href="style.css?v=25">
+<link rel="stylesheet" href="style.css?v=26">
 </head>
 <body>
 
@@ -23,13 +23,15 @@
   <symbol id="i-diet" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M6 3v8a2 2 0 0 0 4 0V3M8 11v10M16 3c-1.5 1-2 3-2 5s0 3 2 3 2-1 2-3-.5-4-2-5ZM16 11v10"/></symbol>
   <symbol id="i-mail" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M3 6h18v12H3zM3 7l9 6 9-6"/></symbol>
   <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5" fill="none" stroke="currentColor" stroke-width="1.7"/><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="m9 13-2 8 5-3 5 3-2-8"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M4 8h3l2-2.5h6L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
 </svg>
 
 <!-- ══ TOP NAV (both modes) ══ -->
 <header class="site-nav" id="site-nav">
   <div class="nav-inner">
     <a class="brand" href="#top" onclick="return goToSection('top')" aria-label="USC Norris Comprehensive Cancer Center — Cancer Research Day">
-      <span class="brand-lock">
+      <img class="brand-logo" src="assets/logo/usc-norris-logo.svg" alt="USC Norris Comprehensive Cancer Center" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+      <span class="brand-lock" style="display:none">
         <span class="brand-line1"><span class="brand-usc">USC</span> Norris</span>
         <span class="brand-line2">Comprehensive Cancer Center</span>
       </span>
@@ -45,6 +47,7 @@
     </nav>
     <div class="nav-actions">
       <button class="btn-outline btn-print" onclick="window.print()">Print</button>
+      <button class="btn-outline btn-livestream" onclick="joinLivestream()">Join the livestream</button>
       <button class="btn-solid" onclick="registerNow()">Register</button>
     </div>
   </div>
@@ -70,29 +73,32 @@
     </div>
   </section>
 
+  <!-- GALLERY -->
+  <section class="band gallery-band" id="gallery">
+    <div class="band-inner">
+      <div class="band-label">Cancer Research Day, in pictures</div>
+      <h2>What a day at USC Norris looks like</h2>
+      <div class="gallery-grid">
+        <div class="gallery-item gallery-feature"><img src="assets/photos/photo-1.jpg" alt="Cancer Research Day — poster session on Pappas Quad" loading="lazy" onerror="this.parentElement.classList.add('gallery-empty')"><span class="gallery-placeholder"><svg class="ico"><use href="#i-camera"/></svg>photo-1.jpg</span></div>
+        <div class="gallery-item"><img src="assets/photos/photo-2.jpg" alt="Cancer Research Day — attendees talking at a poster" loading="lazy" onerror="this.parentElement.classList.add('gallery-empty')"><span class="gallery-placeholder"><svg class="ico"><use href="#i-camera"/></svg>photo-2.jpg</span></div>
+        <div class="gallery-item"><img src="assets/photos/photo-3.jpg" alt="Cancer Research Day — morning talk in Mayer Auditorium" loading="lazy" onerror="this.parentElement.classList.add('gallery-empty')"><span class="gallery-placeholder"><svg class="ico"><use href="#i-camera"/></svg>photo-3.jpg</span></div>
+        <div class="gallery-item"><img src="assets/photos/photo-4.jpg" alt="Cancer Research Day — poster award presentation" loading="lazy" onerror="this.parentElement.classList.add('gallery-empty')"><span class="gallery-placeholder"><svg class="ico"><use href="#i-camera"/></svg>photo-4.jpg</span></div>
+      </div>
+      <p class="fineprint">Add this year's photos to <code>assets/photos/</code> (named <code>photo-1.jpg</code>–<code>photo-4.jpg</code>) to update this gallery.</p>
+    </div>
+  </section>
+
   <!-- WHY COME -->
   <section class="band" id="why">
     <div class="band-inner">
       <div class="band-label">Why come</div>
       <h2>One day, the whole science of USC Norris</h2>
-      <p class="lead">Cancer Research Day is the one day a year the entire Cancer Center is in one place. Come for the science, leave with new collaborators.</p>
+      <p class="lead">The one day a year the whole Cancer Center is in one place. Come for the science, leave with new collaborators.</p>
       <div class="why-grid">
-        <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-landscape"/></svg></span><h3>See the whole landscape</h3><p>Research from every USC Norris program — basic, translational, clinical, population, and community — side by side in one room.</p></div>
-        <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-science"/></svg></span><h3>State of the science</h3><p>Morning talks plus this year's featured session on <strong>AI in cancer research</strong>, where the field is heading and what it means for patients.</p></div>
-        <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-connect"/></svg></span><h3>Real connections</h3><p>A structured way to meet mentors, peers, clinicians, and patient advocates — not just small talk, but follow-ups that lead somewhere.</p></div>
-        <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-award"/></svg></span><h3>Showcase your work</h3><p>Present a poster, get real feedback from across disciplines, and compete for a scientific award.</p></div>
-      </div>
-      <div class="landscape">
-        <div class="landscape-label">Programs represented on the day</div>
-        <div class="prog-chips">
-          <span class="prog-chip">Tumor Microenvironment</span>
-          <span class="prog-chip">Genomic &amp; Epigenomic Regulation</span>
-          <span class="prog-chip">Translational &amp; Clinical Sciences</span>
-          <span class="prog-chip">Cancer Epidemiology</span>
-          <span class="prog-chip">Cancer Control Research</span>
-          <span class="prog-chip">Community Outreach &amp; Engagement</span>
-          <span class="prog-chip">Education &amp; Training (CRTEC)</span>
-        </div>
+        <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-landscape"/></svg></span><h3>See the whole landscape</h3><p>Basic, translational, clinical, population, and community research — side by side in one room.</p></div>
+        <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-science"/></svg></span><h3>State of the science</h3><p>Morning talks plus this year's featured session on <strong>AI in cancer research</strong>.</p></div>
+        <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-connect"/></svg></span><h3>Real connections</h3><p>A structured way to meet mentors, peers, clinicians, and patient advocates — with real follow-up.</p></div>
+        <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-award"/></svg></span><h3>Showcase your work</h3><p>Present a poster, get feedback from across disciplines, and compete for a scientific award.</p></div>
       </div>
     </div>
   </section>
@@ -120,10 +126,10 @@
       <div class="primer" id="poster-primer">
         <h3>First time at a poster session? Here's what to expect</h3>
         <div class="primer-steps">
-          <div class="primer-step"><span class="primer-num">1</span><div><strong>Walk the rows.</strong> Dozens of printed posters line Pappas Quad. Browse whatever catches your eye — there's no set order.</div></div>
-          <div class="primer-step"><span class="primer-num">2</span><div><strong>Talk to presenters.</strong> Researchers stand by their posters. Say hi and ask them to walk you through it — a "two-minute version" is a totally normal thing to ask for.</div></div>
-          <div class="primer-step"><span class="primer-num">3</span><div><strong>Ask questions.</strong> "What surprised you?" or "What's next?" go a long way. You don't need to be an expert in the topic.</div></div>
-          <div class="primer-step"><span class="primer-num">4</span><div><strong>Use the app.</strong> Log the people you meet and request a follow-up connection. It's casual, come and go as you like.</div></div>
+          <div class="primer-step"><span class="primer-num">1</span><div><strong>Walk the rows.</strong> Dozens of posters line Pappas Quad — browse in any order.</div></div>
+          <div class="primer-step"><span class="primer-num">2</span><div><strong>Talk to presenters.</strong> Say hi and ask for the "two-minute version" — totally normal to ask for.</div></div>
+          <div class="primer-step"><span class="primer-num">3</span><div><strong>Ask questions.</strong> "What surprised you?" or "What's next?" go a long way. No expertise required.</div></div>
+          <div class="primer-step"><span class="primer-num">4</span><div><strong>Use the app.</strong> Log the people you meet and request a follow-up connection.</div></div>
         </div>
       </div>
     </div>
@@ -134,9 +140,9 @@
     <div class="band-inner">
       <div class="band-label">Connect on the day</div>
       <h2>Meet people worth knowing</h2>
-      <p>During the poster session you can use our directory to find people, log the conversations you have, and request a short follow-up. Each connection is a track that builds our training community. <strong>CRTEC coordinates every match</strong> — you won't be cold-contacting anyone, and no one will be cold-contacting you.</p>
+      <p>During the poster session, use the directory to find people, log conversations, and request a short follow-up. <strong>CRTEC coordinates every match</strong> — no cold-contacting, in either direction.</p>
       <div id="program-tracks" class="track-cards"></div>
-      <p class="fineprint" id="mentor-note"><strong>A note for faculty:</strong> Mentor Match only lists faculty who opt in when they register, and every request is booked through CRTEC — so it's a light, opt-in commitment, not an open inbox.</p>
+      <p class="fineprint" id="mentor-note"><strong>A note for faculty:</strong> Mentor Match only lists faculty who opt in, and CRTEC books every request — a light, opt-in commitment, not an open inbox.</p>
       <div class="connect-callout">
         <div>
           <strong>Ready to connect?</strong>
@@ -154,38 +160,32 @@
       <h2>Getting there &amp; good to know</h2>
 
       <div class="visit-map-wrap">
-        <svg class="visit-map" viewBox="0 0 640 300" role="img" aria-label="Schematic map showing Pappas Quad, Mayer Auditorium in the Keith Administration Building, and USC Norris Cancer Center">
-          <rect x="0" y="0" width="640" height="300" fill="#faf8f4"/>
-          <!-- streets -->
-          <rect x="0" y="135" width="640" height="26" fill="#efe9df"/>
-          <rect x="300" y="0" width="24" height="300" fill="#efe9df"/>
-          <text x="12" y="152" class="map-street">San Pablo St</text>
-          <!-- Pappas Quad (center, event core) -->
-          <rect x="250" y="180" width="150" height="90" rx="8" fill="#990000"/>
-          <text x="325" y="218" text-anchor="middle" class="map-a">Pappas Quad</text>
-          <text x="325" y="238" text-anchor="middle" class="map-b">Posters · Lunch</text>
-          <text x="325" y="256" text-anchor="middle" class="map-b">Check-in</text>
-          <!-- Keith Admin / Mayer Auditorium -->
-          <rect x="360" y="40" width="200" height="80" rx="8" fill="#fff" stroke="#990000" stroke-width="2"/>
-          <text x="460" y="72" text-anchor="middle" class="map-a2">Mayer Auditorium</text>
-          <text x="460" y="92" text-anchor="middle" class="map-b2">Keith Administration Bldg</text>
-          <text x="460" y="110" text-anchor="middle" class="map-b2">Talks · Panel</text>
-          <!-- USC Norris -->
-          <rect x="70" y="40" width="180" height="80" rx="8" fill="#fff" stroke="#c9a227" stroke-width="2"/>
-          <text x="160" y="76" text-anchor="middle" class="map-a2">USC Norris</text>
-          <text x="160" y="96" text-anchor="middle" class="map-b2">Cancer Center</text>
-          <!-- connector -->
-          <path d="M325 180 L325 130 L460 130 L460 120" fill="none" stroke="#990000" stroke-width="2" stroke-dasharray="5 4"/>
-          <circle cx="325" cy="180" r="4" fill="#990000"/>
-        </svg>
-        <p class="map-note">Schematic, not to scale. The day runs between Mayer Auditorium (morning talks) and Pappas Quad (poster session &amp; lunch), on the Health Sciences Campus.</p>
+        <div class="visit-map-embed">
+          <iframe src="https://www.google.com/maps?q=Keith+Administration+Building+Mayer+Auditorium,+1975+Zonal+Ave,+Los+Angeles,+CA+90033&output=embed" loading="lazy" allowfullscreen title="Map of USC Health Sciences Campus — Mayer Auditorium, Pappas Quad, and USC Norris Cancer Center"></iframe>
+        </div>
+        <div class="map-legend">
+          <a class="map-legend-item" href="https://www.google.com/maps/search/?api=1&query=Keith+Administration+Building+Mayer+Auditorium+USC,+1975+Zonal+Ave,+Los+Angeles,+CA+90033" target="_blank" rel="noopener">
+            <span class="map-legend-dot map-dot-a"></span>
+            <span><strong>Mayer Auditorium, Keith Administration Bldg (KAM)</strong><br>1975 Zonal Ave · morning talks &amp; featured session</span>
+          </a>
+          <a class="map-legend-item" href="https://www.google.com/maps/search/?api=1&query=Pappas+Quad+USC,+2003+Zonal+Ave,+Los+Angeles,+CA+90033" target="_blank" rel="noopener">
+            <span class="map-legend-dot map-dot-b"></span>
+            <span><strong>Pappas Quad</strong><br>2003 Zonal Ave · check-in, posters &amp; lunch</span>
+          </a>
+          <a class="map-legend-item" href="https://www.google.com/maps/search/?api=1&query=USC+Norris+Comprehensive+Cancer+Center,+1441+Eastlake+Ave,+Los+Angeles,+CA+90033" target="_blank" rel="noopener">
+            <span class="map-legend-dot map-dot-c"></span>
+            <span><strong>USC Norris Cancer Center</strong><br>1441 Eastlake Ave · main Cancer Center building</span>
+          </a>
+        </div>
+        <p class="map-note">On Zonal Ave, USC Health Sciences Campus. <a href="https://www.google.com/maps/dir/?api=1&destination=1975+Zonal+Ave,+Los+Angeles,+CA+90033" target="_blank" rel="noopener">Get directions to Mayer Auditorium →</a></p>
       </div>
 
       <div class="visit-grid">
         <div class="visit-card">
           <span class="visit-ico"><svg class="ico"><use href="#i-virtual"/></svg></span>
           <h3>Can't make it in person?</h3>
-          <p>You can still take part. Register as a <strong>virtual attendee</strong> to join the talks and featured session by livestream. Virtual registrants can also submit a short bio on the form to be <strong>matched for a follow-up connection</strong>, so you don't miss the networking. Livestream link goes to registered attendees before the event.</p>
+          <p>Register as a <strong>virtual attendee</strong> to join the talks and featured session by livestream, and still get <strong>matched for a follow-up connection</strong>. The link goes live the morning of the event.</p>
+          <button class="btn-solid" onclick="joinLivestream()">Join the livestream</button>
         </div>
         <div class="visit-card">
           <span class="visit-ico"><svg class="ico"><use href="#i-ce"/></svg></span>
@@ -195,12 +195,12 @@
         <div class="visit-card">
           <span class="visit-ico"><svg class="ico"><use href="#i-access"/></svg></span>
           <h3>Accessibility</h3>
-          <p>We want everyone to take part fully. The registration form asks whether you need any accommodations (seating, interpreting, materials, or anything else). You can also email us any time and we'll make arrangements.</p>
+          <p>The registration form asks about accommodations — seating, interpreting, materials, or anything else. Email us any time.</p>
         </div>
         <div class="visit-card">
           <span class="visit-ico"><svg class="ico"><use href="#i-diet"/></svg></span>
           <h3>Food &amp; dietary needs</h3>
-          <p>Lunch is provided on Pappas Quad. The registration form asks about dietary restrictions (vegetarian, vegan, gluten-free, allergies, and more) so we can plan options for everyone.</p>
+          <p>Lunch is provided on Pappas Quad. The registration form asks about dietary restrictions so we can plan for everyone.</p>
         </div>
       </div>
 
@@ -213,7 +213,7 @@
     <div class="band-inner center">
       <div class="band-label">Register</div>
       <h2>Save your spot — it's free</h2>
-      <p class="lead">One quick form covers everything: attend in person or virtually, submit a poster, share a short bio for matching, and tell us about accessibility or dietary needs.</p>
+      <p class="lead">One form covers it all — attendance mode, poster submission, bio for matching, and accessibility or dietary needs.</p>
       <button class="btn-solid btn-lg" onclick="registerNow()">Register / submit a poster</button>
       <p class="fineprint" id="reg-fallback"></p>
     </div>
@@ -226,7 +226,7 @@
         <span class="visit-ico"><svg class="ico"><use href="#i-mail"/></svg></span>
         <div class="newsletter-text">
           <h3>Stay in the loop — subscribe to <em>Next in Science</em></h3>
-          <p>CRTEC's newsletter covers trainee highlights, program news, and everything Cancer Research Day. Get event updates (and your CE details) straight to your inbox.</p>
+          <p>Trainee highlights, program news, and event updates — including your CE details — straight to your inbox.</p>
         </div>
         <a class="btn-solid" id="newsletter-btn" href="[[NEWSLETTER_LINK]]" target="_blank">Subscribe</a>
       </div>
@@ -364,8 +364,8 @@
   <button class="my-list-btn" id="mylist-header-btn" style="display:none" onclick="showView('mylist')">👥 My List <span class="list-count" id="list-count-badge">0</span></button>
 </div>
 
-<script src="config.js?v=25"></script>
-<script src="data.js?v=25"></script>
-<script src="app.js?v=25"></script>
+<script src="config.js?v=26"></script>
+<script src="data.js?v=26"></script>
+<script src="app.js?v=26"></script>
 </body>
 </html>

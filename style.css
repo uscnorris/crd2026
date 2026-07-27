@@ -438,6 +438,7 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 
 /* Brand lockup (override earlier .brand) */
 .brand { display:flex; align-items:center; gap:12px; text-decoration:none; }
+.brand-logo { height:40px; width:auto; display:block; }
 .brand-lock { display:flex; flex-direction:column; line-height:1.05; }
 .brand-line1 { font-family:Georgia,serif; font-size:18px; font-weight:700; color:var(--text); }
 .brand-line1 .brand-usc { color:var(--cardinal); }
@@ -445,17 +446,27 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 .brand-div { width:1px; align-self:stretch; background:var(--border); margin:2px 0; }
 .brand-event { font-family:Georgia,serif; font-size:12px; font-weight:700; color:var(--cardinal); line-height:1.05; }
 
+/* GALLERY */
+.gallery-band { padding-top:36px; }
+.gallery-grid { display:grid; grid-template-columns:1.4fr 1fr 1fr; grid-template-rows:1fr 1fr; gap:12px; margin-top:20px; height:420px; }
+.gallery-feature { grid-row:1 / 3; }
+.gallery-item { position:relative; border-radius:var(--radius); overflow:hidden; background:var(--off-white); border:1px solid var(--border); }
+.gallery-item img { width:100%; height:100%; object-fit:cover; display:block; }
+.gallery-item.gallery-empty img { display:none; }
+.gallery-placeholder { display:none; }
+.gallery-item.gallery-empty .gallery-placeholder {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  position:absolute; inset:0; color:var(--text-light); font-size:12px; font-family:monospace;
+  background:linear-gradient(135deg,var(--off-white),#efe9df);
+}
+.gallery-placeholder .ico { width:30px; height:30px; color:var(--border); }
+
 /* WHY COME */
 .why-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin:24px 0 12px; }
 .why-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:22px; }
 .why-ico { display:inline-flex; align-items:center; justify-content:center; width:46px; height:46px; border-radius:12px; background:var(--cardinal-light); margin-bottom:12px; }
 .why-card h3 { font-family:Georgia,serif; font-size:19px; margin-bottom:6px; }
 .why-card p { font-size:14.5px; color:var(--text-mid); margin:0; }
-.landscape { margin-top:22px; background:var(--off-white); border-radius:var(--radius); padding:20px 22px; }
-.landscape-label { font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--cardinal); margin-bottom:12px; }
-.prog-chips { display:flex; flex-wrap:wrap; gap:8px; }
-.prog-chip { background:#fff; border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:20px; padding:6px 14px; font-size:13px; font-weight:600; color:var(--text); }
-
 /* POSTER PRIMER */
 .primer { margin-top:28px; background:var(--cardinal-light); border:1px solid #E8C0C0; border-radius:var(--radius); padding:24px; }
 .primer h3 { font-family:Georgia,serif; font-size:20px; color:var(--cardinal-dark); margin-bottom:14px; }
@@ -465,13 +476,18 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 
 /* PLAN YOUR VISIT */
 .visit-map-wrap { margin:20px 0 26px; }
-.visit-map { width:100%; height:auto; border:1px solid var(--border); border-radius:var(--radius); display:block; }
-.map-street { font:600 11px Arial; fill:#9a9488; }
-.map-a { font:700 17px Georgia; fill:#fff; }
-.map-b { font:600 12px Arial; fill:#f6d9d9; }
-.map-a2 { font:700 16px Georgia; fill:var(--cardinal); }
-.map-b2 { font:600 11px Arial; fill:#6a6a6a; }
+.visit-map-embed { position:relative; width:100%; padding-bottom:46%; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; background:var(--off-white); }
+.visit-map-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+.map-legend { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px; }
+.map-legend-item { display:flex; gap:10px; background:#fff; border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; text-decoration:none; color:var(--text); font-size:13.5px; line-height:1.45; }
+.map-legend-item:hover { border-color:var(--cardinal); background:var(--cardinal-light); }
+.map-legend-item strong { display:block; font-size:14px; color:var(--text); }
+.map-legend-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.map-dot-a { background:var(--cardinal); }
+.map-dot-b { background:var(--gold); }
+.map-dot-c { background:var(--faculty-color); }
 .map-note { font-size:13px; color:var(--text-light); margin-top:8px; }
+.map-note a { color:var(--cardinal); font-weight:600; }
 .visit-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-bottom:22px; }
 .visit-card { background:#fff; border:1px solid var(--border); border-top:3px solid var(--cardinal); border-radius:var(--radius-sm); padding:20px; }
 .visit-ico { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:10px; background:var(--cardinal-light); margin-bottom:10px; }
@@ -493,13 +509,17 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 @media (max-width:760px) {
   .why-grid, .primer-steps, .visit-grid { grid-template-columns:1fr; }
   .brand-line2 { display:none; }
+  .brand-logo { height:34px; }
   .newsletter-callout { flex-direction:column; align-items:flex-start; }
+  .map-legend { grid-template-columns:1fr; }
+  .gallery-grid { grid-template-columns:1fr 1fr; grid-template-rows:repeat(3,140px); height:auto; }
+  .gallery-feature { grid-column:1 / 3; grid-row:1; }
 }
 
 /* Print: hide the visual/interactive extras, keep a tight program handout */
 @media print {
-  .why-grid, .landscape, .primer, .visit-map-wrap, .visit-grid,
-  #newsletter, #mentor-note { display:none; }
+  .why-grid, .primer, .visit-map-wrap, .visit-grid,
+  #newsletter, #mentor-note, .gallery-band { display:none; }
   #why { display:none; }
   .brand-line2, .brand-div, .brand-event { display:none; }
 }

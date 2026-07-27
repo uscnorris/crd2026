@@ -112,7 +112,8 @@ const CONFIG = {
   // External links used on the landing page
   links: {
     newsletter: "PASTE_YOUR_NEXT_IN_SCIENCE_SUBSCRIBE_URL_HERE",
-    livestream: ""   // virtual attendee livestream URL (shared with registrants)
+    livestream: ""   // Livestream URL — powers the "Join the livestream" buttons (nav + Plan your visit).
+                      // Leave blank until it's live; buttons show a graceful "check back" message until then.
   },
 
   // Continuing education status shown on the "Plan your visit" section.

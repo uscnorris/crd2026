@@ -19,6 +19,16 @@ Admin dashboard: `https://uscnorris.github.io/crd2026/admin.html`
 | `data.js` | Sample directory data (used until the live Sheet is wired) | Only to change the sample |
 | `app.js` | App logic + the tracks engine | No |
 | `admin.html` | Metrics dashboard (self-contained) | No |
+| `Code.gs` | Apps Script backend (registration, tracking, Qualtrics sync) | Only the constants at the top |
+| `assets/logo/usc-norris-logo.svg` | Header logo | **Yes — replace with the official file** |
+| `assets/photos/photo-1.jpg` … `photo-4.jpg` | Homepage photo gallery | **Yes — add real event photos** |
+
+---
+
+## Branding & photos
+
+- **Logo.** `assets/logo/usc-norris-logo.svg` ships as a plain placeholder wordmark (clearly labeled as such) so the header never looks broken. Download the real USC Norris / Keck Medicine logo from Brand Central (`kecknet.usc.edu/brand_central`, USC intranet login required — email `identity@med.usc.edu` if you don't have access) and save it over that same file path (SVG or PNG both work; if PNG, update the `src` in `index.html`'s `<a class="brand">` accordingly). No other change needed — it swaps in automatically.
+- **Photos.** The homepage gallery (`#gallery` section) looks for `assets/photos/photo-1.jpg` through `photo-4.jpg`. Any file that's missing shows a clean "add a photo" placeholder instead of a broken image, so you can add them one at a time. `photo-1` is the large feature image; `photo-2`–`4` are the smaller tiles.
 
 ---
 
@@ -65,8 +75,8 @@ The app runs on sample data out of the box. To go live for the real event:
    "Submit connection requests" button routes there. If left blank, it falls back to
    a pre-filled email to `info.contact_email`.
 
-After editing, bump the `?v=` number in `index.html`/`admin.html` (currently `v=22`)
-so returning phones don't serve a cached copy.
+After editing, bump the `?v=` number in `index.html` (currently `v=26`) so
+returning phones don't serve a cached copy.
 
 ---
 
@@ -128,9 +138,47 @@ the directory within ~5 minutes → the day-of usage flows to the dashboard.
 and walk-ins). The app's usage POSTs are fire-and-forget, so they never block the UI and
 never hit CORS. The dashboard reads the export over a normal GET; if a browser ever
 blocks it, `doGet` also supports a JSONP fallback (`?action=export&callback=fn`). The
-**Survey** tab is filled by a short post-event survey (a second Form pointed at the same
-sheet, or filled by hand); until then the dashboard's Survey tab simply shows what's
-there.
+**Survey** tab is filled automatically from Qualtrics — see the next section.
+
+---
+
+## Post-event survey — Qualtrics → dashboard (automatic)
+
+The post-event survey lives in **Qualtrics**, not a Google Form — but responses still
+flow into the same spreadsheet and the same dashboard, automatically, via
+`syncQualtrics()` in `Code.gs`. No manual export/import.
+
+**A. Build the survey in Qualtrics.** Create questions matching the Survey tab's
+columns: Name, Role, "Did the meeting happen?" (Yes/No), "How useful was it?" (1–5),
+"Would you continue this collaboration?" (Yes/No), and "What was most useful?" (open
+text).
+
+**B. Turn on Question IDs.** In the Qualtrics survey editor: **Tools** (gear icon) →
+**Import/Export** → **Show Question IDs**. Each question now shows its ID (`QID1`,
+`QID2`, …) next to its text — note which QID is which question.
+
+**C. Get your API credentials.** Click your account avatar (top right) → **Account
+Settings** → **Qualtrics IDs**. This page has three things you need: your **API
+Token** (generate one if you don't have one), your **Datacenter ID** (e.g. `usc1a`),
+and the **Survey ID** (starts with `SV_`) for the survey you just built.
+
+**D. Configure `Code.gs`.** In the same Apps Script project used for the registration
+form (Extensions → Apps Script, from the registration spreadsheet):
+1. Paste the API token, datacenter ID, and survey ID into the `QUALTRICS` constant
+   near the top of the file.
+2. Edit `QUALTRICS_MAP` so each Survey-tab column points at the right `QID` from
+   step B.
+3. Save.
+
+**E. Turn on the sync.** In the Apps Script editor, select `createQualtricsTrigger`
+from the function dropdown and click **Run** (authorize when prompted). This sets up
+an hourly trigger that pulls new Qualtrics responses into the **Survey** tab —
+duplicates are skipped automatically, so it's safe to re-run any time. To pull
+immediately instead of waiting for the next hour, run `syncQualtrics` the same way.
+
+Once this is set up, the dashboard's Survey tab (and its "% want to continue" /
+"avg usefulness" stats) fills itself as responses come in — refresh `admin.html` and
+they're there.
 
 ---
 

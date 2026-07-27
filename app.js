@@ -438,6 +438,17 @@ function registerNow() {
   }
 }
 
+// Open the livestream directly. Falls back gracefully when the link isn't
+// configured yet (e.g. before the morning of the event).
+function joinLivestream() {
+  const url = CONFIG.links && CONFIG.links.livestream;
+  if (url && url.indexOf('PASTE') !== 0 && /^https?:/i.test(url)) {
+    window.open(url, '_blank');
+  } else {
+    alert("The livestream link goes live the morning of the event and is emailed to registered attendees. Check back here on October 14.");
+  }
+}
+
 // Nav that works from BOTH modes: leave the directory first, then scroll.
 function goToSection(id) {
   if (document.body.classList.contains('in-app')) {
