@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 64" width="300" height="64" role="img" aria-label="USC Norris Comprehensive Cancer Center (placeholder wordmark)">
-  <rect x="0" y="4" width="6" height="52" fill="#990011"/>
-  <rect x="10" y="4" width="6" height="52" fill="#FFCC00"/>
-  <text x="26" y="30" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="700" fill="#990011">USC</text>
-  <text x="70" y="30" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="700" fill="#1A1A1A">Norris</text>
-  <text x="26" y="46" font-family="Arial, sans-serif" font-size="10.5" letter-spacing="0.5" fill="#555">Comprehensive Cancer Center</text>
-  <text x="26" y="60" font-family="Arial, sans-serif" font-size="8" font-style="italic" fill="#999">Placeholder — replace with the official logo from Brand Central</text>
-</svg>
