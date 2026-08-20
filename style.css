@@ -696,3 +696,37 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 .poster-location { margin-top: 8px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .poster-location-row { background: var(--cardinal); color: #fff; font-weight: 800; font-size: 12px; letter-spacing: .04em; padding: 3px 9px; border-radius: 20px; }
 .poster-location-desc { font-size: 13px; color: var(--text-mid); }
+
+/* Connected two-step Coffee Consult card — replaces the old scattered
+   log-button + floating-banner + hint-text + separate-button layout. */
+.connect-steps { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+.connect-step { display: flex; gap: 12px; padding: 16px; position: relative; }
+.connect-step:not(:last-child)::after {
+  content: ""; position: absolute; left: 27px; top: 46px; bottom: -4px; width: 2px; background: var(--border);
+}
+.connect-step .step-num {
+  flex: 0 0 24px; height: 24px; border-radius: 50%; background: var(--border); color: var(--text-mid);
+  font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; z-index: 1;
+}
+.connect-step.active .step-num { background: var(--cardinal); color: #fff; }
+.connect-step.done .step-num { background: #1a7a3c; color: #fff; }
+.connect-step.locked { opacity: .55; }
+.connect-step.locked .step-num { background: var(--border); color: var(--text-light); }
+.step-body { flex: 1; padding-top: 1px; }
+.step-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.step-desc { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 10px; }
+.step-locked-hint { font-size: 13px; color: var(--text-light); font-style: italic; margin: 0; }
+.connect-step .btn-log, .connect-step .btn-coffee { width: 100%; }
+
+/* Poster quad layout schematic */
+.quad-layout { margin-top: 24px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+.quad-layout-label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--cardinal); margin-bottom: 8px; }
+.quad-layout-note { font-size: 14px; color: var(--text-mid); margin-bottom: 16px; max-width: 60ch; }
+.quad-svg { display: block; max-width: 320px; margin: 0 auto; }
+.quad-center { font-family: var(--font-serif); font-size: 15px; font-weight: 700; fill: #b0a99a; }
+.quad-side-label { font-size: 12px; font-weight: 700; fill: #fff; }
+.quad-side-label-dark { fill: #1a1a1a; }
+.quad-layout-caveat { font-size: 12px; color: var(--text-light); text-align: center; margin: 12px 0 0; font-style: italic; }
+
+.quad-side-sub { font-size: 9.5px; font-weight: 600; fill: rgba(255,255,255,.85); }
+.quad-side-sub-dark { fill: rgba(0,0,0,.65); }

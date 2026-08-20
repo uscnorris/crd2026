@@ -121,9 +121,9 @@ function onFormSubmit(e) {
   let posterNo;
   if (existingRow) {
     posterNo = dir.getRange(existingRow, headers.indexOf('poster_number') + 1, 1, 1).getValue() || '';
-    if (!posterNo) posterNo = nextPosterNumber_(dir, headers);
+    if (!posterNo) posterNo = nextPosterNumber_(dir, headers, rowLetterFor_(role, researchProgram, get('disease_area')));
   } else {
-    posterNo = nextPosterNumber_(dir, headers);
+    posterNo = nextPosterNumber_(dir, headers, rowLetterFor_(role, researchProgram, get('disease_area')));
   }
 
   const id = existingRow
@@ -159,12 +159,72 @@ function findRowByEmail_(sh, emailCol, email) {
 }
 
 // Next sequential poster number, based on how many are already assigned.
-function nextPosterNumber_(dir, headers) {
+// Next sequential number WITHIN a given section letter, e.g. the 3rd poster
+// assigned to Section A becomes "A-03". This is what makes thematic clustering
+// possible live, at registration time, rather than only after the fact:
+// the row is decided by a fixed policy (PROGRAM_TO_ROW below), so each new
+// registrant can be slotted into the right physical location immediately.
+function nextPosterNumber_(dir, headers, rowLetter) {
   const col = headers.indexOf('poster_number') + 1;
-  const used = dir.getLastRow() > 1
+  const existing = dir.getLastRow() > 1
     ? dir.getRange(2, col, dir.getLastRow() - 1, 1).getValues().flat().filter(String)
     : [];
-  return 'P-' + ('000' + (used.length + 1)).slice(-3);
+  const inThisRow = existing.filter(p => p.split('-')[0] === rowLetter);
+  return rowLetter + '-' + ('000' + (inThisRow.length + 1)).slice(-2);
+}
+
+// ── POSTER SECTION ASSIGNMENT (thematic clustering policy) ──
+// "Section" = one side of the quad, not a literal physical row. Each side
+// holds several large boards (perpendicular to the quad, posters on both
+// faces); board count/depth is decided on-site once final per-section
+// headcount is known (doubled up if a section fills up). This assignment
+// only needs to get someone to the right SIDE — exact board is a day-of,
+// capacity-driven call for staff, not something to pre-compute here.
+// Confirmed layout: Shared Resources on the KAM side (downhill, top of the
+// stairs); everything else clustered thematically by Research Program.
+// MUST stay in sync with config.js → poster_rows / poster_sides.
+//
+//   Section S — Shared Resources                    — KAM side (downhill, top of stairs)
+//   Section A — Tumor Immunology & Microenvironment — Library side (north)
+//   Section B — Epigenetic Regulation in Cancer     — Library side (north)
+//   Section C — Translational and Clinical Sciences — HMR side
+//   Section D — Cancer Epidemiology                 — MCH side (uphill)
+//   Section E — Cancer Control Research              — MCH side (uphill)
+//
+// Shared Resources / Core is NOT a research program — every faculty member,
+// including Core/Shared Resource directors, has a genuine Research Program
+// answer (their scientific home). Instead, "Shared Resource/Core" is an
+// option on Disease / focus area (a checkbox field), checked FIRST — if
+// present, it wins and sends the poster to Section S regardless of program.
+//
+// ACTION NEEDED: the live Google Form's "Disease / focus area" checkbox list
+// doesn't have a "Shared Resource/Core" option yet. Add one with EXACTLY
+// that text so SHARED_RESOURCE_MARKER below matches it, or Shared Resource
+// presenters will fall through to their program's regular section instead.
+//
+// NOT YET DECIDED — left unmapped on purpose, not guessed:
+//   Community Advisory Board / survivor-advocate posters, and CRTEC /
+//   education-and-training posters. They currently get no section letter
+//   (posterNo will be blank) until a side is chosen for them.
+const SHARED_RESOURCE_MARKER = 'Shared Resource/Core';
+const PROGRAM_TO_ROW = {
+  'Tumor Microenvironment & Immunology (TIME)': 'A',
+  'Tumor Immunology & Microenvironment (TIME)': 'A',
+  'Epigenetic Regulation in Cancer (ERC)': 'B',
+  'Translational and Clinical Sciences (TACS)': 'C',
+  'Cancer Epidemiology (CE)': 'D',
+  'Cancer Control Research (CCR)': 'E'
+};
+
+// diseaseArea comes through as a comma-joined string when it's a checkbox
+// question (e.g. "Breast, Shared Resource/Core") — split and check for an
+// exact match on any one selection, not a substring match on the whole
+// string, so "Shared Resource/Core" doesn't accidentally match something
+// else that happens to contain similar words.
+function rowLetterFor_(role, researchProgram, diseaseArea) {
+  const picks = (diseaseArea || '').split(',').map(s => s.trim());
+  if (picks.includes(SHARED_RESOURCE_MARKER)) return 'S';
+  return PROGRAM_TO_ROW[researchProgram] || ''; // '' = not yet assigned a side (see note above)
 }
 
 // ── 2. App posts events → tracking tabs ──

@@ -18,7 +18,7 @@ const PROGRAMS = [
   "Epigenetic Regulation in Cancer",
   "Cancer Health Disparities",
   "Community Outreach & Engagement",
-  "Translational & Clinical Sciences",
+  "Translational and Clinical Sciences",
   "Cancer Biology & Genomics",
   "Cancer Prevention & Control",
   "Computational & Data Sciences",
@@ -235,7 +235,7 @@ const PROGRAMS_BY_ROLE = {
     "Cancer Biology & Genomics",
     "Tumor Immunology & Microenvironment",
     "Epigenetic Regulation in Cancer",
-    "Translational & Clinical Sciences",
+    "Translational and Clinical Sciences",
     "Cancer Prevention & Control",
     "Cancer Epidemiology",
     "Cancer Health Disparities",
@@ -265,7 +265,7 @@ const PROGRAMS_BY_ROLE = {
     // NCCC research programs (from image 3 in prior conversation)
     "Tumor Immunology & Microenvironment Program",
     "Epigenetic Regulation in Cancer Program",
-    "Translational & Clinical Sciences Program",
+    "Translational and Clinical Sciences Program",
     "Cancer Epidemiology Program",
     "Cancer Control Research Program",
     // Keck departments most likely at CRD
@@ -848,20 +848,36 @@ function showProfile(participant) {
        </div>`
     : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`;
 
-  // Connection track — only shown when a track applies to this pair
+  // Connection track — rendered as ONE connected two-step card (log, then
+  // request), not separate floating pieces, so the flow reads as a single
+  // action instead of four disconnected elements.
   let coffeeBtn = '';
   if (track) {
-    const tag = `<div class="track-banner"><span class="track-icon">${track.icon}</span><div><span class="track-name">${track.name}</span><span class="track-aim">${track.aim}</span></div></div><p class="track-purpose">${track.purpose}</p>`;
-    if (talked) {
-      coffeeBtn = selected
-        ? `<div class="log-done-row">
-            <button class="btn-talked-done coffee-done" disabled>${track.icon} Requested · ${track.name}</button>
-            <button class="btn-undo-log" onclick="toggleCoffee('${participant.id}')" title="Remove">✕ Undo</button>
-           </div>`
-        : `${tag}<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${track.icon} ${track.cta}</button>`;
-    } else {
-      coffeeBtn = `${tag}<p class="coffee-hint">Log this conversation first to request the ${track.name}.</p>`;
-    }
+    const step2State = !talked ? 'locked' : (selected ? 'done' : 'active');
+    const step2Action = !talked
+      ? `<p class="step-locked-hint">Unlocks after you log this conversation</p>`
+      : selected
+        ? `<div class="log-done-row"><button class="btn-talked-done coffee-done" disabled>${track.icon} Requested</button><button class="btn-undo-log" onclick="toggleCoffee('${participant.id}')" title="Remove">✕ Undo</button></div>`
+        : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${track.icon} ${track.cta}</button>`;
+
+    coffeeBtn = `
+      <div class="connect-steps">
+        <div class="connect-step ${talked ? 'done' : 'active'}">
+          <span class="step-num">${talked ? '✓' : '1'}</span>
+          <div class="step-body">
+            <div class="step-title">Log this conversation</div>
+            ${talked ? '' : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`}
+          </div>
+        </div>
+        <div class="connect-step ${step2State}">
+          <span class="step-num">${selected ? '✓' : '2'}</span>
+          <div class="step-body">
+            <div class="step-title">${track.icon} Request ${track.name}</div>
+            <div class="step-desc">${track.purpose}</div>
+            ${step2Action}
+          </div>
+        </div>
+      </div>`;
   }
 
   // LinkedIn — shown if URL exists
@@ -877,17 +893,19 @@ function showProfile(participant) {
        </div>`
     : '';
 
-  // Where to find this poster on Pappas Quad — the row letter is the prefix
-  // before the dash (e.g. "A-01" → Row A). CONFIG.poster_rows optionally maps
-  // each letter to a plain-language location description; falls back to a
-  // generic pointer toward the check-in desk / row signage if not yet set.
+  // Where to find this poster on Pappas Quad — the letter prefix (e.g.
+  // "A-01" → Section A) identifies which SIDE of the quad, not a literal
+  // physical row. Each side holds several large boards, perpendicular to
+  // the quad, posters on both faces — exact board number is set on-site
+  // (staff decide board count/depth once final per-section headcount is
+  // known), so the app promises the side confidently and the board loosely.
   let posterLocation = '';
   if (participant.poster_number) {
-    const rowLetter = participant.poster_number.split('-')[0];
-    const rowInfo = (CONFIG.poster_rows && CONFIG.poster_rows[rowLetter]) || '';
+    const sectionLetter = participant.poster_number.split('-')[0];
+    const sectionInfo = (CONFIG.poster_rows && CONFIG.poster_rows[sectionLetter]) || '';
     posterLocation = `<div class="poster-location">
-        <span class="poster-location-row">Row ${rowLetter}</span>
-        <span class="poster-location-desc">${rowInfo || 'Row signage is posted on Pappas Quad — ask at check-in if you need help finding it.'}</span>
+        <span class="poster-location-row">Section ${sectionLetter}</span>
+        <span class="poster-location-desc">${sectionInfo || 'Section signage is posted on Pappas Quad — ask at check-in if you need help finding it.'}${sectionInfo ? ' · board number posted on-site' : ''}</span>
       </div>`;
   }
 
@@ -915,7 +933,7 @@ function showProfile(participant) {
         ${participant.clinical_input ? '<span class="clinical-badge">Open to clinical input</span>' : ''}
       </div>
       <div class="profile-actions">
-        ${logBtn}
+        ${track ? '' : logBtn}
         ${coffeeBtn}
         ${linkedinBtn}
         ${emailField}

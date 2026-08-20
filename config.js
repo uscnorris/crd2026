@@ -92,23 +92,56 @@ const CONFIG = {
   // Update once CME/CE is confirmed with the Keck CME office.
   ce_note: "We are pursuing continuing education / CME credit for the day through the Keck School of Medicine CME office. Details and how to claim credit will be posted here and shared with registrants once confirmed.",
 
-  // DISEASE AREAS (filter options)
-  // POSTER ROW LOCATIONS — optional. Maps a poster's row letter (the letter
-  // before the dash in its number, e.g. "A-01" → "A") to a plain-language
-  // description of where that row physically sits on Pappas Quad. Shown on
-  // each presenter's profile so people can actually find the poster.
-  // PLACEHOLDER — fill in with the real layout once it's set; until then the
-  // app shows a generic "ask at check-in" fallback instead of a wrong answer.
+  // POSTER LOCATIONS ON PAPPAS QUAD — confirmed policy
+  // Shared Resources on the side closest to KAM (downhill, top of stairs).
+  // Everything else is thematic clusters by research program.
+  //
+  // Terminology note: a "section" is one SIDE of the quad, not a literal
+  // physical row of posters. Each side holds several large boards
+  // (perpendicular to the quad, posters mounted on both faces) — exact board
+  // count and whether boards are doubled up is a day-of, capacity-driven
+  // call for staff once final per-section headcount is known. The app and
+  // Code.gs only ever promise the correct SIDE, never a specific board.
+  //
+  // Section letter is assigned automatically at registration by Code.gs.
+  // Everyone (including Core/Shared Resource directors, who are faculty with
+  // a real research program) has a genuine Research Program answer — that's
+  // their scientific home. Shared Resources is instead flagged via the
+  // "Shared Resource/Core" option on Disease / focus area (a checkbox field),
+  // which is checked FIRST and overrides the program-based section. See
+  // rowLetterFor_ in Code.gs, which must stay in sync with this map.
+  //
+  // NOT YET PLACED — needs a decision, not guessed here:
+  //   - Community Advisory Board / survivor-advocate posters (MCH is uphill;
+  //     worth thinking about accessibility before assigning them there)
+  //   - CRTEC / education-and-training posters
+  // NOTE — the live Google Form's Disease / focus area checkbox list does
+  // not yet have a "Shared Resource/Core" option; add one with EXACTLY that
+  // text so Code.gs can detect it (see SHARED_RESOURCE_MARKER in Code.gs).
+  poster_sides: [
+    { id: "kam",     name: "KAM side",     desc: "Downhill, top of the stairs — Shared Resources" },
+    { id: "library", name: "Library side", desc: "North side — Norris Medical Library" },
+    { id: "hmr",     name: "HMR side",     desc: "Hoffman Medical Research Building" },
+    { id: "mch",     name: "MCH side",     desc: "Uphill — McKibben Hall" }
+  ],
+  // poster_rows: keys are the section LETTER (the prefix before the dash in
+  // a poster number, e.g. "A-01" → "A"). Internal property name stays
+  // "poster_rows" for backward compatibility; user-facing copy says "Section".
   poster_rows: {
-    // "A": "Near the fountain, closest to Mayer Auditorium entrance",
-    // "B": "Center of the quad, under the main tent",
-    // "C": "East side, near the registration desk",
+    "S": "KAM side — Shared Resources / Core Facilities",
+    "A": "Library side — Tumor Immunology & Microenvironment (TIME)",
+    "B": "Library side — Epigenetic Regulation in Cancer (ERC)",
+    "C": "HMR side — Translational and Clinical Sciences (TACS)",
+    "D": "MCH side, uphill — Cancer Epidemiology (CE)",
+    "E": "MCH side, uphill — Cancer Control Research (CCR)"
   },
 
+  // DISEASE AREAS (filter options)
   disease_areas: [
     "Breast", "GI/Colorectal", "Genitourinary", "Head & neck",
     "Hepatobiliary and pancreas", "Leukemia", "Melanoma/Skin", "Neuro-oncology",
-    "Pediatric", "Thoracic/Lung", "Cancer care delivery/Implementation science", "Other"
+    "Pediatric", "Thoracic/Lung", "Cancer care delivery/Implementation science",
+    "Shared Resource/Core", "Other"
   ],
 
   // RESEARCH PROGRAMS (filter + profile cards) — CCSG research programs only.
@@ -116,9 +149,9 @@ const CONFIG = {
   // research programs — anyone affiliated with them (almost always Staff/Other)
   // goes under Department / Lab instead, and won't appear in this filter.
   research_programs: [
-    "Tumor Microenvironment (TIME)",
-    "Genomic & Epigenomic Regulation (ERC)",
-    "Translational & Clinical Sciences (TACS)",
+    "Tumor Immunology & Microenvironment (TIME)",
+    "Epigenetic Regulation in Cancer (ERC)",
+    "Translational and Clinical Sciences (TACS)",
     "Cancer Epidemiology (CE)",
     "Cancer Control Research (CCR)"
   ]
