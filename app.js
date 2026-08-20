@@ -71,6 +71,7 @@ function track(payload) {
 }
 
 let activeFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
+let coffeeQuickFilterOn = false;
 let pendingFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
 
 // ── INIT ──────────────────────────────────────
@@ -505,7 +506,7 @@ function showView(view) {
   document.getElementById(view + '-screen').classList.add('active');
   const navBtn = document.getElementById('nav-' + view);
   if (navBtn) navBtn.classList.add('active');
-  if (view === 'directory') renderDirectory();
+  if (view === 'directory') { renderCoffeeQuickFilter(); renderDirectory(); }
   if (view === 'mylist') renderMyList();
   window.scrollTo(0, 0);
   if (view === 'directory') history.replaceState(null, '', window.location.pathname);
@@ -619,8 +620,71 @@ function getFilteredParticipants() {
     if (activeFilters.program.size > 0 && !activeFilters.program.has(p.research_program)) return false;
     if (activeFilters.disease.size > 0 && !activeFilters.disease.has(p.disease_area)) return false;
     if (activeFilters.clinical.size > 0 && activeFilters.clinical.has('true') && !p.clinical_input) return false;
+    if (coffeeQuickFilterOn) {
+      const track = trackForPair(user ? user.role : '', user ? user.program : '', p);
+      if (!track) return false;
+    }
     return true;
   });
+}
+
+// Renders the "Show my Coffee Consult matches" chip above the search bar.
+// Label and eligibility are computed from the CURRENT viewer's role against
+// the live connection_tracks config, so it stays correct even if the track
+// definition changes — no hardcoded role names here.
+function renderCoffeeQuickFilter() {
+  const wrap = document.getElementById('coffee-quickfilter-wrap');
+  if (!wrap) return;
+
+  if (!user || !user.role) {
+    wrap.innerHTML = '';
+    coffeeQuickFilterOn = false;
+    return;
+  }
+
+  const track = (CONFIG.connection_tracks || [])[0]; // Coffee Consult is the sole track
+  if (!track) { wrap.innerHTML = ''; return; }
+
+  const viewer = { role: user.role, program: user.program };
+  const onA = personMatchesSide(viewer, track.sideA);
+  const onB = personMatchesSide(viewer, track.sideB);
+
+  if (!onA && !onB) {
+    // This person's role isn't part of Coffee Consult at all — nothing to show.
+    wrap.innerHTML = '';
+    coffeeQuickFilterOn = false;
+    return;
+  }
+
+  // Show the OTHER side's roles in plain language, not the raw role strings.
+  const otherRoles = onA ? track.sideB.roles : track.sideA.roles;
+  const label = describeRoleGroup(otherRoles);
+
+  wrap.innerHTML = `
+    <button class="coffee-quickfilter ${coffeeQuickFilterOn ? 'on' : ''}" id="coffee-quickfilter-btn" onclick="toggleCoffeeQuickFilter()">
+      <span class="cqf-icon">${track.icon}</span>
+      <span class="cqf-text">${coffeeQuickFilterOn ? 'Showing' : 'Show'} ${label}</span>
+      ${coffeeQuickFilterOn ? '<span class="cqf-clear">✕</span>' : ''}
+    </button>`;
+}
+
+// Turns a list of role strings into a short, readable phrase for the chip.
+function describeRoleGroup(roles) {
+  const short = {
+    'PhD Student': 'PhD students', 'Postdoctoral Fellow': 'postdocs',
+    'Clinical Fellow / Resident': 'clinical fellows & residents',
+    "Master's Student": "master's students", 'Undergraduate Student': 'undergrads',
+    'Faculty (Early Stage Investigator)': 'early-stage faculty'
+  };
+  const names = roles.map(r => short[r] || r);
+  if (names.length === 1) return names[0];
+  return names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1];
+}
+
+function toggleCoffeeQuickFilter() {
+  coffeeQuickFilterOn = !coffeeQuickFilterOn;
+  renderCoffeeQuickFilter();
+  renderDirectory();
 }
 
 function renderDirectory() {

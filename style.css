@@ -644,3 +644,17 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 .p-wide { max-width: none !important; }
 
 .fact-note { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--cardinal); }
+
+/* Coffee Consult quick-filter chip — the fast path to "who can I match with" */
+#coffee-quickfilter-wrap { margin-bottom: 10px; }
+.coffee-quickfilter {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  background: var(--cardinal-light); border: 1.5px solid #E8C0C0; border-radius: var(--radius-sm);
+  padding: 12px 14px; font-size: 14px; font-weight: 700; color: var(--cardinal-dark);
+  cursor: pointer; text-align: left;
+}
+.coffee-quickfilter .cqf-icon { font-size: 18px; }
+.coffee-quickfilter .cqf-text { flex: 1; }
+.coffee-quickfilter .cqf-clear { font-size: 13px; opacity: .7; }
+.coffee-quickfilter.on { background: var(--cardinal); color: #fff; border-color: var(--cardinal); }
+.coffee-quickfilter.on .cqf-text { color: #fff; }
