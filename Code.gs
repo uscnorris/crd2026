@@ -13,27 +13,50 @@
 // ── 1. Map YOUR Google Form question titles → directory fields ──
 // Edit the RIGHT-hand strings to match your form's exact question text.
 const FORM_MAP = {
-  name:             'Name',
-  email:            'Email',
-  role:             'Role',
-  research_program: 'Research program',
-  department:       'Department / lab',
-  year:             'Year (if applicable)',
-  presenting:       'Are you presenting a poster?',
-  title:            'Poster title',
-  summary:          'Poster summary (1–2 sentences)',
-  disease_area:     'Disease / focus area',
-  clinical_input:   'Open to clinical input?',
-  linkedin_url:     'LinkedIn URL',
-  consent:          'May we list you in the directory?',
-  // ── new this round ──
-  mentoring:        'Faculty: are you open to Mentor Match consults?',
-  bio:              'Short bio (for connection matching)',
-  attend_mode:      'Will you attend in person or virtually?',
-  accessibility:    'Do you need any accessibility accommodations?',
-  dietary:          'Any dietary restrictions?'
+  name:              'Name',
+  email:             'Email',
+  role:              'Role',
+  research_program:  'Research Program',
+  department:        'Department / Lab',
+  presenting:        'Are you presenting a poster?',
+  attend_mode:       'Will you attend in person or virtually?',
+  accessibility:     'Do you need any accessibility accommodations?',
+  dietary:           'If joining for lunch, do you have any dietary restrictions?',
+
+  // Section 2 — Trainee / Early-Stage Investigator only (see TRAINEE_ESI_ROLES)
+  year:              'Year (at career/academic stage as a trainee or early stage investigator)',
+  pi_or_mentor:      'PI or Mentor name',
+  other_mentor:      'Other mentor name (such as postdoc, PhD student, or other faculty)',
+  coffee_optin:      'Would you like to participate in our Coffee Consult matching opportunity?',
+  bio:               'Short bio (for connection matching)',
+
+  // Section 3 — Poster submission
+  title:             'Poster Title',
+  summary:           'Poster Summary (1-2 sentences)',
+  disease_area:      'Disease / focus area',      // checkbox (multi-select) — comes through comma-joined
+  linkedin_url:      'LinkedIn URL',
+  consent:           'May we list you in the CRTEC/Cancer Research Day directory?'
 };
-// Send a confirmation email on registration? (uses the "Email" answer)
+
+// The ONLY roles that see Section 2 and get asked the Coffee Consult
+// opt-in question on the form.
+const TRAINEE_ESI_ROLES = [
+  'Faculty (Early Stage Investigator)', 'Postdoctoral Fellow', 'Clinical Fellow/Resident',
+  'PhD Student', "Master's Student", 'Undergraduate Student'
+];
+
+// Coffee Consult (the single connection track as of the 2026 pilot) is
+// narrower than TRAINEE_ESI_ROLES: it's specifically PhD/postdoctoral
+// RESEARCH trainees matched with clinical trainees. Faculty (ESI), Master's,
+// and Undergraduate Students still see the Section 2 questions (for Year /
+// PI-mentor capture) but are never Coffee-Consult eligible, even if they
+// answer "Yes" to the opt-in question — this must match config.js's
+// connection_tracks[0].sideA / sideB exactly.
+const COFFEE_CONSULT_ROLES = ['PhD Student', 'Postdoctoral Fellow', 'Clinical Fellow/Resident'];
+
+// Roles that never have a Research Program (their affiliation, if any, goes
+// in Department / Lab instead — e.g. "COE" or "CRTEC").
+const NO_PROGRAM_ROLES = ['Staff / Other', 'Community Member'];
 const SEND_CONFIRMATION = false;
 
 // ── Tab names + headers (setup() creates these) ──
@@ -62,36 +85,86 @@ function onFormSubmit(e) {
   const v = e.namedValues || {};
   const get = key => { const q = FORM_MAP[key]; return q && v[q] ? String(v[q][0]).trim() : ''; };
 
-  if (FORM_MAP.consent && get('consent') && get('consent') !== 'Yes') return; // opt-in only
-  if (!get('name')) return;
+  const email = get('email').toLowerCase();
+  if (!email || !get('name')) return;
 
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const dir = ss.getSheetByName('Directory') || ss.insertSheet('Directory');
   if (dir.getLastRow() === 0) dir.appendRow(TABS.Directory);
 
-  const rowNum = dir.getLastRow();               // header is row 1
-  const id = 'p-' + ('000' + rowNum).slice(-3);
+  // Find an existing row for this email (case-insensitive), if any.
+  const headers = TABS.Directory;
+  const emailCol = headers.indexOf('email');
+  const existingRow = findRowByEmail_(dir, emailCol, email);
 
-  // Sequential poster number only for presenters
+  const consented = !!get('consent');
   const presenting = /^y/i.test(get('presenting'));
-  let posterNo = '';
-  if (presenting) {
-    const col = dir.getRange(2, 6, Math.max(dir.getLastRow() - 1, 1), 1).getValues().flat().filter(String);
-    posterNo = 'P-' + ('000' + (col.length + 1)).slice(-3);
+  const shouldBeListed = consented && presenting;   // directory = posters/speakers only, and opted in
+
+  if (!shouldBeListed) {
+    if (existingRow) dir.deleteRow(existingRow);   // opted out or no longer presenting → remove stale entry
+    return;
   }
 
-  dir.appendRow([
-    id, get('name'), get('role'), get('year'), get('department'),
-    posterNo, get('title'), get('summary') || get('bio'), get('disease_area'), get('research_program'),
-    /^y/i.test(get('clinical_input')) ? 'TRUE' : 'FALSE',
-    (get('role') === 'Faculty') ? (/^y/i.test(get('mentoring')) ? 'TRUE' : 'FALSE') : '',
-    get('linkedin_url'), '', get('email')
-  ]);
+  const role = get('role');
+  const isCoffeeConsultRole = COFFEE_CONSULT_ROLES.includes(role);
+  const isNoProgramRole = NO_PROGRAM_ROLES.includes(role);
+  // Coffee Consult flag: only PhD/postdoctoral research trainees and clinical
+  // trainees (Clinical Fellow/Resident) can ever be matched — mirrors
+  // config.js connection_tracks[0]. Faculty (ESI), Master's, and Undergrad
+  // students may see the opt-in question on the form but it never sets this.
+  const mentoringFlag = isCoffeeConsultRole ? (/^y/i.test(get('coffee_optin')) ? 'TRUE' : 'FALSE') : '';
+  const researchProgram = isNoProgramRole ? '' : get('research_program');
+
+  // Reuse the existing poster number on an update; assign a fresh one only
+  // for a brand-new presenter, so re-submitting never renumbers posters.
+  let posterNo;
+  if (existingRow) {
+    posterNo = dir.getRange(existingRow, headers.indexOf('poster_number') + 1, 1, 1).getValue() || '';
+    if (!posterNo) posterNo = nextPosterNumber_(dir, headers);
+  } else {
+    posterNo = nextPosterNumber_(dir, headers);
+  }
+
+  const id = existingRow
+    ? dir.getRange(existingRow, headers.indexOf('id') + 1, 1, 1).getValue()
+    : 'p-' + ('000' + (dir.getLastRow())).slice(-3);
+
+  const row = [
+    id, get('name'), role, get('year'), get('department'),
+    posterNo, get('title'), get('summary') || get('bio'), get('disease_area'), researchProgram,
+    '', mentoringFlag, get('linkedin_url'), '', get('email')
+  ];
+
+  if (existingRow) {
+    dir.getRange(existingRow, 1, 1, row.length).setValues([row]);   // update in place
+  } else {
+    dir.appendRow(row);                                             // brand-new presenter
+  }
 
   if (SEND_CONFIRMATION && get('email')) {
     MailApp.sendEmail(get('email'), 'You\'re registered — Cancer Research Day 2026',
       'Thanks for registering for Cancer Research Day on Wednesday, October 14, 2026 (9 AM–3 PM, Mayer Auditorium & Pappas Quad). See you there!');
   }
+}
+
+// Returns the 1-indexed sheet row for a given email, or 0 if not found.
+function findRowByEmail_(sh, emailCol, email) {
+  if (sh.getLastRow() < 2) return 0;
+  const vals = sh.getRange(2, emailCol + 1, sh.getLastRow() - 1, 1).getValues();
+  for (let i = 0; i < vals.length; i++) {
+    if (String(vals[i][0]).trim().toLowerCase() === email) return i + 2;
+  }
+  return 0;
+}
+
+// Next sequential poster number, based on how many are already assigned.
+function nextPosterNumber_(dir, headers) {
+  const col = headers.indexOf('poster_number') + 1;
+  const used = dir.getLastRow() > 1
+    ? dir.getRange(2, col, dir.getLastRow() - 1, 1).getValues().flat().filter(String)
+    : [];
+  return 'P-' + ('000' + (used.length + 1)).slice(-3);
 }
 
 // ── 2. App posts events → tracking tabs ──
