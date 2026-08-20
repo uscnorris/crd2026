@@ -40,7 +40,7 @@
     <nav class="nav-links" id="nav-links">
       <a href="#why" onclick="return goToSection('why')">Why come</a>
       <a href="#agenda" onclick="return goToSection('agenda')">Agenda</a>
-      <a href="#directory" onclick="return goToSection('directory')">Directory</a>
+      <a href="#" onclick="openDirectory(); return false;">Directory</a>
       <a href="#posters" onclick="return goToSection('posters')">Posters</a>
       <a href="#trainees" onclick="return goToSection('trainees')">For trainees</a>
       <a href="#visit" onclick="return goToSection('visit')">Plan your visit</a>
@@ -63,7 +63,7 @@
         <span class="hero-date">Wednesday, October 14, 2026</span>
         <span class="hero-time">9 AM – 3 PM</span>
       </div>
-      <p class="hero-loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg><span>Mayer Auditorium, Keith Administration Building (KAM)<br>1975 Zonal Ave, Los Angeles, CA 90033<br>and Pappas Quad · <strong>In person &amp; virtual</strong></span></p>
+      <p class="hero-loc"><svg class="ico ico-sm"><use href="#i-pin"/></svg><span>Keith Administration Building (KAM), Mayer Auditorium<br>1975 Zonal Ave, Los Angeles, CA 90033<br>and Pappas Quad · <strong>In person &amp; virtual</strong></span></p>
       <div class="hero-cta">
         <button class="btn-solid btn-lg" onclick="registerNow()">Register / Submit a Poster</button>
         <a class="btn-outline btn-lg" href="#agenda" onclick="return goToSection('agenda')">See the agenda</a>
@@ -101,7 +101,7 @@
   <section class="band" id="directory">
     <div class="band-inner">
       <h2>Directory</h2>
-      <p>See who will be there, what they study, and who is open to a conversation. Browse ahead of time, or use it live during the poster session.</p>
+      <p class="p-wide">See who will be there, what they study, and who is open to a conversation. Browse ahead of time, or use it live during the poster session.</p>
       <div class="connect-callout">
         <div>
           <strong>Ready to browse?</strong>
@@ -129,7 +129,7 @@
         <div class="awards-lead">
           <span class="awards-prize">Three prizes of $100</span>
         </div>
-        <p class="sub-note" style="margin:10px 0 0">Trainees entering the competition should list their PI on the submission form. Judging is done by Cancer Center faculty, staff, and senior fellows, using one standard rubric across every program.</p>
+        <p class="p-wide sub-note" style="margin:10px 0 0">Trainees entering the competition should list their PI on the submission form. Judging is done by Cancer Center faculty, staff, and senior fellows, using one standard rubric across every program.</p>
         <h4>What judges look for</h4>
         <ul class="criteria">
           <li><strong>Scientific merit.</strong> The significance of the question and the soundness of the approach.</li>
@@ -180,7 +180,7 @@
           <span class="way-num">3</span>
           <div>
             <h3>Coffee Consult</h3>
-            <p>New for 2026. One conversation across the bench-to-bedside divide, arranged for you.</p>
+            <p class="p-wide">New for 2026. One conversation across the bench-to-bedside divide, arranged for you.</p>
           </div>
         </div>
         <div class="coffee-body">
@@ -216,7 +216,7 @@
         <div class="map-legend">
           <a class="map-legend-item" href="https://www.google.com/maps/search/?api=1&query=Keith+Administration+Building+Mayer+Auditorium+USC,+1975+Zonal+Ave,+Los+Angeles,+CA+90033" target="_blank" rel="noopener">
             <span class="map-legend-dot map-dot-a"></span>
-            <span><strong>Mayer Auditorium, Keith Administration Bldg (KAM)</strong><br>1975 Zonal Ave, Los Angeles, CA 90033 · morning talks &amp; featured session</span>
+            <span><strong>Keith Administration Building (KAM), Mayer Auditorium</strong><br>1975 Zonal Ave, Los Angeles, CA 90033 · morning talks &amp; featured session</span>
           </a>
           <a class="map-legend-item" href="https://www.google.com/maps/search/?api=1&query=Pappas+Quad+USC,+2003+Zonal+Ave,+Los+Angeles,+CA+90033" target="_blank" rel="noopener">
             <span class="map-legend-dot map-dot-b"></span>
@@ -227,7 +227,7 @@
             <span><strong>USC Norris Cancer Center</strong><br>1441 Eastlake Ave · main Cancer Center building</span>
           </a>
         </div>
-        <p class="map-note">On Zonal Ave, USC Health Sciences Campus. <a href="https://www.google.com/maps/dir/?api=1&destination=1975+Zonal+Ave,+Los+Angeles,+CA+90033" target="_blank" rel="noopener">Get directions to Mayer Auditorium →</a></p>
+        <p class="p-wide map-note">On Zonal Ave, USC Health Sciences Campus.<br><a href="https://www.google.com/maps/dir/?api=1&destination=1975+Zonal+Ave,+Los+Angeles,+CA+90033" target="_blank" rel="noopener">Get directions to Mayer Auditorium →</a></p>
       </div>
 
       <h3 class="sub-head">The essentials</h3>
@@ -288,7 +288,7 @@
       <div>
         <div class="footer-title">Cancer Research Day</div>
         Wednesday, October 14, 2026 · 9 AM – 3 PM<br>
-        Mayer Auditorium (KAM), 1975 Zonal Ave, Los Angeles, CA 90033<br>
+        Keith Administration Building (KAM) – Mayer Auditorium, 1975 Zonal Ave, Los Angeles, CA 90033<br>
         and Pappas Quad · In person &amp; virtual
       </div>
       <div>
@@ -307,9 +307,9 @@
   <div class="appbar">
     <button class="appbar-back" onclick="backToProgram()">← Back to program</button>
     <span class="appbar-title">Directory</span>
-    <span class="appbar-role" id="header-role-row" style="display:none">
-      <span class="header-role-chip" id="header-role-chip"></span>
-      <button class="header-role-switch" onclick="switchRole()">Not you?</button>
+    <span class="appbar-role" id="header-role-row">
+      <span class="header-role-chip" id="header-role-chip" style="display:none"></span>
+      <button class="header-role-switch" id="header-role-switch-btn" onclick="switchRole()">Who am I?</button>
     </span>
   </div>
 

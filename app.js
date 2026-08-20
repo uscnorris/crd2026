@@ -368,19 +368,28 @@ function showPostIdentity() {
   showView('directory');
 }
 
+// Always visible: shows "Name · Role" + "Not you?" when identified, or a
+// plain "Who am I?" button when not. This is the ONLY entry point back into
+// the identity screen once someone skips it, so it must never be hidden.
 function showRoleInHeader() {
-  const row = document.getElementById('header-role-row');
   const chip = document.getElementById('header-role-chip');
-  if (!row || !chip || !user) return;
-  chip.textContent = user.name + (user.role ? ' · ' + user.role : '');
-  row.style.display = 'flex';
+  const btn = document.getElementById('header-role-switch-btn');
+  if (!chip || !btn) return;
+  if (user) {
+    chip.textContent = user.name + (user.role ? ' · ' + user.role : '');
+    chip.style.display = 'inline';
+    btn.textContent = 'Not you?';
+  } else {
+    chip.style.display = 'none';
+    btn.textContent = 'Who am I?';
+  }
 }
 
 function switchRole() {
   // Clear user so identity screen shows again
   localStorage.removeItem('crd2026_user');
   user = null;
-  document.getElementById('header-role-row').style.display = 'none';
+  showRoleInHeader();
   document.getElementById('bottom-nav').style.display = 'none';
   document.getElementById('mylist-header-btn').style.display = 'none';
   // Pre-fill name if we remember it
@@ -418,6 +427,7 @@ function openDirectory() {
     document.getElementById('bottom-nav').style.display = 'flex';
     document.getElementById('nav-mylist').style.display = 'none';
     document.getElementById('mylist-header-btn').style.display = 'none';
+    showRoleInHeader();   // shows "Who am I?" so there's always a way to identify
   }
 }
 
@@ -435,6 +445,17 @@ function registerNow() {
   } else {
     alert("Registration opens soon. Subscribe to Next in Science to be notified — or check back here.");
     goToSection('newsletter');
+  }
+}
+
+// Opens the livestream if configured; otherwise a graceful "not live yet"
+// message. The link goes live the morning of the event (CONFIG.links.livestream).
+function joinLivestream() {
+  const url = CONFIG.links && CONFIG.links.livestream;
+  if (url && url.indexOf('PASTE') !== 0 && /^https?:/i.test(url)) {
+    window.open(url, '_blank');
+  } else {
+    alert("The livestream link goes live the morning of the event — check back here on Oct 14, or watch for an email with the link.");
   }
 }
 
@@ -957,7 +978,7 @@ function renderProgram() {
   if (agEl) {
     agEl.innerHTML = ag.map(s => `
       <div class="agenda-item ${s.tbd ? 'is-tbd' : ''}">
-        <div class="agenda-time">${s.time}</div>
+        <div class="agenda-time">${s.time}${s.loc ? `<div class="agenda-loc">${s.loc}</div>` : ''}</div>
         <div class="agenda-body">
           <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag">${s.tag}</span>` : ''}</div>
           <div class="agenda-desc">${s.desc || ''}</div>
@@ -969,7 +990,7 @@ function renderProgram() {
   if (facts) {
     facts.innerHTML = `
       <div class="fact"><div class="fact-big">4 × 4 ft</div><div class="fact-lbl">Maximum poster size</div></div>
-      <div class="fact"><div class="fact-big">3 × $100</div><div class="fact-lbl">Scientific award prizes</div></div>
+      <div class="fact"><div class="fact-big">3 × $100</div><div class="fact-lbl">Scientific award prizes<br><span class="fact-note">Trainees only</span></div></div>
       <div class="fact"><div class="fact-big">Oct 2</div><div class="fact-lbl">Submission deadline</div></div>`;
   }
 

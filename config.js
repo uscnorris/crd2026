@@ -74,7 +74,7 @@ const CONFIG = {
 
   // Practical info shown at the bottom of the Agenda view
   info: {
-    location: "Mayer Auditorium, Keith Administration Building (KAM), and Pappas Quad",
+    location: "Keith Administration Building (KAM) – Mayer Auditorium, and Pappas Quad",
     address: "1975 Zonal Ave, Los Angeles, CA 90033",
     wifi: "USC Guest",
     contact_email: "crtec@usc.edu",
