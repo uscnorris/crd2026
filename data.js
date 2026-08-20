@@ -19,9 +19,9 @@ const SAMPLE_DATA = [
     "research_program": "Tumor Microenvironment (TIME)",
     "clinical_input": true,
     "mentoring": "",
-    "linkedin_url": "",
+    "linkedin_url": "https://linkedin.com/in/sarahchen-example",
     "photo_url": "",
-    "email": ""
+    "email": "sarah.chen@usc.edu"
   },
   {
     "id": "time-02",
@@ -55,7 +55,7 @@ const SAMPLE_DATA = [
     "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": ""
+    "email": "elena.vasquez@med.usc.edu"
   },
   {
     "id": "time-04",
@@ -89,7 +89,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": ""
+    "email": "james.okonkwo@usc.edu"
   },
   {
     "id": "erc-02",
@@ -128,7 +128,7 @@ const SAMPLE_DATA = [
   {
     "id": "tacs-01",
     "name": "Dr. Alicia Reyes",
-    "role": "Clinical Fellow / Resident",
+    "role": "Clinical Fellow/Resident",
     "year": "Year 2",
     "department": "Medical Oncology Fellowship",
     "poster_number": "C-01",
@@ -138,14 +138,14 @@ const SAMPLE_DATA = [
     "research_program": "Translational & Clinical Sciences (TACS)",
     "clinical_input": true,
     "mentoring": "",
-    "linkedin_url": "",
+    "linkedin_url": "https://linkedin.com/in/aliciareyes-example",
     "photo_url": "",
-    "email": ""
+    "email": "alicia.reyes@med.usc.edu"
   },
   {
     "id": "tacs-02",
     "name": "David Park",
-    "role": "Clinical Fellow / Resident",
+    "role": "Clinical Fellow/Resident",
     "year": "Year 1",
     "department": "Hematology/Oncology Fellowship",
     "poster_number": "C-02",
@@ -179,7 +179,7 @@ const SAMPLE_DATA = [
   {
     "id": "tacs-04",
     "name": "Dr. Thomas Wright",
-    "role": "Clinical Fellow / Resident",
+    "role": "Clinical Fellow/Resident",
     "year": "Year 3",
     "department": "Surgical Oncology",
     "poster_number": "C-04",
@@ -208,7 +208,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": ""
+    "email": "grace.liu@usc.edu"
   },
   {
     "id": "ce-02",
@@ -257,9 +257,9 @@ const SAMPLE_DATA = [
     "research_program": "Cancer Control Research (CCR)",
     "clinical_input": false,
     "mentoring": "TRUE",
-    "linkedin_url": "",
+    "linkedin_url": "https://linkedin.com/in/lourdesibarra-example",
     "photo_url": "",
-    "email": ""
+    "email": "lourdes.ibarra@usc.edu"
   },
   {
     "id": "ccr-02",

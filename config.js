@@ -54,7 +54,7 @@ const CONFIG = {
       // Pilot program for 2026; see the "For trainees" section of the site.
       cta: "Add to Coffee Consult",
       sideA: { roles: ["PhD Student", "Postdoctoral Fellow"], programMatch: null },
-      sideB: { roles: ["Clinical Fellow / Resident"], programMatch: null }
+      sideB: { roles: ["Clinical Fellow/Resident"], programMatch: null }
     }
   ],
 
@@ -93,6 +93,18 @@ const CONFIG = {
   ce_note: "We are pursuing continuing education / CME credit for the day through the Keck School of Medicine CME office. Details and how to claim credit will be posted here and shared with registrants once confirmed.",
 
   // DISEASE AREAS (filter options)
+  // POSTER ROW LOCATIONS — optional. Maps a poster's row letter (the letter
+  // before the dash in its number, e.g. "A-01" → "A") to a plain-language
+  // description of where that row physically sits on Pappas Quad. Shown on
+  // each presenter's profile so people can actually find the poster.
+  // PLACEHOLDER — fill in with the real layout once it's set; until then the
+  // app shows a generic "ask at check-in" fallback instead of a wrong answer.
+  poster_rows: {
+    // "A": "Near the fountain, closest to Mayer Auditorium entrance",
+    // "B": "Center of the quad, under the main tent",
+    // "C": "East side, near the registration desk",
+  },
+
   disease_areas: [
     "Breast", "GI/Colorectal", "Genitourinary", "Head & neck",
     "Hepatobiliary and pancreas", "Leukemia", "Melanoma/Skin", "Neuro-oncology",

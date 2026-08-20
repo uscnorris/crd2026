@@ -7,7 +7,7 @@ const ROLES = [
   "PhD Student",
   "Master's Student",
   "Postdoctoral Fellow",
-  "Clinical Fellow / Resident",
+  "Clinical Fellow/Resident",
   "Faculty",
   "Community Member",
   "Staff / Other"
@@ -125,6 +125,8 @@ function checkForProfileDeepLink() {
 
 // ── DATA LOADING ──────────────────────────────
 
+let usingSampleData = false;
+
 async function loadData() {
   if (!CONFIG.use_sample_data && CONFIG.sheet_url && CONFIG.sheet_url !== 'PASTE_YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
     try {
@@ -134,17 +136,21 @@ async function loadData() {
       const parsed = parseCSV(csv);
       if (parsed.length === 0) throw new Error('CSV parsed 0 rows — check column headers match exactly');
       allParticipants = parsed;
+      usingSampleData = false;
       console.log('Sheet loaded:', allParticipants.length, 'participants');
     } catch(e) {
       console.error('Sheet load failed:', e.message);
       console.warn('Falling back to sample data. Common causes:\n' +
         '1. URL is /export?format=csv — use /pub?gid=...&single=true&output=csv instead\n' +
         '2. Sheet is not published (File → Share → Publish to web)\n' +
-        '3. Column headers in row 1 do not match expected names');
+        '3. Column headers in row 1 do not match expected names\n' +
+        '4. No real rows yet — the Directory tab only lists poster presenters, so it can be genuinely empty this early');
       allParticipants = SAMPLE_DATA;
+      usingSampleData = true;
     }
   } else {
     allParticipants = SAMPLE_DATA;
+    usingSampleData = true;
   }
   decideStartView();
 }
@@ -236,7 +242,7 @@ const PROGRAMS_BY_ROLE = {
     "Computational & Data Sciences",
     "Other"
   ],
-  "Clinical Fellow / Resident": [
+  "Clinical Fellow/Resident": [
     // Oncology-adjacent fellowships most likely at Cancer Research Day
     // sourced from keck.usc.edu/residencies-and-fellowships
     "Medical Oncology Fellowship",
@@ -291,7 +297,7 @@ function onRoleChange() {
     programSelect.innerHTML = '<option value="" selected disabled>Select your program</option>' +
       options.map(o => `<option value="${o}">${o}</option>`).join('');
     if (role === 'Faculty') programLabel.textContent = 'Research Program / Department';
-    else if (role === 'Clinical Fellow / Resident') programLabel.textContent = 'Fellowship / Residency Program';
+    else if (role === 'Clinical Fellow/Resident') programLabel.textContent = 'Fellowship / Residency Program';
     else programLabel.textContent = 'Program';
     programRow.style.display = 'block';
     programOtherRow.style.display = 'none';
@@ -340,11 +346,11 @@ function showPostIdentity() {
   nav.removeAttribute('style');
   nav.style.display = 'flex';
 
-  // My List is visible to EVERYONE — tracks conversations and connections
-  const mlBtn = document.getElementById('mylist-header-btn');
-  mlBtn.removeAttribute('style');
-  mlBtn.style.display = 'flex';
-  mlBtn.style.visibility = 'visible';
+  // NOTE: the old floating #mylist-header-btn pill was removed from view —
+  // it duplicated the bottom nav's "My List" tab (which has the same count
+  // badge) and had no fixed positioning, so it would land wherever normal
+  // page flow put it and overlap other content. The bottom nav tab is the
+  // one true "My List" entry point now.
 
   const mlNav = document.getElementById('nav-mylist');
   if (mlNav) {
@@ -498,7 +504,39 @@ function wireRegistrationLinks() {
   if (CONFIG.ce_note) { const c = document.getElementById('ce-note'); if (c) c.textContent = CONFIG.ce_note; }
 }
 
-// ── NAVIGATION ────────────────────────────────
+// ── IN-APP AGENDA ──────────────────────────────
+// Same data as the landing page's agenda, but rendered inside app-mode so
+// "what's happening / where do I go" is always one tap away, never a trip
+// back out to the full marketing site.
+
+function renderAppAgenda() {
+  const wrap = document.getElementById('app-agenda-content');
+  if (!wrap) return;
+  const ag = CONFIG.agenda || [];
+  const info = CONFIG.info || {};
+
+  wrap.innerHTML = `
+    <div class="app-agenda-header">
+      <h2>${CONFIG.event_name || 'Agenda'}</h2>
+      <div class="app-agenda-when">${CONFIG.event_date || ''} · ${CONFIG.event_time || ''}</div>
+    </div>
+    <div class="agenda-print-list">
+      ${ag.map(s => `
+        <div class="agenda-item ${s.tbd ? 'is-tbd' : ''}">
+          <div class="agenda-time">${s.time}${s.loc ? `<div class="agenda-loc">${s.loc}</div>` : ''}</div>
+          <div class="agenda-body">
+            <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag">${s.tag}</span>` : ''}</div>
+            <div class="agenda-desc">${s.desc || ''}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="app-agenda-info">
+      ${info.wifi ? `<div class="info-row"><span class="info-k">Wi-Fi</span><span class="info-v">${info.wifi}</span></div>` : ''}
+      ${info.parking ? `<div class="info-row"><span class="info-k">Parking</span><span class="info-v">${info.parking}</span></div>` : ''}
+      ${info.contact_email ? `<div class="info-row"><span class="info-k">Questions</span><span class="info-v"><a href="mailto:${info.contact_email}">${info.contact_email}</a></span></div>` : ''}
+    </div>
+    <button class="btn-primary app-agenda-cta" onclick="showView('directory')">Open the directory →</button>`;
+}
 
 function showView(view) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -508,6 +546,7 @@ function showView(view) {
   if (navBtn) navBtn.classList.add('active');
   if (view === 'directory') { renderCoffeeQuickFilter(); renderDirectory(); }
   if (view === 'mylist') renderMyList();
+  if (view === 'agenda') renderAppAgenda();
   window.scrollTo(0, 0);
   if (view === 'directory') history.replaceState(null, '', window.location.pathname);
 }
@@ -636,14 +675,23 @@ function renderCoffeeQuickFilter() {
   const wrap = document.getElementById('coffee-quickfilter-wrap');
   if (!wrap) return;
 
+  const banner = usingSampleData
+    ? `<div class="sample-data-banner">⚠️ Showing sample/preview data, not real registrations — see console for why, or check config.js.</div>`
+    : '';
+
   if (!user || !user.role) {
-    wrap.innerHTML = '';
+    // Not identified yet: no way to compute "the other side" — but say so,
+    // so the feature is discoverable instead of just silently absent.
+    const track = (CONFIG.connection_tracks || [])[0];
+    wrap.innerHTML = banner + (track
+      ? `<button class="coffee-quickfilter-hint" onclick="switchRole()">${track.icon} Tap to identify yourself and see your Coffee Consult matches →</button>`
+      : '');
     coffeeQuickFilterOn = false;
     return;
   }
 
   const track = (CONFIG.connection_tracks || [])[0]; // Coffee Consult is the sole track
-  if (!track) { wrap.innerHTML = ''; return; }
+  if (!track) { wrap.innerHTML = banner; return; }
 
   const viewer = { role: user.role, program: user.program };
   const onA = personMatchesSide(viewer, track.sideA);
@@ -651,7 +699,7 @@ function renderCoffeeQuickFilter() {
 
   if (!onA && !onB) {
     // This person's role isn't part of Coffee Consult at all — nothing to show.
-    wrap.innerHTML = '';
+    wrap.innerHTML = banner;
     coffeeQuickFilterOn = false;
     return;
   }
@@ -660,11 +708,12 @@ function renderCoffeeQuickFilter() {
   const otherRoles = onA ? track.sideB.roles : track.sideA.roles;
   const label = describeRoleGroup(otherRoles);
 
-  wrap.innerHTML = `
+  wrap.innerHTML = banner + `
     <button class="coffee-quickfilter ${coffeeQuickFilterOn ? 'on' : ''}" id="coffee-quickfilter-btn" onclick="toggleCoffeeQuickFilter()">
+      <span class="cqf-check">${coffeeQuickFilterOn ? '✓' : ''}</span>
       <span class="cqf-icon">${track.icon}</span>
-      <span class="cqf-text">${coffeeQuickFilterOn ? 'Showing' : 'Show'} ${label}</span>
-      ${coffeeQuickFilterOn ? '<span class="cqf-clear">✕</span>' : ''}
+      <span class="cqf-text">${coffeeQuickFilterOn ? 'FILTER ON — Showing' : 'Show'} ${label}</span>
+      ${coffeeQuickFilterOn ? '<span class="cqf-clear">✕ Clear</span>' : '<span class="cqf-arrow">→</span>'}
     </button>`;
 }
 
@@ -672,7 +721,7 @@ function renderCoffeeQuickFilter() {
 function describeRoleGroup(roles) {
   const short = {
     'PhD Student': 'PhD students', 'Postdoctoral Fellow': 'postdocs',
-    'Clinical Fellow / Resident': 'clinical fellows & residents',
+    'Clinical Fellow/Resident': 'clinical fellows & residents',
     "Master's Student": "master's students", 'Undergraduate Student': 'undergrads',
     'Faculty (Early Stage Investigator)': 'early-stage faculty'
   };
@@ -828,6 +877,20 @@ function showProfile(participant) {
        </div>`
     : '';
 
+  // Where to find this poster on Pappas Quad — the row letter is the prefix
+  // before the dash (e.g. "A-01" → Row A). CONFIG.poster_rows optionally maps
+  // each letter to a plain-language location description; falls back to a
+  // generic pointer toward the check-in desk / row signage if not yet set.
+  let posterLocation = '';
+  if (participant.poster_number) {
+    const rowLetter = participant.poster_number.split('-')[0];
+    const rowInfo = (CONFIG.poster_rows && CONFIG.poster_rows[rowLetter]) || '';
+    posterLocation = `<div class="poster-location">
+        <span class="poster-location-row">Row ${rowLetter}</span>
+        <span class="poster-location-desc">${rowInfo || 'Row signage is posted on Pappas Quad — ask at check-in if you need help finding it.'}</span>
+      </div>`;
+  }
+
 
 
   document.getElementById('profile-content').innerHTML = `
@@ -840,7 +903,7 @@ function showProfile(participant) {
           <div class="profile-dept">${participant.department || ''}</div>
         </div>
       </div>
-      ${participant.poster_number ? `<div class="profile-section"><span class="poster-badge-lg">Poster ${participant.poster_number}</span></div>` : ''}
+      ${participant.poster_number ? `<div class="profile-section"><span class="poster-badge-lg">Poster ${participant.poster_number}</span>${posterLocation}</div>` : ''}
       <div class="profile-section">
         <div class="section-label">Research</div>
         <div class="profile-title">${participant.title || ''}</div>
