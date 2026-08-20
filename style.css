@@ -334,6 +334,9 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 /* Every jump target clears the sticky nav, so section titles are never hidden */
 #program-mode [id] { scroll-margin-top:128px; }
 .band { padding:52px 0; }
+#why { padding-bottom:30px; }
+#why .why-grid { margin-bottom:0; }
+#agenda { padding-top:36px; }
 .band.alt { background:var(--off-white); }
 .band-inner { max-width:1040px; margin:0 auto; padding:0 20px; }
 .band-inner.center { text-align:center; }
@@ -565,7 +568,6 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
   border-radius:var(--radius); background:#fff; padding:24px 26px; margin-top:6px; }
 .awards-lead { display:flex; flex-wrap:wrap; gap:22px; align-items:baseline; margin-bottom:6px; }
 .awards-prize { font-size:26px; font-weight:700; color:var(--cardinal); }
-.awards-who { font-size:15px; color:var(--text-mid); }
 .awards h4 { font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
   color:var(--text-light); margin:20px 0 10px; }
 .criteria { list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:10px 26px; margin:0; }
@@ -577,8 +579,16 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 
 /* Closing band: register + newsletter read as one unit */
 .closing-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius);
-  padding:32px 28px; text-align:center; }
-.closing-card .btn-lg { margin-top:6px; }
+  padding:34px 28px; text-align:center; }
+/* .band p caps the measure at 64ch, which left the block hugging the left edge
+   of a centred card. Centre the block as well as the lines. */
+.closing-card p { max-width:54ch; margin-left:auto; margin-right:auto; text-wrap:balance; }
+/* the newsletter strip keeps its own left-aligned layout inside the centred card */
+.closing-sub .newsletter-callout { text-align:left; }
+.closing-sub .newsletter-text p { max-width:none; text-wrap:initial; }
+.closing-card h2 { margin-bottom:12px; }
+.closing-card .lead { margin-bottom:22px; }
+.closing-card .btn-lg { margin-top:0; }
 .closing-sub { margin-top:26px; padding-top:22px; border-top:1px solid var(--border); }
 
 /* PLAN YOUR VISIT */

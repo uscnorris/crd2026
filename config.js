@@ -68,8 +68,8 @@ const CONFIG = {
     { time: "11:00 AM", loc: "Mayer Auditorium", title: "Featured session: AI in Cancer Research", desc: "Plenary and panel on artificial intelligence in cancer research and care.", tag: "Panel TBD", tbd: true },
     { time: "12:00 PM", loc: "Pappas Quad",      title: "Lunch & networking", desc: "Lunch is provided. Browse the directory and log conversations." },
     { time: "12:45–2:45 PM", loc: "Pappas Quad", title: "Poster session & judging", desc: "Open poster session, with judging for trainee entries and the Patient Advocate poster walk." },
-    { time: "2:15 PM",  loc: "In the app",       title: "Log your conversations", desc: "Coffee Consult requests stay open until 5 PM the next day, Thursday, Oct 15." },
-    { time: "2:45 PM",  loc: "Mayer Auditorium", title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." }
+    { time: "2:45 PM",  loc: "Mayer Auditorium", title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." },
+    { time: "All day",  loc: "In the app",       title: "Coffee Consult", desc: "A new trainee program pairing bench and clinic. Request a match any time during the day, or until 5 PM on Thursday, Oct 15.", tag: "New for 2026" }
   ],
 
   // Practical info shown at the bottom of the Agenda view
