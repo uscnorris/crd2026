@@ -1,8 +1,10 @@
 # Cancer Research Day 2026 — Event App (v2)
 
 A single static app that serves as the **whole-day digital program** for CRD 2026:
-agenda, poster/people directory, conversation logging, and follow-up **connection
-requests** across four tracks that each map to a CRTEC aim and a training outcome.
+agenda, poster/people directory, conversation logging, and follow-up **Coffee Consult
+requests**, which map to a CRTEC aim and a training outcome.
+
+Hosted by Cancer Research Training & Education Coordination (CRTEC).
 
 Hosted on GitHub Pages: `https://uscnorris.github.io/crd2026`
 Admin dashboard: `https://uscnorris.github.io/crd2026/admin.html`
@@ -20,18 +22,18 @@ Admin dashboard: `https://uscnorris.github.io/crd2026/admin.html`
 | `app.js` | App logic + the tracks engine | No |
 | `admin.html` | Metrics dashboard (self-contained) | No |
 | `Code.gs` | Apps Script backend (registration, tracking, Qualtrics sync) | Only the constants at the top |
-| `assets/logo/usc-norris-logo.jpg` | Header logo | **Yes — replace whenever a new official file is issued** |
-| `assets/photos/photo-1.jpg` | Wide banner image under the hero | **Yes — swap in a real event photo** |
-| `assets/photos/coffee-consult.jpg` | Photo in the "For trainees" section | Optional — replace with a real event photo |
+| `assets/logo/uscnorrislogo.jpg` | Header logo | **Yes — replace whenever a new official file is issued** |
+| `assets/photos/photo1.jpg` | Wide banner image under the hero | **Yes — swap in a real event photo** |
+| `assets/photos/coffeeconsult.jpg` | Photo in the "For trainees" section | Optional — replace with a real event photo |
 
 ---
 
 ## Branding & photos
 
-- **Logo.** `assets/logo/usc-norris-logo.jpg` is the official USC Norris Comprehensive Cancer Center / Keck Medicine of USC lockup. To replace it with an updated file, save the new image over that same path (any common image format works — if the extension changes, e.g. to `.png`, update the `src` on `index.html`'s `<img class="brand-logo">` accordingly). If the file is ever missing, the header falls back to a plain text lockup instead of a broken image.
+- **Logo.** `assets/logo/uscnorrislogo.jpg` is the official USC Norris Comprehensive Cancer Center / Keck Medicine of USC lockup. To replace it with an updated file, save the new image over that same path (any common image format works — if the extension changes, e.g. to `.png`, update the `src` on `index.html`'s `<img class="brand-logo">` accordingly). If the file is ever missing, the header falls back to a plain text lockup instead of a broken image.
 - **Photos.** Two images, both of which simply disappear (rather than showing a broken image) if the file is missing:
-  - `assets/photos/photo-1.jpg` — the wide banner strip under the hero. A landscape/panoramic crop works best; it's displayed at up to 300px tall, cropped to fill. Currently an AI-generated composite — swap in a real photo from a past Cancer Research Day when one's available.
-  - `assets/photos/coffee-consult.jpg` — the photo in the "For trainees" section. Currently a stock photo of two people talking over coffee.
+  - `assets/photos/photo1.jpg` — the wide banner strip under the hero. A landscape/panoramic crop works best; it's displayed at up to 300px tall, cropped to fill. Currently an AI-generated composite — swap in a real photo from a past Cancer Research Day when one's available.
+  - `assets/photos/coffeeconsult.jpg` — the photo in the "For trainees" section. Currently a stock photo of two people talking over coffee.
 
 ---
 
@@ -80,7 +82,7 @@ The app runs on sample data out of the box. To go live for the real event:
    "Submit connection requests" button routes there. If left blank, it falls back to
    a pre-filled email to `info.contact_email`.
 
-After editing, bump the `?v=` number in `index.html` (currently `v=26`) so
+After editing, bump the `?v=` number in `index.html` (currently `v=28`) so
 returning phones don't serve a cached copy.
 
 ---
@@ -102,10 +104,11 @@ and "May we list you in the directory?" (Yes/No consent). Also add, so the site'
 features work: "Will you attend in person or virtually?", "Short bio (for connection
 matching)" (used to match virtual attendees who aren't presenting a poster), "Do you
 need any accessibility accommodations?", and "Any dietary restrictions?". Note that
-poster submission is restricted to trainees (students, postdoctoral fellows, and
-clinical fellows) and Coffee Consult matching is restricted to clinical trainees and
-PhD/postdoctoral research trainees — word the Role question so this stays enforceable.
-Keep **PI name** on the form — it lands in the raw responses and is what
+poster submission is open to everyone, but the judged award competition is limited to
+trainees (students, postdoctoral fellows, clinical fellows), and Coffee Consult matching
+is limited to clinical trainees paired with PhD/postdoctoral research trainees. Word the
+Role question so both stay enforceable.
+Keep **PI name** on the form. It lands in the raw responses and is what
 turns the event into CCSG numbers. (Accessibility, dietary, PI, and attendance mode stay
 in the raw Responses tab for planning; only the directory-relevant fields are copied to
 the Directory tab.)

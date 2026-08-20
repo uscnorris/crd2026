@@ -51,6 +51,7 @@ const CONFIG = {
       aim: "Clinical & Translational",
       outcome_tag: "R38 data",
       purpose: "Bench meets clinic. A PhD or postdoctoral research trainee and a clinical fellow, resident, or clinical doctoral student talk through the clinical rationale behind the science.",
+      // Pilot program for 2026; see the "For trainees" section of the site.
       cta: "Add to Coffee Consult",
       sideA: { roles: ["PhD Student", "Postdoctoral Fellow"], programMatch: null },
       sideB: { roles: ["Clinical Fellow / Resident"], programMatch: null }
@@ -62,21 +63,22 @@ const CONFIG = {
   // tag: optional pill. tbd: true dims the item and shows a "TBD" chip.
   // ───────────────────────────────────────────
   agenda: [
-    { time: "9:00 AM",  title: "Check-in & coffee", desc: "Registration desk opens on Pappas Quad. Poster setup begins." },
-    { time: "9:30 AM",  title: "Welcome & scientific talks", desc: "Research from across the Cancer Center.", tag: "Speakers TBD", tbd: true },
-    { time: "11:00 AM", title: "Featured session: AI in Cancer Research", desc: "Plenary and panel on artificial intelligence in cancer research and care.", tag: "Panel TBD", tbd: true },
-    { time: "12:00 PM", title: "Lunch & networking", desc: "Lunch on Pappas Quad. Connection tracks are active — browse the directory and log conversations." },
-    { time: "12:45 – 2:45 PM", title: "Poster session & judging", desc: "Interactive poster session with scientific award judging and the Patient Advocate poster walk." },
-    { time: "2:15 PM",  title: "Connection requests close", desc: "Submit your follow-up connection requests in the app by 2:15." },
-    { time: "2:45 PM",  title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." }
+    { time: "9:00 AM",  loc: "Pappas Quad",      title: "Check-in & coffee", desc: "Registration desk opens. Poster setup begins." },
+    { time: "9:30 AM",  loc: "Mayer Auditorium", title: "Welcome & scientific talks", desc: "Research from across the Cancer Center.", tag: "Speakers TBD", tbd: true },
+    { time: "11:00 AM", loc: "Mayer Auditorium", title: "Featured session: AI in Cancer Research", desc: "Plenary and panel on artificial intelligence in cancer research and care.", tag: "Panel TBD", tbd: true },
+    { time: "12:00 PM", loc: "Pappas Quad",      title: "Lunch & networking", desc: "Lunch is provided. Browse the directory and log conversations." },
+    { time: "12:45–2:45 PM", loc: "Pappas Quad", title: "Poster session & judging", desc: "Open poster session, with judging for trainee entries and the Patient Advocate poster walk." },
+    { time: "2:15 PM",  loc: "In the app",       title: "Coffee Consult requests close", desc: "Submit your follow-up requests by 2:15." },
+    { time: "2:45 PM",  loc: "Mayer Auditorium", title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." }
   ],
 
   // Practical info shown at the bottom of the Agenda view
   info: {
-    location: "Mayer Auditorium, Keith Administration Building & Pappas Quad",
+    location: "Mayer Auditorium, Keith Administration Building (KAM), and Pappas Quad",
+    address: "1975 Zonal Ave, Los Angeles, CA 90033",
     wifi: "USC Guest",
     contact_email: "crtec@usc.edu",
-    parking: "Closest lot is Biggy Parking Structure (1334 Biggy St.). Rates are a $10 flat rate for USC Norris patients and a $20 flat rate for general visitors."
+    parking: "Biggy Parking Structure, 1334 Biggy St. Flat rate of $10 for USC Norris patients, $20 for general visitors."
   },
 
   // External links used on the landing page

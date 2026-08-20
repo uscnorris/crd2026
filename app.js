@@ -183,14 +183,14 @@ function parseCSVLine(line) {
 const PROGRAMS_BY_ROLE = {
   "PhD Student": [
     // PIBBS programs (keck.usc.edu/pibbs/phd-programs)
-    "Cancer Biology & Genomics (CBG) — PIBBS",
-    "Development, Stem Cells & Regenerative Medicine — PIBBS",
-    "Infectious Diseases, Immunology & Pathogenesis — PIBBS",
-    "Medical Biophysics — PIBBS",
+    "Cancer Biology & Genomics (CBG), PIBBS",
+    "Development, Stem Cells & Regenerative Medicine, PIBBS",
+    "Infectious Diseases, Immunology & Pathogenesis, PIBBS",
+    "Medical Biophysics, PIBBS",
     // Population & Public Health Sciences (keck.usc.edu/pphs/education/doctoral-programs)
-    "Biostatistics — PPHS",
-    "Epidemiology — PPHS",
-    "Health Behavior Research — PPHS",
+    "Biostatistics, PPHS",
+    "Epidemiology, PPHS",
+    "Health Behavior Research, PPHS",
     // Other Keck PhD programs
     "Integrative Anatomical Sciences",
     "MD-PhD (USC-Caltech)",
@@ -433,7 +433,7 @@ function registerNow() {
   if (url && url.indexOf('PASTE') !== 0 && /^https?:/i.test(url)) {
     window.open(url, '_blank');
   } else {
-    alert("Registration opens soon. Subscribe to Next in Science to be notified — or check back here.");
+    alert("Registration opens soon. Subscribe to Next in Science to be notified, or check back here.");
     goToSection('newsletter');
   }
 }
@@ -617,7 +617,7 @@ function renderDirectory() {
   const results = getFilteredParticipants();
   const totalFilters = Object.values(activeFilters).reduce((n, s) => n + s.size, 0);
   document.getElementById('results-count').textContent =
-    `${results.length} participant${results.length !== 1 ? 's' : ''}${totalFilters > 0 ? ' — filters active' : ''}`;
+    `${results.length} participant${results.length !== 1 ? 's' : ''}${totalFilters > 0 ? ' · filters active' : ''}`;
 
   if (results.length === 0) {
     document.getElementById('directory-list').innerHTML =
@@ -972,6 +972,7 @@ function renderProgram() {
         <div class="agenda-body">
           <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag">${s.tag}</span>` : ''}</div>
           <div class="agenda-desc">${s.desc || ''}</div>
+          ${s.loc ? `<div class="agenda-loc">${s.loc}</div>` : ''}
         </div>
       </div>`).join('');
   }
@@ -980,7 +981,7 @@ function renderProgram() {
   if (facts) {
     facts.innerHTML = `
       <div class="fact"><div class="fact-big">4 × 4 ft</div><div class="fact-lbl">Maximum poster size</div></div>
-      <div class="fact"><div class="fact-big">3 × $100</div><div class="fact-lbl">Award prizes — trainees only</div></div>
+      <div class="fact"><div class="fact-big">3 × $100</div><div class="fact-lbl">Award prizes, trainees only</div></div>
       <div class="fact"><div class="fact-big">Oct 2</div><div class="fact-lbl">Submission deadline</div></div>`;
   }
 
@@ -1001,8 +1002,9 @@ function renderProgram() {
     const rows = [
       ['Date & time', `${CONFIG.event_date} · ${CONFIG.event_time}`],
       ['Location', info.location || CONFIG.event_location || ''],
-      ['Wi-Fi', info.wifi || ''],
+      ['Address', info.address || ''],
       ['Parking', info.parking || ''],
+      ['Wi-Fi', info.wifi || ''],
       ['Questions', `<a href="mailto:${info.contact_email || ''}">${info.contact_email || ''}</a>`]
     ].filter(r => r[1]);
     infoEl.innerHTML = rows.map(r => `<div class="info-row"><span class="info-k">${r[0]}</span><span class="info-v">${r[1]}</span></div>`).join('');
