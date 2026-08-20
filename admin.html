@@ -196,16 +196,6 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
       <div id="users-by-program"></div>
     </div>
   </div>
-  <!-- TRAINING PIPELINE (CCSG: Inclusive Pipeline aim) -->
-  <div class="card" style="margin-bottom:20px;">
-    <div class="card-title">Training pipeline — participation by career stage</div>
-    <p style="font-size:13px;color:var(--mid);margin-bottom:14px;">Undergraduate through faculty, in pipeline order — evidence for the Inclusive Pipeline aim.</p>
-    <div id="pipeline-funnel"></div>
-    <div style="display:flex;gap:28px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
-      <div><span style="font-size:20px;font-weight:700;color:var(--cardinal)" id="pipeline-coffee">—</span> <span style="font-size:13px;color:var(--mid)">Coffee Consult pairs (clinical ↔ research trainee)</span></div>
-    </div>
-  </div>
-
   <div class="card">
     <div class="card-title">All registered users</div>
     <table class="data-table">
@@ -247,23 +237,12 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
   </div>
 
   <!-- ROLE INTERACTION MATRIX -->
-  <div class="card" style="margin-bottom:20px;">
+  <div class="card">
     <div class="card-title">Role interaction matrix — who talked to whom</div>
     <p style="font-size:13px;color:var(--mid);margin-bottom:14px;">Rows = viewer role · Columns = profile viewed role · Numbers = conversation count</p>
     <div class="matrix-wrap">
       <table class="role-matrix" id="role-matrix"></table>
     </div>
-  </div>
-
-  <!-- PROGRAM INTERACTION MATRIX (CCSG: cross-program / transdisciplinary mixing) -->
-  <div class="card">
-    <div class="card-title">Program interaction matrix — cross-program mixing</div>
-    <p style="font-size:13px;color:var(--mid);margin-bottom:6px;">Rows = viewer's program · Columns = program of the profile viewed · Numbers = conversation count. Programs are inferred from self-reported text via keyword matching — tune <code>PROGRAM_KEYWORDS</code> in this file if it misclassifies your program names.</p>
-    <p style="font-size:13px;color:var(--mid);margin-bottom:14px;"><strong>Cross-program conversations: <span id="cross-program-stat" style="color:var(--cardinal);font-weight:700">—</span></strong> of conversations where both sides' programs are known — the number CCSG renewal reviewers care about most from this event.</p>
-    <div class="matrix-wrap">
-      <table class="role-matrix" id="program-matrix"></table>
-    </div>
-    <p id="program-matrix-legend" style="font-size:11px;color:var(--lt);margin-top:10px;"></p>
   </div>
 </div>
 
@@ -311,37 +290,18 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
 <!-- SURVEY TAB -->
 <div id="tab-survey" class="page">
   <div class="alert-info">
-    Survey is sent to matched Coffee Consult participants after their meeting (by Nov 1) via Qualtrics. Responses sync here automatically every hour once <code>syncQualtrics</code> is configured in Code.gs — see the README's "Post-event survey — Qualtrics" section.
+    Survey is sent to matched Coffee Consult participants after their meeting (by Nov 1). Send the survey link via CRTEC email. Responses appear here automatically once the Apps Script endpoint is connected.
   </div>
-  <div class="grid-4">
+  <div class="grid-3">
     <div class="card"><div class="stat-num" id="survey-responses">—</div><div class="stat-label">Survey responses</div></div>
     <div class="card"><div class="stat-num" id="survey-continued">—</div><div class="stat-label">Want to continue</div><div class="stat-sub">% of respondents</div></div>
     <div class="card"><div class="stat-num" id="survey-useful">—</div><div class="stat-label">Avg usefulness score</div><div class="stat-sub">Out of 5</div></div>
-    <div class="card"><div class="stat-num" id="survey-resource">—</div><div class="stat-label">Learned about a Shared Resource</div><div class="stat-sub">% of respondents</div></div>
-  </div>
-  <div class="card" style="margin-bottom:20px;">
-    <div class="card-title">Survey responses</div>
-    <table class="data-table">
-      <thead><tr><th>Name</th><th>Role</th><th>Meeting happened?</th><th>Usefulness (1-5)</th><th>Continue?</th><th>Most useful aspect</th><th>Shared Resource</th></tr></thead>
-      <tbody id="survey-body"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--lt)">No responses yet</td></tr></tbody>
-    </table>
-  </div>
-
-  <!-- DOWNSTREAM IMPACT (CCSG: 6-12 month longitudinal follow-up) -->
-  <div class="alert-info">
-    <strong>Downstream impact.</strong> A separate, short follow-up survey sent 6–12 months after the event, asking whether a CRD connection led anywhere. This is the number CCSG renewal reviewers weigh most heavily — it shows the event converts into research output, not just attendance. Configure <code>QUALTRICS_FOLLOWUP</code> in Code.gs — see the README's "Post-event survey — Qualtrics" section.
-  </div>
-  <div class="grid-4">
-    <div class="card"><div class="stat-num" id="outcome-responses">—</div><div class="stat-label">Follow-up responses</div></div>
-    <div class="card"><div class="stat-num" id="outcome-grants">—</div><div class="stat-label">Grants submitted</div><div class="stat-sub">Traced to a CRD connection</div></div>
-    <div class="card"><div class="stat-num" id="outcome-pubs">—</div><div class="stat-label">Publications co-authored</div></div>
-    <div class="card"><div class="stat-num" id="outcome-ongoing">—</div><div class="stat-label">Ongoing collaborations</div></div>
   </div>
   <div class="card">
-    <div class="card-title">Follow-up responses</div>
+    <div class="card-title">Survey responses</div>
     <table class="data-table">
-      <thead><tr><th>Name</th><th>Role</th><th>Connection</th><th>Grant?</th><th>Publication?</th><th>Shared Resource?</th><th>Ongoing?</th><th>Details</th></tr></thead>
-      <tbody id="outcomes-body"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--lt)">No responses yet</td></tr></tbody>
+      <thead><tr><th>Name</th><th>Role</th><th>Meeting happened?</th><th>Usefulness (1-5)</th><th>Continue?</th><th>Most useful aspect</th></tr></thead>
+      <tbody id="survey-body"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--lt)">No responses yet</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -369,7 +329,7 @@ const POSTER_LAYOUT = [
 ];
 
 // ── STATE ──────────────────────────────────────
-let DATA = { users:[], convos:[], coffee:[], views:[], survey:[], outcomes:[] };
+let DATA = { users:[], convos:[], coffee:[], views:[], survey:[] };
 let currentLayer = 'views';
 let participantMap = {}; // id -> participant object from main sheet
 
@@ -417,7 +377,6 @@ async function loadTrackingData() {
     if (json.coffee) DATA.coffee = json.coffee;
     if (json.views)  DATA.views  = json.views;
     if (json.survey) DATA.survey = json.survey;
-    if (json.outcomes) DATA.outcomes = json.outcomes;
   } catch(e) {
     console.warn('Tracking data load failed:', e);
     DATA = getMockData();
@@ -548,107 +507,12 @@ function renderUsers() {
           <td style="color:var(--lt);font-size:12px">${formatTime(u.timestamp)}</td>
         </tr>`;
       }).join('');
-
-  renderPipeline();
-}
-
-// Career-stage order for the Inclusive Pipeline funnel (excludes
-// Community Member / Staff — not part of the academic/clinical pipeline).
-const PIPELINE_ORDER = ["Undergraduate Student","Master's Student","PhD Student","Postdoctoral Fellow","Clinical Fellow / Resident","Faculty"];
-
-function renderPipeline() {
-  const byRole = groupBy(DATA.users, 'role');
-  const maxCount = Math.max(1, ...PIPELINE_ORDER.map(r => (byRole[r]||[]).length));
-  document.getElementById('pipeline-funnel').innerHTML = PIPELINE_ORDER.map(role => {
-    const count = (byRole[role]||[]).length;
-    return `<div class="bar-row">
-      <div class="bar-label">${role}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(count/maxCount*100)}%"></div></div>
-      <div class="bar-count">${count}</div>
-    </div>`;
-  }).join('');
-
-  const net = getNetCoffee();
-  document.getElementById('pipeline-coffee').textContent = net.filter(c=>c.track_id==='coffee').length;
 }
 
 // ── HEATMAP ────────────────────────────────────
 function renderHeatmap() {
   renderFloorMap();
   renderRoleMatrix();
-  renderProgramMatrix();
-}
-
-// ── PROGRAM MIXING (CCSG: transdisciplinary / cross-program evidence) ──
-// Free-text program/department strings get bucketed into the 7 canonical
-// CCSG research programs via keyword matching. Tune these lists if your
-// program names or common self-entered variants differ.
-const PROGRAM_KEYWORDS = [
-  ['Tumor Microenvironment (TIME)', ['microenvironment','immunology','immuno']],
-  ['Genomic & Epigenomic Regulation (ERC)', ['genomic','epigenomic','genetics','cbg','cancer biology']],
-  ['Translational & Clinical Sciences (TACS)', ['translational','clinical','oncology fellowship','hematology','surgical oncology','radiation oncology','pathology','tacs']],
-  ['Cancer Epidemiology (CE)', ['epidemiology']],
-  ['Cancer Control Research (CCR)', ['cancer control','prevention','behavior','public health','pphs']],
-  ['Community Outreach & Engagement (COE)', ['community','outreach','advocate','csac','coe']],
-  ['Education & Training (CRTEC)', ['crtec','education','training']]
-];
-function mapToCanonicalProgram(raw) {
-  const s = (raw || '').toLowerCase();
-  if (!s.trim()) return 'Unspecified';
-  for (const [canon, keys] of PROGRAM_KEYWORDS) {
-    if (keys.some(k => s.includes(k))) return canon;
-  }
-  return 'Other';
-}
-function shortProg(p) {
-  const m = p.match(/\(([^)]+)\)$/);
-  return m ? m[1] : p;
-}
-
-function renderProgramMatrix() {
-  const activeConvos = DATA.convos.filter(c=>c.status!=='undone');
-  const table = document.getElementById('program-matrix');
-  if (activeConvos.length === 0) {
-    table.innerHTML = '<tr><td style="padding:20px;color:var(--lt);text-align:center">No conversation data yet</td></tr>';
-    document.getElementById('cross-program-stat').textContent = '—';
-    return;
-  }
-
-  const rows = activeConvos.map(c => ({
-    v: mapToCanonicalProgram(c.viewer_program),
-    p: mapToCanonicalProgram(c.participant_program)
-  }));
-  const order = (CONFIG.research_programs || []).concat(['Other','Unspecified']);
-  const programs = [...new Set(rows.flatMap(r=>[r.v,r.p]))].sort((a,b)=>order.indexOf(a)-order.indexOf(b));
-
-  const matrix = {};
-  rows.forEach(r => { const key = r.v+'|'+r.p; matrix[key] = (matrix[key]||0)+1; });
-  const maxVal = Math.max(1, ...Object.values(matrix));
-
-  const known = rows.filter(r => r.v !== 'Unspecified' && r.p !== 'Unspecified');
-  const cross = known.filter(r => r.v !== r.p);
-  document.getElementById('cross-program-stat').textContent =
-    known.length > 0 ? Math.round(cross.length/known.length*100) + '%' : '—';
-
-  table.innerHTML =
-    `<tr><th class="row-header">Viewer →</th>${programs.map(p=>`<th class="col-header" title="${p}">${shortProg(p)}</th>`).join('')}</tr>` +
-    programs.map(v => `<tr>
-      <th class="row-header" title="${v}">${shortProg(v)}</th>
-      ${programs.map(p => {
-        const val = matrix[v+'|'+p] || 0;
-        const bg = heatColor(val, maxVal);
-        const tc = heatTextColor(val, maxVal);
-        return `<td style="background:${bg};color:${tc}">${val||''}</td>`;
-      }).join('')}
-    </tr>`).join('');
-
-  const legendEl = document.getElementById('program-matrix-legend');
-  if (legendEl) {
-    legendEl.textContent = programs
-      .filter(p => p !== 'Other' && p !== 'Unspecified')
-      .map(p => `${shortProg(p)} = ${p.replace(/ \([^)]+\)$/,'')}`)
-      .join('  ·  ');
-  }
 }
 
 function setLayer(layer, btn) {
@@ -898,12 +762,9 @@ function renderSurvey() {
   const scores = s.map(r=>parseFloat(r.meeting_useful)).filter(n=>!isNaN(n));
   document.getElementById('survey-useful').textContent =
     scores.length > 0 ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1) : '—';
-  const learnedResource = s.filter(r=>r.shared_resource_learned==='Yes').length;
-  document.getElementById('survey-resource').textContent =
-    s.length > 0 ? Math.round(learnedResource/s.length*100) + '%' : '—';
 
   document.getElementById('survey-body').innerHTML = s.length === 0
-    ? '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--lt)">No responses yet</td></tr>'
+    ? '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--lt)">No responses yet</td></tr>'
     : s.map(r=>`<tr>
         <td>${r.name||'—'}</td>
         <td>${roleBadge(r.role)}</td>
@@ -911,31 +772,6 @@ function renderSurvey() {
         <td style="text-align:center">${r.meeting_useful||'—'}</td>
         <td>${r.continue_collaboration||'—'}</td>
         <td style="font-size:12px;color:var(--mid)">${r.most_useful||'—'}</td>
-        <td style="font-size:12px;color:var(--mid)">${r.shared_resource_learned==='Yes' ? (r.shared_resource_which||'Yes') : '—'}</td>
-      </tr>`).join('');
-
-  renderOutcomes();
-}
-
-// ── DOWNSTREAM IMPACT (6-12 month follow-up) ────
-function renderOutcomes() {
-  const o = DATA.outcomes;
-  document.getElementById('outcome-responses').textContent = o.length;
-  document.getElementById('outcome-grants').textContent = o.filter(r=>r.grant_submitted==='Yes').length;
-  document.getElementById('outcome-pubs').textContent = o.filter(r=>r.publication_coauthored==='Yes').length;
-  document.getElementById('outcome-ongoing').textContent = o.filter(r=>r.ongoing_collaboration==='Yes').length;
-
-  document.getElementById('outcomes-body').innerHTML = o.length === 0
-    ? '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--lt)">No responses yet</td></tr>'
-    : o.map(r=>`<tr>
-        <td>${r.name||'—'}</td>
-        <td>${roleBadge(r.role)}</td>
-        <td style="font-size:12px;color:var(--mid)">${r.connection_partner||'—'}</td>
-        <td>${r.grant_submitted||'—'}</td>
-        <td>${r.publication_coauthored||'—'}</td>
-        <td>${r.shared_resource_used||'—'}</td>
-        <td>${r.ongoing_collaboration||'—'}</td>
-        <td style="font-size:12px;color:var(--mid)">${r.details||'—'}</td>
       </tr>`).join('');
 }
 
@@ -994,28 +830,13 @@ function getMockData() {
   const useful = [5,4,5,5,4,5,3,5,4,4,5,4];
   const cont = ['Yes','Yes','Yes','Yes','No','Yes','No','Yes','Yes','Yes','Yes','Yes'];
   const most = ['Career advice from a clinician','Understanding the clinical side','Great methods discussion','Learning what bench researchers need','Scheduling was hard','Talking through grad school','Interesting but off-topic','Learned about grad programs','Perspective on survivorship','New collaboration idea','Mentorship on grants','Near-peer advice'];
-  const learnedResource = ['Yes','No','Yes','Yes','No','No','No','Yes','No','Yes','Yes','No'];
-  const whichResource = ['Biostatistics Core','','Genomics Core','Translational Pathology Core','','','','Biostatistics Core','','Genomics Core','Biostatistics Core',''];
   const survey = surveyNames.map((n,i)=>({
     name:n, role:surveyRoles[i], meeting_happened:'Yes',
     meeting_useful:useful[i], continue_collaboration:cont[i], most_useful:most[i],
-    shared_resource_learned:learnedResource[i], shared_resource_which:whichResource[i],
     timestamp:new Date(Date.now()-Math.random()*20*86400000).toISOString()
   }));
 
-  const outcomeNames = ['Sarah Chen','Priya Nair','James Okonkwo','Miguel Santos','Tyler Nguyen'];
-  const outcomeRoles = ['PhD Student','PhD Student','PhD Student','Postdoctoral Fellow','Postdoctoral Fellow'];
-  const outcomes = outcomeNames.map((n,i)=>({
-    name:n, role:outcomeRoles[i], connection_partner:['Dr. Alicia Reyes','David Park','Dr. Alicia Reyes','Kevin Tran','Hannah Levine'][i],
-    grant_submitted:['Yes','No','No','No','Yes'][i],
-    publication_coauthored:['No','Yes','No','No','No'][i],
-    shared_resource_used:['No','No','No','Yes','No'][i],
-    ongoing_collaboration:['Yes','Yes','No','Yes','Yes'][i],
-    details:['Submitted an R38 supplement together','Co-authored a methods paper','','Used the Biostatistics Core for a joint analysis','Monthly check-ins on a shared project'][i],
-    timestamp:new Date(Date.now()-Math.random()*200*86400000).toISOString()
-  }));
-
-  return { users, convos, coffee, views, survey, outcomes };
+  return { users, convos, coffee, views, survey };
 }
 
 // ── HELPERS ────────────────────────────────────

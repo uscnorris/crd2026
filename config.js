@@ -14,34 +14,42 @@ const CONFIG = {
 
   // APPS SCRIPT BACKEND (event tracking)
   // Paste your deployed Apps Script web app URL here (see Code.gs setup instructions)
-  script_url: "PASTE_YOUR_APPS_SCRIPT_URL_HERE",
+  script_url: "https://script.google.com/macros/s/AKfycbzm3v4EXQ2VwnmOEAUAyLteeAv4HGFfugMfDO22BbwWNBkT-w4rhgXg7x4rKURrpGo3jQ/exec",
 
   // GOOGLE SHEETS (directory data)
   // File → Share → Publish to web → Sheet1 → CSV → Publish → copy URL
-  sheet_url: "PASTE_YOUR_PUBLISHED_CSV_URL_HERE",
+  sheet_url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQksITlntkPc60L__OSZomcBTOpjGXHI5kEEErmZLjFl3qe1KOPN6E80yExao-4El3fgYJ79PjI2ZGS/pub?gid=1334489619&single=true&output=csv",
 
   // Set to false once your sheet URL is pasted above
-  use_sample_data: true,
+  use_sample_data: false,
 
   // Max follow-up connection requests per person (across all tracks)
   max_selections: 2,
 
   // Where connection requests get sent (Google Form URL — see README)
-  form_url: "PASTE_YOUR_GOOGLE_FORM_URL_HERE",
+  form_url: "https://forms.gle/NScGUCFhKD9d4qv19",
 
   // BASE URL for QR codes — your GitHub Pages URL
   base_url: "https://uscnorris.github.io/crd2026",
 
+  // External links used on the landing page
+  links: {
+    newsletter: "PASTE_YOUR_NEXT_IN_SCIENCE_SUBSCRIBE_URL_HERE",
+    livestream: ""   // virtual attendee livestream URL (shared with registrants)
+  },
+
+  // Continuing education status shown on the "Plan your visit" section.
+  // Update once CME/CE is confirmed with the Keck CME office.
+  ce_note: "We are pursuing continuing education / CME credit for the day through the Keck School of Medicine CME office. Details and how to claim credit will be posted here and shared with registrants once confirmed.",
+
   // ───────────────────────────────────────────
   // CONNECTION TRACKS
-  // Matching is Coffee Consult only — reserved for clinical trainees
-  // (clinical fellows, residents, clinical doctoral students) on one side
-  // and research trainees (PhD students, postdoctoral fellows) on the
-  // other. Each track connects two groups, maps to a CRTEC aim, and
-  // produces a training outcome. The app offers the applicable track when
-  // a viewer opens someone's profile.
-  //   sideA / sideB: { roles: [...], programMatch: [substrings] | null }
+  // Each track connects two groups, maps to a CRTEC aim, and produces a
+  // training outcome. The app offers the applicable track when a viewer
+  // opens someone's profile. Order = priority (first match wins).
+  //   sideA / sideB: { roles: [...], programMatch: [substrings] | null, requiresFlag: "field" }
   //   programMatch null = any program; otherwise matches research_program+department (case-insensitive)
+  //   requiresFlag = the person must have that column set to TRUE (e.g. faculty opting into mentoring)
   // ───────────────────────────────────────────
   connection_tracks: [
     {
@@ -50,11 +58,43 @@ const CONFIG = {
       icon: "☕",
       aim: "Clinical & Translational",
       outcome_tag: "R38 data",
-      purpose: "Bench meets clinic. A PhD or postdoctoral research trainee and a clinical fellow, resident, or clinical doctoral student talk through the clinical rationale behind the science.",
-      // Pilot program for 2026; see the "For trainees" section of the site.
+      purpose: "Bench meets clinic. A Cancer Biology PhD student and an oncology fellow talk through the clinical rationale behind the science.",
       cta: "Add to Coffee Consult",
-      sideA: { roles: ["PhD Student", "Postdoctoral Fellow"], programMatch: null },
+      sideA: { roles: ["PhD Student"], programMatch: ["cancer biology", "cbg", "genomics"] },
       sideB: { roles: ["Clinical Fellow / Resident"], programMatch: null }
+    },
+    {
+      id: "mentor",
+      name: "Mentor Match",
+      icon: "🧭",
+      aim: "Team Science & Mentorship",
+      outcome_tag: "",
+      purpose: "Career and research advice. A trainee sits down with a faculty mentor for a short, focused consult.",
+      cta: "Request Mentor Match",
+      sideA: { roles: ["PhD Student", "Master's Student", "Postdoctoral Fellow", "Clinical Fellow / Resident", "Undergraduate Student"], programMatch: null },
+      sideB: { roles: ["Faculty"], programMatch: null, requiresFlag: "mentoring" }
+    },
+    {
+      id: "advocate",
+      name: "Patient Perspective",
+      icon: "💬",
+      aim: "Community Education",
+      outcome_tag: "",
+      purpose: "Practice explaining your work in plain language and hear the patient perspective from a survivor-advocate.",
+      cta: "Request a Patient Perspective chat",
+      sideA: { roles: ["PhD Student", "Master's Student", "Postdoctoral Fellow", "Clinical Fellow / Resident", "Undergraduate Student", "Faculty"], programMatch: null },
+      sideB: { roles: ["Community Member"], programMatch: null }
+    },
+    {
+      id: "peer",
+      name: "Near-Peer",
+      icon: "🌱",
+      aim: "Inclusive Pipeline",
+      outcome_tag: "",
+      purpose: "See what graduate training is really like. An undergrad or master's student connects with a PhD student or postdoc.",
+      cta: "Request Near-Peer connection",
+      sideA: { roles: ["Undergraduate Student", "Master's Student", "Attendee"], programMatch: null },
+      sideB: { roles: ["PhD Student", "Postdoctoral Fellow"], programMatch: null }
     }
   ],
 
@@ -63,50 +103,43 @@ const CONFIG = {
   // tag: optional pill. tbd: true dims the item and shows a "TBD" chip.
   // ───────────────────────────────────────────
   agenda: [
-    { time: "9:00 AM",  loc: "Pappas Quad",      title: "Check-in & coffee", desc: "Registration desk opens. Poster setup begins." },
-    { time: "9:30 AM",  loc: "Mayer Auditorium", title: "Welcome & scientific talks", desc: "Research from across the Cancer Center.", tag: "Speakers TBD", tbd: true },
-    { time: "11:00 AM", loc: "Mayer Auditorium", title: "Featured session: AI in Cancer Research", desc: "Plenary and panel on artificial intelligence in cancer research and care.", tag: "Panel TBD", tbd: true },
-    { time: "12:00 PM", loc: "Pappas Quad",      title: "Lunch & networking", desc: "Lunch is provided. Browse the directory and log conversations." },
-    { time: "12:45–2:45 PM", loc: "Pappas Quad", title: "Poster session & judging", desc: "Open poster session, with judging for trainee entries and the Patient Advocate poster walk." },
-    { time: "2:45 PM",  loc: "Mayer Auditorium", title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." },
-    { time: "All day",  loc: "In the app",       title: "Coffee Consult", desc: "A new trainee program pairing bench and clinic. Request a match any time during the day, or until 5 PM on Thursday, Oct 15.", tag: "New for 2026" }
+    { time: "9:00 AM",  title: "Check-in & coffee", desc: "Registration desk opens on Pappas Quad. Poster setup begins." },
+    { time: "9:30 AM",  title: "Welcome & scientific talks", desc: "Research from across the Cancer Center.", tag: "Speakers TBD", tbd: true },
+    { time: "11:00 AM", title: "Featured session: AI in Cancer Research", desc: "Plenary and panel on artificial intelligence in cancer research and care.", tag: "Panel TBD", tbd: true },
+    { time: "12:00 PM", title: "Lunch & networking", desc: "Lunch on Pappas Quad. Connection tracks are active — browse the directory and log conversations." },
+    { time: "12:45 – 2:45 PM", title: "Poster session & judging", desc: "Interactive poster session with scientific award judging and the Patient Advocate poster walk." },
+    { time: "2:15 PM",  title: "Connection requests close", desc: "Submit your follow-up connection requests in the app by 2:15." },
+    { time: "2:45 PM",  title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." }
   ],
 
   // Practical info shown at the bottom of the Agenda view
   info: {
-    location: "Mayer Auditorium, Keith Administration Building (KAM), and Pappas Quad",
-    address: "1975 Zonal Ave, Los Angeles, CA 90033",
+    location: "Mayer Auditorium, Keith Administration Building & Pappas Quad",
     wifi: "USC Guest",
     contact_email: "crtec@usc.edu",
-    parking: "Biggy Parking Structure, 1334 Biggy St. Flat rate of $10 for USC Norris patients, $20 for general visitors."
+    parking: "[Add parking details]"
   },
-
-  // External links used on the landing page
-  links: {
-    newsletter: "PASTE_YOUR_NEXT_IN_SCIENCE_SUBSCRIBE_URL_HERE",
-    livestream: ""   // Livestream URL — powers the "Join the livestream" buttons (nav + Plan your visit).
-                      // Leave blank until it's live; buttons show a graceful "check back" message until then.
-  },
-
-  // Continuing education status shown on the "Plan your visit" section.
-  // Update once CME/CE is confirmed with the Keck CME office.
-  ce_note: "We are pursuing continuing education / CME credit for the day through the Keck School of Medicine CME office. Details and how to claim credit will be posted here and shared with registrants once confirmed.",
 
   // DISEASE AREAS (filter options)
+  // DISEASE AREAS — must exactly match the checkbox options on the
+  // registration form's "Disease / focus area" question, so submitted values
+  // match this filter one-to-one.
   disease_areas: [
-    "Breast", "GI / Colorectal", "GU / Prostate", "Hematologic", "Lung",
-    "Neuro-oncology", "Melanoma / Skin", "Pediatric", "Cancer Prevention", "Multiple / Other"
+    "Breast", "GI/Colorectal", "Genitourinary", "Head & neck",
+    "Hepatobiliary and pancreas", "Leukemia", "Melanoma/Skin", "Neuro-oncology",
+    "Pediatric", "Thoracic/Lung", "Cancer care delivery/Implementation science", "Other"
   ],
 
-  // RESEARCH PROGRAMS (filter + profile cards) — CCSG programs + COE + CRTEC
+  // RESEARCH PROGRAMS (filter + profile cards) — CCSG research programs only.
+  // COE (Community Outreach & Engagement) and CRTEC are units/departments, not
+  // research programs — staff associated with them go under Department/Lab
+  // instead, and won't appear in this filter.
   research_programs: [
     "Tumor Microenvironment (TIME)",
     "Genomic & Epigenomic Regulation (ERC)",
     "Translational & Clinical Sciences (TACS)",
     "Cancer Epidemiology (CE)",
-    "Cancer Control Research (CCR)",
-    "Community Outreach & Engagement (COE)",
-    "Education & Training (CRTEC)"
+    "Cancer Control Research (CCR)"
   ]
 
 };
