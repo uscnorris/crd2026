@@ -61,7 +61,7 @@ const SEND_CONFIRMATION = false;
 
 // ── Tab names + headers (setup() creates these) ──
 const TABS = {
-  Directory: ['id','name','role','year','department','poster_number','title','summary','disease_area','research_program','clinical_input','mentoring','linkedin_url','photo_url','email'],
+  Directory: ['id','name','role','year','department','poster_number','title','summary','bio','disease_area','research_program','clinical_input','mentoring','linkedin_url','photo_url','email'],
   Users:     ['session_id','name','role','program','timestamp'],
   Convos:    ['session_id','viewer_name','viewer_role','viewer_program','participant_id','participant_name','participant_role','participant_program','timestamp'],
   Coffee:    ['session_id','requester_name','requester_role','requester_program','participant_id','participant_name','participant_role','participant_program','track_id','track_name','track_aim','action','timestamp'],
@@ -132,7 +132,7 @@ function onFormSubmit(e) {
 
   const row = [
     id, get('name'), role, get('year'), get('department'),
-    posterNo, get('title'), get('summary') || get('bio'), get('disease_area'), researchProgram,
+    posterNo, get('title'), get('summary'), get('bio'), get('disease_area'), researchProgram,
     '', mentoringFlag, get('linkedin_url'), '', get('email')
   ];
 

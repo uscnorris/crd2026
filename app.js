@@ -660,8 +660,8 @@ function getFilteredParticipants() {
     if (activeFilters.disease.size > 0 && !activeFilters.disease.has(p.disease_area)) return false;
     if (activeFilters.clinical.size > 0 && activeFilters.clinical.has('true') && !p.clinical_input) return false;
     if (coffeeQuickFilterOn) {
-      const track = trackForPair(user ? user.role : '', user ? user.program : '', p);
-      if (!track) return false;
+      const matchedTrack = trackForPair(user ? user.role : '', user ? user.program : '', p);
+      if (!matchedTrack) return false;
     }
     return true;
   });
@@ -761,9 +761,9 @@ function renderDirectory() {
           <div class="card-meta">${p.role}${p.year ? ' · ' + p.year : ''}${p.department ? ' · ' + p.department : ''}</div>
           <div class="card-title">${p.title || ''}</div>
           <div class="card-tags">
-            ${p.poster_number ? `<span class="poster-badge">Poster ${p.poster_number}</span>` : ''}
-            ${p.disease_area ? `<span class="disease-badge">${p.disease_area}</span>` : ''}
-            ${p.clinical_input ? '<span class="clinical-badge">Open to clinical input</span>' : ''}
+            ${p.poster_number ? `<span class="chip">Poster ${p.poster_number}</span>` : ''}
+            ${p.disease_area ? `<span class="chip">${p.disease_area}</span>` : ''}
+            ${p.clinical_input ? '<span class="chip chip-accent">Open to clinical input</span>' : ''}
           </div>
         </div>
       </div>`;
@@ -838,78 +838,78 @@ function showProfile(participant) {
   const selected = coffeeSelections.has(participant.id);
   const viewerRole = user ? user.role : '';
   const viewerProgram = user ? (user.program || '') : '';
-  const track = trackForPair(viewerRole, viewerProgram, participant);
+  const matchedTrack = trackForPair(viewerRole, viewerProgram, participant);
 
-  // Log button — with undo option
-  const logBtn = talked
-    ? `<div class="log-done-row">
-        <button class="btn-talked-done" disabled>✓ Conversation logged</button>
-        <button class="btn-undo-log" onclick="undoConversation('${participant.id}')" title="Undo">✕ Undo</button>
-       </div>`
-    : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`;
-
-  // Connection track — rendered as ONE connected two-step card (log, then
-  // request), not separate floating pieces, so the flow reads as a single
-  // action instead of four disconnected elements.
-  let coffeeBtn = '';
-  if (track) {
+  // ── Connect card: one connected two-step flow. Copy is explicit that
+  // step 2 is a REQUEST, not an automatic match — CRTEC coordinates and
+  // confirms every pairing by hand, so nobody is silently paired up.
+  let connectCard = '';
+  if (matchedTrack) {
     const step2State = !talked ? 'locked' : (selected ? 'done' : 'active');
     const step2Action = !talked
-      ? `<p class="step-locked-hint">Unlocks after you log this conversation</p>`
+      ? `<p class="step-hint">Unlocks after you log this conversation</p>`
       : selected
-        ? `<div class="log-done-row"><button class="btn-talked-done coffee-done" disabled>${track.icon} Requested</button><button class="btn-undo-log" onclick="toggleCoffee('${participant.id}')" title="Remove">✕ Undo</button></div>`
-        : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${track.icon} ${track.cta}</button>`;
+        ? `<div class="request-sent">
+             <span>${matchedTrack.icon} Request sent — CRTEC will confirm your match</span>
+             <button class="btn-undo-text" onclick="toggleCoffee('${participant.id}')">Undo</button>
+           </div>`
+        : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${matchedTrack.icon} ${matchedTrack.cta}</button>
+           <p class="step-hint">This sends a request — you won't be automatically paired. CRTEC confirms every match.</p>`;
 
-    coffeeBtn = `
+    connectCard = `
       <div class="connect-steps">
         <div class="connect-step ${talked ? 'done' : 'active'}">
           <span class="step-num">${talked ? '✓' : '1'}</span>
           <div class="step-body">
             <div class="step-title">Log this conversation</div>
-            ${talked ? '' : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`}
+            ${talked
+              ? `<button class="btn-undo-text" onclick="undoConversation('${participant.id}')">Undo</button>`
+              : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`}
           </div>
         </div>
         <div class="connect-step ${step2State}">
           <span class="step-num">${selected ? '✓' : '2'}</span>
           <div class="step-body">
-            <div class="step-title">${track.icon} Request ${track.name}</div>
-            <div class="step-desc">${track.purpose}</div>
+            <div class="step-title">${matchedTrack.icon} Request ${matchedTrack.name}</div>
+            <div class="step-desc">${matchedTrack.purpose}</div>
             ${step2Action}
           </div>
         </div>
       </div>`;
+  } else if (!talked) {
+    connectCard = `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`;
+  } else {
+    connectCard = `<button class="btn-undo-text" onclick="undoConversation('${participant.id}')">✓ Logged — Undo</button>`;
   }
 
-  // LinkedIn — shown if URL exists
-  const linkedinBtn = participant.linkedin_url
-    ? `<a href="${participant.linkedin_url}" target="_blank" class="btn-linkedin">Connect on LinkedIn</a>`
-    : '';
-
-  // Email field — copyable, shown if email column populated in sheet
-  const emailField = participant.email
-    ? `<div class="email-field">
-        <span class="email-label">Email</span>
-        <a class="email-value" href="mailto:${participant.email}">${participant.email}</a>
+  // ── Compact contact row: icon-only LinkedIn, plain email text. Replaces
+  // the old full-width blue LinkedIn bar and boxed email field.
+  const contactRow = (participant.linkedin_url || participant.email)
+    ? `<div class="profile-contact">
+        ${participant.email ? `<a class="contact-email" href="mailto:${participant.email}">${participant.email}</a>` : ''}
+        ${participant.linkedin_url ? `<a class="contact-linkedin" href="${participant.linkedin_url}" target="_blank" title="Connect on LinkedIn" aria-label="Connect on LinkedIn">in</a>` : ''}
        </div>`
     : '';
 
-  // Where to find this poster on Pappas Quad — the letter prefix (e.g.
-  // "A-01" → Section A) identifies which SIDE of the quad, not a literal
-  // physical row. Each side holds several large boards, perpendicular to
-  // the quad, posters on both faces — exact board number is set on-site
-  // (staff decide board count/depth once final per-section headcount is
-  // known), so the app promises the side confidently and the board loosely.
-  let posterLocation = '';
+  // ── Poster location: one line, one badge — not two competing colors.
+  let posterLine = '';
   if (participant.poster_number) {
     const sectionLetter = participant.poster_number.split('-')[0];
     const sectionInfo = (CONFIG.poster_rows && CONFIG.poster_rows[sectionLetter]) || '';
-    posterLocation = `<div class="poster-location">
-        <span class="poster-location-row">Section ${sectionLetter}</span>
-        <span class="poster-location-desc">${sectionInfo || 'Section signage is posted on Pappas Quad — ask at check-in if you need help finding it.'}${sectionInfo ? ' · board number posted on-site' : ''}</span>
+    posterLine = `<div class="profile-location">
+        <span class="location-badge">Poster ${participant.poster_number}</span>
+        <span class="location-text">${sectionInfo || 'Ask at check-in for help finding this poster.'}${sectionInfo ? ' · board # posted on-site' : ''}</span>
       </div>`;
   }
 
-
+  // ── Bio: what THEY submitted about themselves — separate from the
+  // research summary, shown only when present.
+  const bioBlock = participant.bio
+    ? `<div class="profile-block">
+        <div class="block-label">About</div>
+        <p class="profile-bio">${participant.bio}</p>
+       </div>`
+    : '';
 
   document.getElementById('profile-content').innerHTML = `
     <div class="profile-wrap">
@@ -921,23 +921,20 @@ function showProfile(participant) {
           <div class="profile-dept">${participant.department || ''}</div>
         </div>
       </div>
-      ${participant.poster_number ? `<div class="profile-section"><span class="poster-badge-lg">Poster ${participant.poster_number}</span>${posterLocation}</div>` : ''}
-      <div class="profile-section">
-        <div class="section-label">Research</div>
+      ${contactRow}
+      ${posterLine}
+      ${bioBlock}
+      <div class="profile-block">
+        <div class="block-label">Research</div>
         <div class="profile-title">${participant.title || ''}</div>
         <div class="profile-summary">${participant.summary || ''}</div>
+        <div class="profile-tags">
+          ${participant.disease_area ? `<span class="chip">${participant.disease_area}</span>` : ''}
+          ${participant.research_program ? `<span class="chip">${participant.research_program}</span>` : ''}
+          ${participant.clinical_input ? '<span class="chip chip-accent">Open to clinical input</span>' : ''}
+        </div>
       </div>
-      <div class="profile-tags-row">
-        ${participant.disease_area ? `<span class="disease-badge">${participant.disease_area}</span>` : ''}
-        ${participant.research_program ? `<span class="program-badge">${participant.research_program}</span>` : ''}
-        ${participant.clinical_input ? '<span class="clinical-badge">Open to clinical input</span>' : ''}
-      </div>
-      <div class="profile-actions">
-        ${track ? '' : logBtn}
-        ${coffeeBtn}
-        ${linkedinBtn}
-        ${emailField}
-      </div>
+      <div class="profile-connect">${connectCard}</div>
     </div>`;
 
   showView('profile');
@@ -1063,7 +1060,7 @@ function renderMyList() {
   wrap.innerHTML = talkedIds.map(id => {
     const p = allParticipants.find(x => x.id === id);
     if (!p) return '';
-    const track = trackForPair(viewerRole, viewerProg, p);
+    const matchedTrack = trackForPair(viewerRole, viewerProg, p);
     const selected = coffeeSelections.has(id);
     const time = conversations[id] ? new Date(conversations[id]).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
 
@@ -1074,12 +1071,12 @@ function renderMyList() {
           <div class="mylist-name">${p.name}</div>
           <div class="mylist-meta">${p.role}${p.year ? ' · ' + p.year : ''}</div>
           <div class="mylist-title">${(p.title || '').substring(0, 65)}${(p.title || '').length > 65 ? '…' : ''}</div>
-          ${track ? `<div class="mylist-track">${track.icon} ${track.name}</div>` : ''}
+          ${matchedTrack ? `<div class="mylist-track">${matchedTrack.icon} ${matchedTrack.name}</div>` : ''}
           ${time ? `<div class="mylist-time">Logged at ${time}</div>` : ''}
         </div>
         <div class="mylist-actions">
           ${p.linkedin_url ? `<a class="ml-action-btn ml-li" href="${p.linkedin_url}" target="_blank" title="Connect on LinkedIn">in</a>` : ''}
-          ${track ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove request' : 'Request ' + track.name}">${track.icon}${selected ? '✓' : ''}</button>` : ''}
+          ${matchedTrack ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove request' : 'Request ' + matchedTrack.name}">${matchedTrack.icon}${selected ? '✓' : ''}</button>` : ''}
         </div>
       </div>`;
   }).join('');

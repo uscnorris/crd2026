@@ -46,26 +46,31 @@ Admin dashboard: `https://uscnorris.github.io/crd2026/admin.html`
 
 ---
 
-## Going live (three settings in config.js)
+## Going live — status: ✅ done, fully automated
 
-The app runs on sample data out of the box. To go live for the real event:
+Earlier drafts of this README described a manual setup (import a CSV by hand,
+publish it, paste the URL). **That's no longer how this works.** The three
+settings below are already filled in with real values in `config.js`, and
+they now update themselves — nobody needs to touch a CSV or `config.js` again
+for day-to-day changes:
 
-1. **Directory data** — a ready-to-use template, `CRD2026_Poster_Directory_Template.csv`,
-   is included and pre-loaded with the 23 sample posters (spanning all five research
-   programs plus COE and CRTEC). Import it into Google Sheets (`File → Import → Upload`),
-   replace the samples with your real registrations, then publish to the web as CSV
-   (`File → Share → Publish to web → CSV`), paste the URL into `sheet_url`, and set
-   `use_sample_data: false`. Column order must match the template header. This is the
-   same publish-a-Sheet workflow as the events calendar — whoever maintains the roster
-   only ever edits the Sheet, never the code.
-2. **Event tracking** — deploy the Apps Script web app (logs conversations/requests to
-   a Sheet) and paste its URL into `script_url`. Without this the app still works;
-   it just won't record analytics for the dashboard.
-3. **Connection requests** — paste your Google Form URL into `form_url` so the
-   "Submit connection requests" button routes there. If left blank, it falls back to
-   a pre-filled email to `info.contact_email`.
+1. **Directory data** — `sheet_url` points at the "Directory" tab of your
+   spreadsheet, published as CSV. That tab is written automatically by
+   `onFormSubmit` in `Code.gs` every time someone submits the registration
+   form (and updates in place if they resubmit — see the "Day-of sign-ups"
+   section above). You never import a CSV by hand.
+2. **Event tracking** — `script_url` is your deployed Apps Script web app. It
+   logs conversations and connection requests to the spreadsheet, which feeds
+   the admin dashboard.
+3. **Connection requests** — `form_url` is your Google Form link, already set.
 
-After editing, bump the `?v=` number in `index.html`/`admin.html` (currently `v=22`)
+The `CRD2026_Poster_Directory_Template.csv` file is kept only as a reference
+for the column order Directory rows must follow — you shouldn't need to
+import it anywhere.
+
+**The one manual step that still applies:** any time the app's own files
+(`index.html`, `admin.html`, `app.js`, etc.) are re-uploaded to GitHub with
+changes, bump the `?v=` number at the top of `index.html` and `admin.html`
 so returning phones don't serve a cached copy.
 
 ---
@@ -85,12 +90,13 @@ Research program, Department / lab, Year, "Are you presenting a poster?", Poster
 Poster summary, Disease / focus area, PI name, "Open to clinical input?", LinkedIn URL,
 and "May we list you in the directory?" (Yes/No consent). Also add, so the site's newer
 features work: "Will you attend in person or virtually?", "Short bio (for connection
-matching)" (used to match virtual attendees who aren't presenting a poster), "Faculty:
-are you open to Mentor Match consults?" (Yes/No — only opted-in faculty appear as Mentor
-Match targets), "Do you need any accessibility accommodations?", and "Any dietary
-restrictions?". Keep **PI name** on the form — it lands in the raw responses and is what
-turns the event into CCSG numbers. (Accessibility, dietary, PI, and attendance mode stay
-in the raw Responses tab for planning; only the directory-relevant fields are copied to
+matching)" (shown as its own "About" section on the profile — separate from the Poster
+Summary, which stays about the research), "Faculty: are you open to Mentor Match
+consults?" (Yes/No — only opted-in faculty appear as Mentor Match targets), "Do you need
+any accessibility accommodations?", and "Any dietary restrictions?". Keep **PI name** on
+the form — it lands in the raw responses and is what turns the event into CCSG numbers.
+(Accessibility, dietary, PI, and attendance mode stay in the raw Responses tab for
+planning; only the directory-relevant fields are copied to
 the Directory tab.)
 
 **B. Link the form to a spreadsheet.** In the Form: Responses → Link to Sheets → create
