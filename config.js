@@ -14,20 +14,20 @@ const CONFIG = {
 
   // APPS SCRIPT BACKEND (event tracking)
   // Paste your deployed Apps Script web app URL here (see Code.gs setup instructions)
-  script_url: "https://script.google.com/macros/s/AKfycbzm3v4EXQ2VwnmOEAUAyLteeAv4HGFfugMfDO22BbwWNBkT-w4rhgXg7x4rKURrpGo3jQ/exec",
+  script_url: https://script.google.com/macros/s/AKfycbxuiXOjPozmm5Q2M9ax9nrHJnTEh2PVsnkzUkMX68-1jkEIBGpIfWNA_2wmrQ3x0XSAxQ/exec
 
   // GOOGLE SHEETS (directory data)
   // File → Share → Publish to web → Sheet1 → CSV → Publish → copy URL
-  sheet_url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQksITlntkPc60L__OSZomcBTOpjGXHI5kEEErmZLjFl3qe1KOPN6E80yExao-4El3fgYJ79PjI2ZGS/pub?gid=1334489619&single=true&output=csv",
+  sheet_url: https://docs.google.com/spreadsheets/d/e/2PACX-1vQksITlntkPc60L__OSZomcBTOpjGXHI5kEEErmZLjFl3qe1KOPN6E80yExao-4El3fgYJ79PjI2ZGS/pub?gid=1334489619&single=true&output=csv
 
   // Set to false once your sheet URL is pasted above
-  use_sample_data: false,
+  use_sample_data: false
 
   // Max follow-up connection requests per person (across all tracks)
   max_selections: 2,
 
   // Where connection requests get sent (Google Form URL — see README)
-  form_url: "https://forms.gle/NScGUCFhKD9d4qv19",
+  form_url: https://docs.google.com/forms/d/e/1FAIpQLSejuB6fGgHYuU1IMp1Lk-_0tMmDbKGVRPNgjJP44fYYdcGnvg/viewform?usp=sharing&ouid=103258556796135986003
 
   // BASE URL for QR codes — your GitHub Pages URL
   base_url: "https://uscnorris.github.io/crd2026",
