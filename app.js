@@ -595,15 +595,21 @@ function renderCoffeeQuickFilter() {
 
   if (currentSegment !== 'coffee') { wrap.innerHTML = banner; return; }
 
-  // Coffee Consult tab: explain the pairing rule up front, and give people
-  // who aren't listed a way in without leaving the app confused.
   const url = CONFIG.form_url;
   const canRegister = url && url.indexOf('PASTE') !== 0;
+
+  // Instructions as numbered commands, not description. Side legend uses the
+  // same cardinal/gold tint as the cards themselves, so the colour is the key.
   wrap.innerHTML = banner + `
     <div class="coffee-explainer">
-      <p><strong>\u2615 Coffee Consult</strong> pairs one <span class="side-dot side-research"></span><strong>research trainee</strong> (PhD student or postdoc) with one <span class="side-dot side-clinical"></span><strong>clinical trainee</strong> (fellow, resident, or clinical doctoral student) for a conversation over coffee. CRTEC arranges and confirms every match.</p>
-      <p class="coffee-explainer-foot">Don't see yourself listed? Only trainees who opted in during registration appear here.
-      ${canRegister ? `<a href="${url}" target="_blank" rel="noopener">Opt in using the registration form</a> \u2014 resubmit with the same email and you'll appear within a few minutes.` : 'Contact CRTEC to opt in.'}</p>
+      <ol class="cc-steps">
+        <li>Find your side below \u2014 <span class="cc-key cc-key-research">research trainee</span> or <span class="cc-key cc-key-clinical">clinical trainee</span>.</li>
+        <li>Browse the <strong>other</strong> side. You can only be matched across sides.</li>
+        <li>Open a profile and tap <strong>Request Coffee Consult</strong>.</li>
+        <li>Confirm your registered email. CRTEC arranges the match and emails you both.</li>
+      </ol>
+      <p class="coffee-explainer-foot">Not listed? Only trainees who opted in at registration appear here.
+      ${canRegister ? `<a href="${url}" target="_blank" rel="noopener">Opt in on the registration form</a> \u2014 resubmit with the same email and you'll appear within a few minutes.` : 'Contact CRTEC to opt in.'}</p>
     </div>`;
 }
 
@@ -638,7 +644,7 @@ function renderDirectory() {
   document.getElementById('directory-list').innerHTML = results.map(p => {
     const requested = coffeeSelections.has(p.id);
     return `
-      <div class="participant-card ${requested ? 'talked' : ''}" onclick="showProfile(getParticipant('${p.id}'))">
+      <div class="participant-card ${requested ? 'talked' : ''} ${isCoffeeEligible(p) ? (coffeeSideOf(p) === 'B' ? 'card-clinical' : 'card-research') : ''}" onclick="showProfile(getParticipant('${p.id}'))">
         <div class="card-avatar ${avatarClass(p.role)}">${initials(p.name)}</div>
         <div class="card-body">
           <div class="card-name-row">
@@ -652,7 +658,7 @@ function renderDirectory() {
               ? `<span class="chip">Poster ${p.poster_number}</span>`
               : '<span class="chip chip-quiet">No poster \u00b7 here to connect</span>'}
             ${p.disease_area ? `<span class="chip">${p.disease_area}</span>` : ''}
-            ${isCoffeeEligible(p) ? `<span class="chip chip-side chip-side-${coffeeSideOf(p) === 'B' ? 'clinical' : 'research'}">☕ ${sideLabel(coffeeSideOf(p))} trainee</span>` : ''}
+            ${isCoffeeEligible(p) ? `<span class="chip chip-side">☕ ${sideLabel(coffeeSideOf(p))} trainee</span>` : ''}
           </div>
         </div>
       </div>`;
@@ -808,7 +814,7 @@ function showProfile(participant) {
         <div class="profile-tags">
           ${participant.disease_area ? `<span class="chip">${participant.disease_area}</span>` : ''}
           ${participant.research_program ? `<span class="chip">${participant.research_program}</span>` : ''}
-          ${isCoffeeEligible(participant) ? `<span class="chip chip-side chip-side-${coffeeSideOf(participant) === 'B' ? 'clinical' : 'research'}">☕ ${sideLabel(coffeeSideOf(participant))} trainee · open to Coffee Consult</span>` : ''}
+          ${isCoffeeEligible(participant) ? `<span class="chip chip-side">☕ ${sideLabel(coffeeSideOf(participant))} trainee · open to Coffee Consult</span>` : ''}
         </div>
       </div>
       <div class="profile-connect">${connectCard}</div>

@@ -722,14 +722,14 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 .quad-layout { margin-top: 24px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
 .quad-layout-label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--cardinal); margin-bottom: 8px; }
 .quad-layout-note { font-size: 14px; color: var(--text-mid); margin-bottom: 16px; max-width: 60ch; }
-.quad-svg { display: block; max-width: 320px; margin: 0 auto; }
+.quad-svg { display: block; width: 100%; max-width: 520px; margin: 0 auto; }
 .quad-center { font-family: var(--font-serif); font-size: 15px; font-weight: 700; fill: #b0a99a; }
-.quad-side-label { font-size: 12px; font-weight: 700; fill: #fff; }
+.quad-side-label { font-size: 13px; font-weight: 700; fill: #fff; }
 .quad-side-label-dark { fill: #1a1a1a; }
 .quad-layout-caveat { font-size: 12px; color: var(--text-light); text-align: center; margin: 12px 0 0; font-style: italic; }
 
-.quad-side-sub { font-size: 9.5px; font-weight: 600; fill: rgba(255,255,255,.85); }
-.quad-side-sub-dark { fill: rgba(0,0,0,.65); }
+.quad-side-sub { font-size: 11px; font-weight: 600; fill: rgba(255,255,255,.9); }
+.quad-side-sub-dark { fill: rgba(0,0,0,.85); }
 
 /* ═══════════════════════════════════════════════
    Profile redesign — one consistent visual language.
@@ -814,13 +814,22 @@ body.in-app #profile-screen, body.in-app #mylist-screen { padding-bottom: 86px; 
 .chip-quiet { background: transparent; border-style: dashed; color: var(--text-light); font-weight: 600; }
 .no-poster-note { font-style: italic; color: var(--text-light); margin: 0 0 10px; }
 
-/* Side colour coding: research vs clinical */
+/* Side colour coding \u2014 on-brand cardinal & gold, applied to the WHOLE card
+   so the side reads at a glance instead of via a small badge. */
+.card-research { background: #FFFBEF; border-left: 5px solid var(--gold); }
+.card-clinical { background: #FDF3F3; border-left: 5px solid var(--cardinal); }
+.card-research .chip-side { background: var(--gold); border-color: var(--gold); color: #1a1a1a; font-weight: 700; }
+.card-clinical .chip-side { background: var(--cardinal); border-color: var(--cardinal); color: #fff; font-weight: 700; }
 .chip-side { font-weight: 700; }
-.chip-side-research { background: #eaf1fb; border-color: #b9d0ee; color: #1b4a86; }
-.chip-side-clinical { background: #f3ecfa; border-color: #d3bde9; color: #5b2e8c; }
-.side-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; vertical-align: baseline; }
-.side-research { background: #1b4a86; }
-.side-clinical { background: #5b2e8c; }
+
+/* Inline colour keys used in the numbered instructions */
+.cc-key { font-weight: 700; padding: 1px 7px; border-radius: 20px; white-space: nowrap; }
+.cc-key-research { background: var(--gold); color: #1a1a1a; }
+.cc-key-clinical { background: var(--cardinal); color: #fff; }
+
+/* Numbered command list */
+.cc-steps { margin: 0; padding-left: 20px; }
+.cc-steps li { font-size: 13.5px; line-height: 1.7; color: var(--text); }
 
 /* Coffee Consult tab explainer */
 .coffee-explainer { background: var(--cardinal-light); border: 1px solid #E8C0C0; border-radius: var(--radius-sm); padding: 13px 15px; margin-bottom: 10px; }
