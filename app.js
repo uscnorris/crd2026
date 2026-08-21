@@ -72,7 +72,7 @@ function track(payload) {
 
 let activeFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
 let coffeeQuickFilterOn = false;
-let currentSegment = 'all';   // 'all' | 'posters' | 'coffee'
+let currentSegment = 'posters';   // 'posters' | 'coffee'
 let pendingFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
 
 // ── INIT ──────────────────────────────────────
@@ -593,19 +593,18 @@ function renderCoffeeQuickFilter() {
     ? `<div class="sample-data-banner">\u26a0\ufe0f Showing sample/preview data, not real registrations \u2014 see console for why, or check config.js.</div>`
     : '';
 
-  const t = (CONFIG.connection_tracks || [])[0];
-  const anyEligible = allParticipants.some(isCoffeeEligible);
-  if (!t || !anyEligible || currentSegment !== 'all') { wrap.innerHTML = banner; return; }
+  if (currentSegment !== 'coffee') { wrap.innerHTML = banner; return; }
 
-  // No identity needed — this simply narrows the directory to the people who
-  // opted in to Coffee Consult, so anyone can see who's taking part.
+  // Coffee Consult tab: explain the pairing rule up front, and give people
+  // who aren't listed a way in without leaving the app confused.
+  const url = CONFIG.form_url;
+  const canRegister = url && url.indexOf('PASTE') !== 0;
   wrap.innerHTML = banner + `
-    <button class="coffee-quickfilter ${coffeeQuickFilterOn ? 'on' : ''}" id="coffee-quickfilter-btn" onclick="toggleCoffeeQuickFilter()">
-      <span class="cqf-check">${coffeeQuickFilterOn ? '\u2713' : ''}</span>
-      <span class="cqf-icon">${t.icon}</span>
-      <span class="cqf-text">${coffeeQuickFilterOn ? 'SHOWING ONLY \u2014 Coffee Consult participants' : 'Show only Coffee Consult participants'}</span>
-      ${coffeeQuickFilterOn ? '<span class="cqf-clear">\u2715 Clear</span>' : '<span class="cqf-arrow">\u2192</span>'}
-    </button>`;
+    <div class="coffee-explainer">
+      <p><strong>\u2615 Coffee Consult</strong> pairs one <span class="side-dot side-research"></span><strong>research trainee</strong> (PhD student or postdoc) with one <span class="side-dot side-clinical"></span><strong>clinical trainee</strong> (fellow, resident, or clinical doctoral student) for a conversation over coffee. CRTEC arranges and confirms every match.</p>
+      <p class="coffee-explainer-foot">Don't see yourself listed? Only trainees who opted in during registration appear here.
+      ${canRegister ? `<a href="${url}" target="_blank" rel="noopener">Opt in using the registration form</a> \u2014 resubmit with the same email and you'll appear within a few minutes.` : 'Contact CRTEC to opt in.'}</p>
+    </div>`;
 }
 
 function setSegment(seg) {
@@ -613,9 +612,7 @@ function setSegment(seg) {
   document.querySelectorAll('#dir-segments .seg-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.seg === seg);
   });
-  // The standalone coffee toggle is redundant while the Coffee segment is
-  // active, so clear it to avoid two controls doing the same thing.
-  if (seg === 'coffee') coffeeQuickFilterOn = false;
+  coffeeQuickFilterOn = false;
   renderCoffeeQuickFilter();
   renderDirectory();
 }
@@ -655,7 +652,7 @@ function renderDirectory() {
               ? `<span class="chip">Poster ${p.poster_number}</span>`
               : '<span class="chip chip-quiet">No poster \u00b7 here to connect</span>'}
             ${p.disease_area ? `<span class="chip">${p.disease_area}</span>` : ''}
-            ${isCoffeeEligible(p) ? '<span class="chip chip-accent">☕ Open to Coffee Consult</span>' : ''}
+            ${isCoffeeEligible(p) ? `<span class="chip chip-side chip-side-${coffeeSideOf(p) === 'B' ? 'clinical' : 'research'}">☕ ${sideLabel(coffeeSideOf(p))} trainee</span>` : ''}
           </div>
         </div>
       </div>`;
@@ -736,13 +733,27 @@ function showProfile(participant) {
   let connectCard = '';
   if (eligible) {
     const t = (CONFIG.connection_tracks || [])[0];
-    connectCard = selected
-      ? `<div class="request-sent">
+    const me = user && user.id ? allParticipants.find(x => x.id === user.id) : null;
+    const sameSide = me && coffeeSideOf(me) && coffeeSideOf(me) === coffeeSideOf(participant);
+    const isMe = me && me.id === participant.id;
+
+    if (isMe) {
+      connectCard = `<p class="step-hint">This is your own entry.</p>`;
+    } else if (sameSide) {
+      // Explain instead of offering a button that would just fail.
+      connectCard = `<div class="request-blocked">
+          ${t.icon} Coffee Consult pairs a <strong>research trainee</strong> with a <strong>clinical trainee</strong>.
+          You are both on the ${sideLabel(coffeeSideOf(participant)).toLowerCase()} side, so this pairing isn't available.
+        </div>`;
+    } else if (selected) {
+      connectCard = `<div class="request-sent">
            <span>${t.icon} Request sent — CRTEC will confirm your match</span>
            <button class="btn-undo-text" onclick="toggleCoffee('${participant.id}')">Undo</button>
-         </div>`
-      : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${t.icon} Request Coffee Consult</button>
+         </div>`;
+    } else {
+      connectCard = `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${t.icon} Request Coffee Consult</button>
          <p class="step-hint">This sends a request — you won't be automatically paired. CRTEC confirms every match and emails you both.</p>`;
+    }
   }
 
   // ── Compact contact row: icon-only LinkedIn, plain email text. Replaces
@@ -797,7 +808,7 @@ function showProfile(participant) {
         <div class="profile-tags">
           ${participant.disease_area ? `<span class="chip">${participant.disease_area}</span>` : ''}
           ${participant.research_program ? `<span class="chip">${participant.research_program}</span>` : ''}
-          ${isCoffeeEligible(participant) ? '<span class="chip chip-accent">☕ Open to Coffee Consult</span>' : ''}
+          ${isCoffeeEligible(participant) ? `<span class="chip chip-side chip-side-${coffeeSideOf(participant) === 'B' ? 'clinical' : 'research'}">☕ ${sideLabel(coffeeSideOf(participant))} trainee · open to Coffee Consult</span>` : ''}
         </div>
       </div>
       <div class="profile-connect">${connectCard}</div>
@@ -833,6 +844,13 @@ function isCoffeeEligible(p) {
 }
 
 // Which side is this person on? Used to show them the OTHER side.
+// Human-readable label for a Coffee Consult side.
+function sideLabel(side) {
+  if (side === 'A') return 'Research';
+  if (side === 'B') return 'Clinical';
+  return '';
+}
+
 function coffeeSideOf(p) {
   const t = (CONFIG.connection_tracks || [])[0];
   if (!t) return null;
@@ -861,10 +879,18 @@ function toggleCoffee(id) {
     if (p) showProfile(p);
     return;
   }
-  // Need to know who is requesting — but pick, don't type.
+  // Need to know who is requesting — verified by their registered email.
   if (!user || !user.id) {
     window._pendingRequest = id;
     showSelfPicker();
+    return;
+  }
+  // Coffee Consult pairs bench with clinic. Enforce that here as well as in
+  // the UI, so a stale page or a direct call can't create an invalid pair.
+  const target = allParticipants.find(x => x.id === id);
+  const me = allParticipants.find(x => x.id === user.id);
+  if (target && me && coffeeSideOf(me) && coffeeSideOf(target) === coffeeSideOf(me)) {
+    alert('Coffee Consult pairs a research trainee with a clinical trainee. You can only request someone from the other side.');
     return;
   }
   if (coffeeSelections.size >= CONFIG.max_selections) {
@@ -897,24 +923,22 @@ function toggleCoffee(id) {
 
 // "Which one are you?" — a searchable list of registered Coffee Consult
 // participants. No typing a name, no email re-entry, no account.
-function showSelfPicker(filterText) {
-  const people = coffeeEligiblePeople(null)
-    .filter(p => !filterText || (p.name + ' ' + (p.department || '')).toLowerCase().includes(filterText.toLowerCase()))
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  document.getElementById('selfpicker-list').innerHTML = people.length
-    ? people.map(p => `
-        <button class="selfpicker-row" onclick="pickSelf('${p.id}')">
-          <span class="selfpicker-name">${p.name}</span>
-          <span class="selfpicker-meta">${p.role}${p.department ? ' · ' + p.department : ''}</span>
-        </button>`).join('')
-    : `<p class="selfpicker-empty">No matching names. Coffee Consult is limited to trainees who opted in during registration. If you opted in and are not listed, contact ${(CONFIG.info && CONFIG.info.contact_email) || 'CRTEC'}.</p>`;
-
-  document.getElementById('selfpicker-modal').style.display = 'flex';
-}
-
-function filterSelfPicker() {
-  showSelfPicker(document.getElementById('selfpicker-search').value);
+// ── Identify yourself by EMAIL, not by picking from a list ──
+// A browsable list of names would let anyone claim to be someone else and
+// send requests in their name. Requiring the email you registered with means
+// you can only act as yourself.
+function showSelfPicker() {
+  const modal = document.getElementById('selfpicker-modal');
+  document.getElementById('selfpicker-error').textContent = '';
+  document.getElementById('selfpicker-email').value = '';
+  const link = document.getElementById('selfpicker-register-link');
+  if (link) {
+    const url = CONFIG.form_url;
+    if (url && url.indexOf('PASTE') !== 0) { link.href = url; link.style.display = 'inline'; }
+    else { link.style.display = 'none'; }
+  }
+  modal.style.display = 'flex';
+  setTimeout(() => document.getElementById('selfpicker-email').focus(), 50);
 }
 
 function closeSelfPicker() {
@@ -922,9 +946,21 @@ function closeSelfPicker() {
   window._pendingRequest = null;
 }
 
-function pickSelf(id) {
-  const me = allParticipants.find(x => x.id === id);
-  if (!me) return;
+// Look the email up against the registered directory.
+function confirmSelfByEmail() {
+  const input = (document.getElementById('selfpicker-email').value || '').trim().toLowerCase();
+  const errEl = document.getElementById('selfpicker-error');
+  if (!input) { errEl.textContent = 'Please enter your email address.'; return; }
+
+  const me = allParticipants.find(p => (p.email || '').trim().toLowerCase() === input);
+  if (!me) {
+    errEl.innerHTML = 'We could not find that email in the directory. Coffee Consult is open to trainees who opted in when they registered \u2014 you can opt in or update your details using the registration form below, then try again in a few minutes.';
+    return;
+  }
+  if (!isCoffeeEligible(me)) {
+    errEl.innerHTML = 'That email is registered, but is not currently opted in to Coffee Consult. You can opt in using the registration form below \u2014 resubmitting updates your existing entry.';
+    return;
+  }
   user = { id: me.id, name: me.name, role: me.role, program: me.research_program || me.department || '' };
   saveState();
   track({ action: 'identify', name: me.name, role: me.role, program: user.program });

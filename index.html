@@ -345,16 +345,21 @@
     <div class="selfpicker-card">
       <div class="selfpicker-head">
         <div>
-          <div class="selfpicker-title">Select your name</div>
-          <div class="selfpicker-sub">So CRTEC knows who to connect. Your contact details are already on file from registration.</div>
+          <div class="selfpicker-title">Confirm your identity</div>
+          <div class="selfpicker-sub">Enter the email address you registered with, so CRTEC knows who is making the request.</div>
         </div>
         <button class="selfpicker-close" onclick="closeSelfPicker()">&times;</button>
       </div>
-      <input type="search" id="selfpicker-search" placeholder="Search by name…" oninput="filterSelfPicker()" autocomplete="off">
-      <div id="selfpicker-list" class="selfpicker-list"></div>
+      <input type="email" id="selfpicker-email" placeholder="you@usc.edu" autocomplete="email" onkeydown="if(event.key==='Enter')confirmSelfByEmail()">
+      <p id="selfpicker-error" class="selfpicker-error"></p>
+      <button class="btn-primary" onclick="confirmSelfByEmail()">Continue</button>
+      <p class="selfpicker-foot">
+        Not registered for Coffee Consult yet?
+        <a id="selfpicker-register-link" href="#" target="_blank" rel="noopener">Open the registration form</a>
+        — resubmitting with the same email updates your entry, and you'll appear here within a few minutes.
+      </p>
     </div>
   </div>
-
 
   <!-- AGENDA (in-app — stays inside the directory tool, no full page nav-away) -->
   <div id="agenda-screen" class="screen">
@@ -364,8 +369,7 @@
   <!-- DIRECTORY -->
   <div id="directory-screen" class="screen">
     <div class="segmented" id="dir-segments">
-      <button class="seg-btn active" data-seg="all" onclick="setSegment('all')">All</button>
-      <button class="seg-btn" data-seg="posters" onclick="setSegment('posters')">Posters</button>
+      <button class="seg-btn active" data-seg="posters" onclick="setSegment('posters')">Poster Directory</button>
       <button class="seg-btn" data-seg="coffee" onclick="setSegment('coffee')">☕ Coffee Consult</button>
     </div>
     <div id="coffee-quickfilter-wrap"></div>

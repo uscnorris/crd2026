@@ -39,7 +39,7 @@ const SAMPLE_DATA = [
     "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "priya.nair@usc.edu",
     "bio": ""
   },
   {
@@ -75,7 +75,7 @@ const SAMPLE_DATA = [
     "mentoring": "FALSE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "miguel.santos@usc.edu",
     "bio": ""
   },
   {
@@ -111,7 +111,7 @@ const SAMPLE_DATA = [
     "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "hannah.levine@usc.edu",
     "bio": ""
   },
   {
@@ -129,7 +129,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "robert.kim@usc.edu",
     "bio": ""
   },
   {
@@ -165,7 +165,7 @@ const SAMPLE_DATA = [
     "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "david.park@usc.edu",
     "bio": ""
   },
   {
@@ -183,7 +183,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "nadia.haddad@usc.edu",
     "bio": ""
   },
   {
@@ -201,7 +201,7 @@ const SAMPLE_DATA = [
     "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "thomas.wright@usc.edu",
     "bio": ""
   },
   {
@@ -237,7 +237,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "ana.morales@usc.edu",
     "bio": ""
   },
   {
@@ -255,7 +255,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "kevin.tran@usc.edu",
     "bio": ""
   },
   {
@@ -291,7 +291,7 @@ const SAMPLE_DATA = [
     "mentoring": "FALSE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "destiny.brooks@usc.edu",
     "bio": ""
   },
   {
@@ -309,7 +309,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "andre.flores@usc.edu",
     "bio": ""
   },
   {
@@ -327,7 +327,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "maria.torres@usc.edu",
     "bio": ""
   },
   {
@@ -345,7 +345,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "denise.whitfield@usc.edu",
     "bio": ""
   },
   {
@@ -363,7 +363,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "rosa.jimenez@usc.edu",
     "bio": ""
   },
   {
@@ -381,7 +381,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "aisha.mensah@usc.edu",
     "bio": ""
   },
   {
@@ -399,7 +399,7 @@ const SAMPLE_DATA = [
     "mentoring": "",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "marcus.bell@usc.edu",
     "bio": ""
   },
   {
@@ -417,7 +417,7 @@ const SAMPLE_DATA = [
     "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "",
+    "email": "tyler.nguyen@usc.edu",
     "bio": ""
   },
   {
