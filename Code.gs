@@ -99,15 +99,25 @@ function onFormSubmit(e) {
 
   const consented = !!get('consent');
   const presenting = /^y/i.test(get('presenting'));
-  const shouldBeListed = consented && presenting;   // directory = posters/speakers only, and opted in
+  const role = get('role');
+  const isCoffeeConsultRole = COFFEE_CONSULT_ROLES.includes(role);
+  const coffeeOptIn = isCoffeeConsultRole && /^y/i.test(get('coffee_optin'));
+  const hasBio = !!get('bio');
+
+  // Two ways into the directory:
+  //   1. You're presenting a poster.
+  //   2. You're a Coffee Consult trainee WITHOUT a poster — allowed in so you
+  //      can be matched, but only if you gave a bio / research interests,
+  //      since that's all anyone would have to go on when matching you.
+  // Either way you must have consented to being listed.
+  const coffeeOnlyListing = coffeeOptIn && hasBio;
+  const shouldBeListed = consented && (presenting || coffeeOnlyListing);
 
   if (!shouldBeListed) {
-    if (existingRow) dir.deleteRow(existingRow);   // opted out or no longer presenting → remove stale entry
+    if (existingRow) dir.deleteRow(existingRow);   // opted out, no poster and no bio → remove stale entry
     return;
   }
 
-  const role = get('role');
-  const isCoffeeConsultRole = COFFEE_CONSULT_ROLES.includes(role);
   const isNoProgramRole = NO_PROGRAM_ROLES.includes(role);
   // Coffee Consult flag: only PhD/postdoctoral research trainees and clinical
   // trainees (Clinical Fellow/Resident) can ever be matched — mirrors
@@ -116,14 +126,15 @@ function onFormSubmit(e) {
   const mentoringFlag = isCoffeeConsultRole ? (/^y/i.test(get('coffee_optin')) ? 'TRUE' : 'FALSE') : '';
   const researchProgram = isNoProgramRole ? '' : get('research_program');
 
-  // Reuse the existing poster number on an update; assign a fresh one only
-  // for a brand-new presenter, so re-submitting never renumbers posters.
-  let posterNo;
-  if (existingRow) {
-    posterNo = dir.getRange(existingRow, headers.indexOf('poster_number') + 1, 1, 1).getValue() || '';
+  // Poster numbers go ONLY to actual presenters. Coffee-Consult-only people
+  // are in the directory to be matched, not to be found at a board, so they
+  // stay blank and never take a slot in a section's numbering.
+  let posterNo = '';
+  if (presenting) {
+    if (existingRow) {
+      posterNo = dir.getRange(existingRow, headers.indexOf('poster_number') + 1, 1, 1).getValue() || '';
+    }
     if (!posterNo) posterNo = nextPosterNumber_(dir, headers, rowLetterFor_(role, researchProgram, get('disease_area')));
-  } else {
-    posterNo = nextPosterNumber_(dir, headers, rowLetterFor_(role, researchProgram, get('disease_area')));
   }
 
   const id = existingRow

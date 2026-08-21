@@ -785,3 +785,31 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 }
 .btn-undo-text { background: none; border: none; color: var(--text-light); font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 4px; }
 .btn-undo-text:hover { color: var(--cardinal); }
+
+/* ── Pick-yourself modal (replaces the old login/identity screen) ── */
+.selfpicker-modal { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 500; display: flex; align-items: flex-end; justify-content: center; }
+.selfpicker-card { background: #fff; width: 100%; max-width: 520px; max-height: 82vh; border-radius: 16px 16px 0 0; padding: 20px; display: flex; flex-direction: column; }
+.selfpicker-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.selfpicker-title { font-family: var(--font-serif); font-size: 19px; font-weight: 700; }
+.selfpicker-sub { font-size: 13px; color: var(--text-mid); margin-top: 3px; line-height: 1.45; }
+.selfpicker-close { background: none; border: none; font-size: 26px; line-height: 1; color: var(--text-light); cursor: pointer; padding: 0 4px; }
+#selfpicker-search { width: 100%; padding: 11px 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; margin-bottom: 10px; }
+.selfpicker-list { overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
+.selfpicker-row { display: block; width: 100%; text-align: left; background: #fff; border: none; border-bottom: 1px solid var(--border); padding: 12px 4px; cursor: pointer; }
+.selfpicker-row:hover { background: var(--off-white); }
+.selfpicker-name { display: block; font-weight: 700; font-size: 15px; }
+.selfpicker-meta { display: block; font-size: 12.5px; color: var(--text-mid); margin-top: 2px; }
+.selfpicker-empty { font-size: 14px; color: var(--text-mid); padding: 16px 4px; line-height: 1.5; }
+@media (min-width: 560px) { .selfpicker-modal { align-items: center; } .selfpicker-card { border-radius: 16px; } }
+
+/* Keep the last profile element clear of the fixed bottom nav */
+body.in-app #profile-screen, body.in-app #mylist-screen { padding-bottom: 86px; }
+
+/* Segment control: All / Posters / Coffee Consult */
+.segmented { display: flex; gap: 4px; background: var(--off-white); border: 1px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 10px; }
+.seg-btn { flex: 1; padding: 8px 6px; background: none; border: none; border-radius: 7px; font-size: 13px; font-weight: 700; color: var(--text-mid); cursor: pointer; white-space: nowrap; }
+.seg-btn.active { background: var(--cardinal); color: #fff; }
+
+/* Quiet chip for "no poster" so it reads as context, not a warning */
+.chip-quiet { background: transparent; border-style: dashed; color: var(--text-light); font-weight: 600; }
+.no-poster-note { font-style: italic; color: var(--text-light); margin: 0 0 10px; }

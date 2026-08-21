@@ -72,6 +72,7 @@ function track(payload) {
 
 let activeFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
 let coffeeQuickFilterOn = false;
+let currentSegment = 'all';   // 'all' | 'posters' | 'coffee'
 let pendingFilters = { role: new Set(), program: new Set(), disease: new Set(), clinical: new Set() };
 
 // ── INIT ──────────────────────────────────────
@@ -284,123 +285,32 @@ const PROGRAMS_BY_ROLE = {
   ]
 };
 
-function onRoleChange() {
-  const role = document.getElementById('user-role').value;
-  const programRow = document.getElementById('program-row');
-  const programOtherRow = document.getElementById('program-other-row');
-  const programSelect = document.getElementById('user-program');
-  const programLabel = document.getElementById('program-label');
-  const options = PROGRAMS_BY_ROLE[role];
-
-  if (options) {
-    // Populate the dropdown with role-specific options
-    programSelect.innerHTML = '<option value="" selected disabled>Select your program</option>' +
-      options.map(o => `<option value="${o}">${o}</option>`).join('');
-    if (role === 'Faculty') programLabel.textContent = 'Research Program / Department';
-    else if (role === 'Clinical Fellow/Resident') programLabel.textContent = 'Fellowship / Residency Program';
-    else programLabel.textContent = 'Program';
-    programRow.style.display = 'block';
-    programOtherRow.style.display = 'none';
-    // Show text field when Other is selected
-    programSelect.onchange = function() {
-      programOtherRow.style.display = this.value === 'Other' ? 'block' : 'none';
-    };
-  } else {
-    // Roles without a curated dropdown: show open text field instead
-    programRow.style.display = 'none';
-    programOtherRow.style.display = 'block';
-    const otherLabel = document.getElementById('program-other-label');
-    if (otherLabel) otherLabel.textContent = 'Program / Department (optional)';
-    const otherInput = document.getElementById('user-program-other');
-    if (otherInput) { otherInput.value = ''; otherInput.placeholder = 'e.g. Norris Cancer Center, Community Advisory Board'; }
-  }
-}
-
-function saveIdentity() {
-  const name = document.getElementById('user-name').value.trim();
-  const roleEl = document.getElementById('user-role');
-  const role = roleEl.options[roleEl.selectedIndex] ? roleEl.options[roleEl.selectedIndex].value : roleEl.value;
-  if (!name) { alert('Please enter your name.'); return; }
-  if (!role) { alert('Please select your role.'); return; }
-  const programEl = document.getElementById('user-program');
-  const programRowVisible = document.getElementById('program-row') && document.getElementById('program-row').style.display !== 'none';
-  let program = (programRowVisible && programEl) ? (programEl.options[programEl.selectedIndex] ? programEl.options[programEl.selectedIndex].value : '') : '';
-  if (program === 'Other' || !program) {
-    const otherEl = document.getElementById('user-program-other');
-    const otherVisible = document.getElementById('program-other-row') && document.getElementById('program-other-row').style.display !== 'none';
-    if (otherVisible && otherEl && otherEl.value.trim()) program = otherEl.value.trim();
-  }
-  user = { name, role, program };
-  saveState();
-  track({ action: 'identify', name, role, program });
-  if (allParticipants.length === 0) {
-    setTimeout(showPostIdentity, 300);
-  } else {
-    showPostIdentity();
-  }
-}
-
-function showPostIdentity() {
-  // Show bottom nav for everyone
-  const nav = document.getElementById('bottom-nav');
-  nav.removeAttribute('style');
-  nav.style.display = 'flex';
-
-  // NOTE: the old floating #mylist-header-btn pill was removed from view —
-  // it duplicated the bottom nav's "My List" tab (which has the same count
-  // badge) and had no fixed positioning, so it would land wherever normal
-  // page flow put it and overlap other content. The bottom nav tab is the
-  // one true "My List" entry point now.
-
-  const mlNav = document.getElementById('nav-mylist');
-  if (mlNav) {
-    mlNav.removeAttribute('style');
-    mlNav.style.display = 'flex';
-  }
-
-  showRoleInHeader();
-
-  if (window._pendingProfile) {
-    const id = window._pendingProfile;
-    window._pendingProfile = null;
-    const p = allParticipants.find(x => x.id === id);
-    if (p) { showProfile(p); return; }
-  }
-  if (window._pendingLog) {
-    const id = window._pendingLog;
-    window._pendingLog = null;
-    logConversation(id);
-    return;
-  }
-  showView('directory');
-}
-
-// Always visible: shows "Name · Role" + "Not you?" when identified, or a
-// plain "Who am I?" button when not. This is the ONLY entry point back into
-// the identity screen once someone skips it, so it must never be hidden.
+// Header identity chip. No login exists any more — this only reflects who
+// you picked when requesting a Coffee Consult, and lets you change it.
 function showRoleInHeader() {
   const chip = document.getElementById('header-role-chip');
   const btn = document.getElementById('header-role-switch-btn');
   if (!chip || !btn) return;
-  if (user) {
-    chip.textContent = user.name + (user.role ? ' · ' + user.role : '');
+  if (user && user.name) {
+    chip.textContent = user.name;
     chip.style.display = 'inline';
-    btn.textContent = 'Not you?';
+    btn.textContent = 'Change';
+    btn.style.display = 'inline';
   } else {
     chip.style.display = 'none';
-    btn.textContent = 'Who am I?';
+    btn.style.display = 'none';   // nothing to change until you've requested
   }
 }
 
+// "Change" — clear the remembered selection and re-open the picker.
 function switchRole() {
-  // Clear user so identity screen shows again
   localStorage.removeItem('crd2026_user');
   user = null;
+  coffeeSelections.clear();
+  saveState();
+  updateBadgeCounts();
   showRoleInHeader();
-  document.getElementById('bottom-nav').style.display = 'none';
-  document.getElementById('mylist-header-btn').style.display = 'none';
-  // Pre-fill name if we remember it
-  showView('identity');
+  showSelfPicker();
 }
 
 function decideStartView() {
@@ -426,16 +336,21 @@ function openDirectory() {
   document.getElementById('app-mode').classList.remove('app-hidden');
   document.body.classList.add('in-app');
   window.scrollTo(0, 0);
-  if (user) {
-    showPostIdentity();
-  } else {
-    // Browse first; identity is prompted only when someone logs a conversation
-    showView('directory');
-    document.getElementById('bottom-nav').style.display = 'flex';
-    document.getElementById('nav-mylist').style.display = 'none';
-    document.getElementById('mylist-header-btn').style.display = 'none';
-    showRoleInHeader();   // shows "Who am I?" so there's always a way to identify
+  // No login, ever. The directory is open to everyone immediately — browsing
+  // posters is the main job, and identity is only asked (as a pick, not a
+  // form) at the moment someone requests a Coffee Consult.
+  document.getElementById('bottom-nav').style.display = 'flex';
+  const mlNav = document.getElementById('nav-mylist');
+  if (mlNav) mlNav.style.display = 'flex';
+  showRoleInHeader();
+  updateBadgeCounts();
+  if (window._pendingProfile) {
+    const id = window._pendingProfile;
+    window._pendingProfile = null;
+    const p = allParticipants.find(x => x.id === id);
+    if (p) { showProfile(p); return; }
   }
+  showView('directory');
 }
 
 function backToProgram() {
@@ -658,11 +573,10 @@ function getFilteredParticipants() {
     if (activeFilters.role.size > 0 && !activeFilters.role.has(p.role)) return false;
     if (activeFilters.program.size > 0 && !activeFilters.program.has(p.research_program)) return false;
     if (activeFilters.disease.size > 0 && !activeFilters.disease.has(p.disease_area)) return false;
-    if (activeFilters.clinical.size > 0 && activeFilters.clinical.has('true') && !p.clinical_input) return false;
-    if (coffeeQuickFilterOn) {
-      const matchedTrack = trackForPair(user ? user.role : '', user ? user.program : '', p);
-      if (!matchedTrack) return false;
-    }
+    if (activeFilters.clinical.size > 0 && activeFilters.clinical.has('true') && !isCoffeeEligible(p)) return false;
+    if (coffeeQuickFilterOn && !isCoffeeEligible(p)) return false;
+    if (currentSegment === 'posters' && !p.poster_number) return false;
+    if (currentSegment === 'coffee' && !isCoffeeEligible(p)) return false;
     return true;
   });
 }
@@ -676,58 +590,34 @@ function renderCoffeeQuickFilter() {
   if (!wrap) return;
 
   const banner = usingSampleData
-    ? `<div class="sample-data-banner">⚠️ Showing sample/preview data, not real registrations — see console for why, or check config.js.</div>`
+    ? `<div class="sample-data-banner">\u26a0\ufe0f Showing sample/preview data, not real registrations \u2014 see console for why, or check config.js.</div>`
     : '';
 
-  if (!user || !user.role) {
-    // Not identified yet: no way to compute "the other side" — but say so,
-    // so the feature is discoverable instead of just silently absent.
-    const track = (CONFIG.connection_tracks || [])[0];
-    wrap.innerHTML = banner + (track
-      ? `<button class="coffee-quickfilter-hint" onclick="switchRole()">${track.icon} Tap to identify yourself and see your Coffee Consult matches →</button>`
-      : '');
-    coffeeQuickFilterOn = false;
-    return;
-  }
+  const t = (CONFIG.connection_tracks || [])[0];
+  const anyEligible = allParticipants.some(isCoffeeEligible);
+  if (!t || !anyEligible || currentSegment !== 'all') { wrap.innerHTML = banner; return; }
 
-  const track = (CONFIG.connection_tracks || [])[0]; // Coffee Consult is the sole track
-  if (!track) { wrap.innerHTML = banner; return; }
-
-  const viewer = { role: user.role, program: user.program };
-  const onA = personMatchesSide(viewer, track.sideA);
-  const onB = personMatchesSide(viewer, track.sideB);
-
-  if (!onA && !onB) {
-    // This person's role isn't part of Coffee Consult at all — nothing to show.
-    wrap.innerHTML = banner;
-    coffeeQuickFilterOn = false;
-    return;
-  }
-
-  // Show the OTHER side's roles in plain language, not the raw role strings.
-  const otherRoles = onA ? track.sideB.roles : track.sideA.roles;
-  const label = describeRoleGroup(otherRoles);
-
+  // No identity needed — this simply narrows the directory to the people who
+  // opted in to Coffee Consult, so anyone can see who's taking part.
   wrap.innerHTML = banner + `
     <button class="coffee-quickfilter ${coffeeQuickFilterOn ? 'on' : ''}" id="coffee-quickfilter-btn" onclick="toggleCoffeeQuickFilter()">
-      <span class="cqf-check">${coffeeQuickFilterOn ? '✓' : ''}</span>
-      <span class="cqf-icon">${track.icon}</span>
-      <span class="cqf-text">${coffeeQuickFilterOn ? 'FILTER ON — Showing' : 'Show'} ${label}</span>
-      ${coffeeQuickFilterOn ? '<span class="cqf-clear">✕ Clear</span>' : '<span class="cqf-arrow">→</span>'}
+      <span class="cqf-check">${coffeeQuickFilterOn ? '\u2713' : ''}</span>
+      <span class="cqf-icon">${t.icon}</span>
+      <span class="cqf-text">${coffeeQuickFilterOn ? 'SHOWING ONLY \u2014 Coffee Consult participants' : 'Show only Coffee Consult participants'}</span>
+      ${coffeeQuickFilterOn ? '<span class="cqf-clear">\u2715 Clear</span>' : '<span class="cqf-arrow">\u2192</span>'}
     </button>`;
 }
 
-// Turns a list of role strings into a short, readable phrase for the chip.
-function describeRoleGroup(roles) {
-  const short = {
-    'PhD Student': 'PhD students', 'Postdoctoral Fellow': 'postdocs',
-    'Clinical Fellow/Resident': 'clinical fellows & residents',
-    "Master's Student": "master's students", 'Undergraduate Student': 'undergrads',
-    'Faculty (Early Stage Investigator)': 'early-stage faculty'
-  };
-  const names = roles.map(r => short[r] || r);
-  if (names.length === 1) return names[0];
-  return names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1];
+function setSegment(seg) {
+  currentSegment = seg;
+  document.querySelectorAll('#dir-segments .seg-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.seg === seg);
+  });
+  // The standalone coffee toggle is redundant while the Coffee segment is
+  // active, so clear it to avoid two controls doing the same thing.
+  if (seg === 'coffee') coffeeQuickFilterOn = false;
+  renderCoffeeQuickFilter();
+  renderDirectory();
 }
 
 function toggleCoffeeQuickFilter() {
@@ -749,21 +639,23 @@ function renderDirectory() {
   }
 
   document.getElementById('directory-list').innerHTML = results.map(p => {
-    const talked = conversations[p.id];
+    const requested = coffeeSelections.has(p.id);
     return `
-      <div class="participant-card ${talked ? 'talked' : ''}" onclick="showProfile(getParticipant('${p.id}'))">
+      <div class="participant-card ${requested ? 'talked' : ''}" onclick="showProfile(getParticipant('${p.id}'))">
         <div class="card-avatar ${avatarClass(p.role)}">${initials(p.name)}</div>
         <div class="card-body">
           <div class="card-name-row">
             <span class="card-name">${p.name}</span>
-            ${talked ? '<span class="talked-badge">✓ Logged</span>' : ''}
+            ${requested ? '<span class="talked-badge">☕ Requested</span>' : ''}
           </div>
           <div class="card-meta">${p.role}${p.year ? ' · ' + p.year : ''}${p.department ? ' · ' + p.department : ''}</div>
           <div class="card-title">${p.title || ''}</div>
           <div class="card-tags">
-            ${p.poster_number ? `<span class="chip">Poster ${p.poster_number}</span>` : ''}
+            ${p.poster_number
+              ? `<span class="chip">Poster ${p.poster_number}</span>`
+              : '<span class="chip chip-quiet">No poster \u00b7 here to connect</span>'}
             ${p.disease_area ? `<span class="chip">${p.disease_area}</span>` : ''}
-            ${p.clinical_input ? '<span class="chip chip-accent">Open to clinical input</span>' : ''}
+            ${isCoffeeEligible(p) ? '<span class="chip chip-accent">☕ Open to Coffee Consult</span>' : ''}
           </div>
         </div>
       </div>`;
@@ -834,52 +726,23 @@ function isCoffeeEligiblePair(viewerRole, participantRole, viewerProgram, partic
 
 function showProfile(participant) {
   if (!participant) return;
-  const talked = conversations[participant.id];
   const selected = coffeeSelections.has(participant.id);
-  const viewerRole = user ? user.role : '';
-  const viewerProgram = user ? (user.program || '') : '';
-  const matchedTrack = trackForPair(viewerRole, viewerProgram, participant);
+  const eligible = isCoffeeEligible(participant);
 
-  // ── Connect card: one connected two-step flow. Copy is explicit that
-  // step 2 is a REQUEST, not an automatic match — CRTEC coordinates and
-  // confirms every pairing by hand, so nobody is silently paired up.
+  // ── Coffee Consult: one button, no conversation logging, no login gate.
+  // Identity is only needed at the moment of requesting, and even then it's
+  // a pick-yourself-from-the-list step — everyone here already registered,
+  // so we never re-collect a name or email.
   let connectCard = '';
-  if (matchedTrack) {
-    const step2State = !talked ? 'locked' : (selected ? 'done' : 'active');
-    const step2Action = !talked
-      ? `<p class="step-hint">Unlocks after you log this conversation</p>`
-      : selected
-        ? `<div class="request-sent">
-             <span>${matchedTrack.icon} Request sent — CRTEC will confirm your match</span>
-             <button class="btn-undo-text" onclick="toggleCoffee('${participant.id}')">Undo</button>
-           </div>`
-        : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${matchedTrack.icon} ${matchedTrack.cta}</button>
-           <p class="step-hint">This sends a request — you won't be automatically paired. CRTEC confirms every match.</p>`;
-
-    connectCard = `
-      <div class="connect-steps">
-        <div class="connect-step ${talked ? 'done' : 'active'}">
-          <span class="step-num">${talked ? '✓' : '1'}</span>
-          <div class="step-body">
-            <div class="step-title">Log this conversation</div>
-            ${talked
-              ? `<button class="btn-undo-text" onclick="undoConversation('${participant.id}')">Undo</button>`
-              : `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`}
-          </div>
-        </div>
-        <div class="connect-step ${step2State}">
-          <span class="step-num">${selected ? '✓' : '2'}</span>
-          <div class="step-body">
-            <div class="step-title">${matchedTrack.icon} Request ${matchedTrack.name}</div>
-            <div class="step-desc">${matchedTrack.purpose}</div>
-            ${step2Action}
-          </div>
-        </div>
-      </div>`;
-  } else if (!talked) {
-    connectCard = `<button class="btn-log" onclick="logConversation('${participant.id}')">I talked to this person</button>`;
-  } else {
-    connectCard = `<button class="btn-undo-text" onclick="undoConversation('${participant.id}')">✓ Logged — Undo</button>`;
+  if (eligible) {
+    const t = (CONFIG.connection_tracks || [])[0];
+    connectCard = selected
+      ? `<div class="request-sent">
+           <span>${t.icon} Request sent — CRTEC will confirm your match</span>
+           <button class="btn-undo-text" onclick="toggleCoffee('${participant.id}')">Undo</button>
+         </div>`
+      : `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${t.icon} Request Coffee Consult</button>
+         <p class="step-hint">This sends a request — you won't be automatically paired. CRTEC confirms every match and emails you both.</p>`;
   }
 
   // ── Compact contact row: icon-only LinkedIn, plain email text. Replaces
@@ -925,13 +788,16 @@ function showProfile(participant) {
       ${posterLine}
       ${bioBlock}
       <div class="profile-block">
-        <div class="block-label">Research</div>
-        <div class="profile-title">${participant.title || ''}</div>
-        <div class="profile-summary">${participant.summary || ''}</div>
+        ${participant.title
+          ? `<div class="block-label">Poster</div>
+             <div class="profile-title">${participant.title}</div>
+             <div class="profile-summary">${participant.summary || ''}</div>`
+          : `<div class="block-label">Research interests</div>
+             <p class="profile-summary no-poster-note">Not presenting a poster this year \u2014 here to connect through Coffee Consult.</p>`}
         <div class="profile-tags">
           ${participant.disease_area ? `<span class="chip">${participant.disease_area}</span>` : ''}
           ${participant.research_program ? `<span class="chip">${participant.research_program}</span>` : ''}
-          ${participant.clinical_input ? '<span class="chip chip-accent">Open to clinical input</span>' : ''}
+          ${isCoffeeEligible(participant) ? '<span class="chip chip-accent">☕ Open to Coffee Consult</span>' : ''}
         </div>
       </div>
       <div class="profile-connect">${connectCard}</div>
@@ -949,71 +815,77 @@ function showProfile(participant) {
   });
 }
 
-function logConversation(id) {
-  if (!user) {
-    window._pendingLog = id;
-    showView('identity');
-    return;
-  }
-  conversations[id] = new Date().toISOString();
-  saveState();
-  updateBadgeCounts();
-  const p = allParticipants.find(x => x.id === id);
-  if (p) {
-    track({
-      action: 'log_convo',
-      participant_id: p.id,
-      participant_name: p.name,
-      participant_role: p.role,
-      participant_program: p.research_program || p.department || ''
-    });
-    showProfile(p);
-  }
+// ── COFFEE CONSULT ────────────────────────────
+// Everyone in the directory registered through the form, so we already have
+// their name and email. Identity is therefore never typed — when someone
+// requests a match, they pick themselves from the registered list, once.
+
+// Is this person part of Coffee Consult at all? Requires BOTH that their
+// role is on one side of the track AND that they opted in on the form
+// (the `mentoring` column, written by Code.gs from the opt-in question).
+function isCoffeeEligible(p) {
+  if (!p) return false;
+  const optedIn = String(p.mentoring || '').toLowerCase() === 'true';
+  if (!optedIn) return false;
+  const t = (CONFIG.connection_tracks || [])[0];
+  if (!t) return false;
+  return personMatchesSide(p, t.sideA) || personMatchesSide(p, t.sideB);
 }
 
-function undoConversation(id) {
-  delete conversations[id];
-  coffeeSelections.delete(id);
-  saveState();
-  updateBadgeCounts();
-  const p = allParticipants.find(x => x.id === id);
-  if (p) {
-    track({
-      action: 'undo_convo',
-      participant_id: p.id,
-      participant_name: p.name,
-      participant_role: p.role,
-      participant_program: p.research_program || p.department || ''
-    });
-    showProfile(p);
-  }
+// Which side is this person on? Used to show them the OTHER side.
+function coffeeSideOf(p) {
+  const t = (CONFIG.connection_tracks || [])[0];
+  if (!t) return null;
+  if (personMatchesSide(p, t.sideA)) return 'A';
+  if (personMatchesSide(p, t.sideB)) return 'B';
+  return null;
+}
+
+// Everyone opted in to Coffee Consult, optionally limited to the side
+// opposite `me` (so people only ever see valid matches).
+function coffeeEligiblePeople(oppositeOf) {
+  const list = allParticipants.filter(isCoffeeEligible);
+  if (!oppositeOf) return list;
+  const mySide = coffeeSideOf(oppositeOf);
+  if (!mySide) return list;
+  return list.filter(p => p.id !== oppositeOf.id && coffeeSideOf(p) !== mySide);
 }
 
 function toggleCoffee(id) {
-  const wasSelected = coffeeSelections.has(id);
-  if (wasSelected) {
+  // Undo is always allowed without identity.
+  if (coffeeSelections.has(id)) {
     coffeeSelections.delete(id);
-  } else {
-    if (coffeeSelections.size >= CONFIG.max_selections) {
-      alert(`You can request up to ${CONFIG.max_selections} follow-up connections. Remove one first.`);
-      return;
-    }
-    coffeeSelections.add(id);
+    saveState();
+    updateBadgeCounts();
+    const p = allParticipants.find(x => x.id === id);
+    if (p) showProfile(p);
+    return;
   }
+  // Need to know who is requesting — but pick, don't type.
+  if (!user || !user.id) {
+    window._pendingRequest = id;
+    showSelfPicker();
+    return;
+  }
+  if (coffeeSelections.size >= CONFIG.max_selections) {
+    alert(`You can request up to ${CONFIG.max_selections} Coffee Consults. Undo one first.`);
+    return;
+  }
+  coffeeSelections.add(id);
   saveState();
   updateBadgeCounts();
   const p = allParticipants.find(x => x.id === id);
   if (p) {
-    const t = trackForPair(user ? user.role : '', user ? user.program : '', p);
+    const t = (CONFIG.connection_tracks || [])[0] || {};
     track({
       action: 'coffee',
-      action_type: wasSelected ? 'removed' : 'selected',
-      track_id: t ? t.id : '',
-      track_name: t ? t.name : '',
-      track_aim: t ? t.aim : '',
-      requester_name: user ? user.name : '',
-      requester_role: user ? user.role : '',
-      requester_program: user ? user.program : '',
+      action_type: 'selected',
+      track_id: t.id || 'coffee',
+      track_name: t.name || 'Coffee Consult',
+      track_aim: t.aim || '',
+      requester_name: user.name,
+      requester_role: user.role,
+      requester_program: user.research_program || user.department || '',
       participant_id: p.id,
       participant_name: p.name,
       participant_role: p.role,
@@ -1023,8 +895,48 @@ function toggleCoffee(id) {
   }
 }
 
+// "Which one are you?" — a searchable list of registered Coffee Consult
+// participants. No typing a name, no email re-entry, no account.
+function showSelfPicker(filterText) {
+  const people = coffeeEligiblePeople(null)
+    .filter(p => !filterText || (p.name + ' ' + (p.department || '')).toLowerCase().includes(filterText.toLowerCase()))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  document.getElementById('selfpicker-list').innerHTML = people.length
+    ? people.map(p => `
+        <button class="selfpicker-row" onclick="pickSelf('${p.id}')">
+          <span class="selfpicker-name">${p.name}</span>
+          <span class="selfpicker-meta">${p.role}${p.department ? ' · ' + p.department : ''}</span>
+        </button>`).join('')
+    : `<p class="selfpicker-empty">No matching names. Coffee Consult is limited to trainees who opted in during registration. If you opted in and are not listed, contact ${(CONFIG.info && CONFIG.info.contact_email) || 'CRTEC'}.</p>`;
+
+  document.getElementById('selfpicker-modal').style.display = 'flex';
+}
+
+function filterSelfPicker() {
+  showSelfPicker(document.getElementById('selfpicker-search').value);
+}
+
+function closeSelfPicker() {
+  document.getElementById('selfpicker-modal').style.display = 'none';
+  window._pendingRequest = null;
+}
+
+function pickSelf(id) {
+  const me = allParticipants.find(x => x.id === id);
+  if (!me) return;
+  user = { id: me.id, name: me.name, role: me.role, program: me.research_program || me.department || '' };
+  saveState();
+  track({ action: 'identify', name: me.name, role: me.role, program: user.program });
+  showRoleInHeader();
+  document.getElementById('selfpicker-modal').style.display = 'none';
+  const pending = window._pendingRequest;
+  window._pendingRequest = null;
+  if (pending) toggleCoffee(pending);
+}
+
 function updateBadgeCounts() {
-  const count = Object.keys(conversations).length;
+  const count = coffeeSelections.size;
   document.getElementById('list-count-badge').textContent = count;
   const navCount = document.getElementById('nav-count');
   navCount.textContent = count;
@@ -1035,12 +947,16 @@ function updateBadgeCounts() {
 
 function renderMyList() {
   updateBadgeCounts();
-  const talkedIds = Object.keys(conversations);
+  const ids = [...coffeeSelections];
   const wrap = document.getElementById('mylist-content');
   const empty = document.getElementById('mylist-empty');
   const submitWrap = document.getElementById('submit-wrap');
 
-  if (talkedIds.length === 0) {
+  document.getElementById('mylist-sub').textContent = user && user.name
+    ? `Requesting as ${user.name}. CRTEC confirms every match and emails you both.`
+    : 'Coffee Consult requests you\'ve made. CRTEC confirms every match.';
+
+  if (ids.length === 0) {
     wrap.innerHTML = '';
     empty.style.display = 'block';
     submitWrap.style.display = 'none';
@@ -1048,46 +964,26 @@ function renderMyList() {
   }
   empty.style.display = 'none';
 
-  const viewerRole = user ? user.role : '';
-  const viewerProg = user ? (user.program || '') : '';
-  const hasTracks = viewerHasAnyTrack(viewerRole, viewerProg);
-
-  // Subtitle: context-aware based on whether any connection track is open to this user
-  const trackSubtitle = `People you talked to today. Tap a track badge to request a follow-up connection (up to ${CONFIG.max_selections}). CRTEC coordinates the match within 48 hours.`;
-  const genericSubtitle = 'People you talked to today. Connect on LinkedIn or tap a name to view their research.';
-  document.getElementById('mylist-sub').textContent = hasTracks ? trackSubtitle : genericSubtitle;
-
-  wrap.innerHTML = talkedIds.map(id => {
+  wrap.innerHTML = ids.map(id => {
     const p = allParticipants.find(x => x.id === id);
     if (!p) return '';
-    const matchedTrack = trackForPair(viewerRole, viewerProg, p);
-    const selected = coffeeSelections.has(id);
-    const time = conversations[id] ? new Date(conversations[id]).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
-
     return `
-      <div class="mylist-card ${selected ? 'selected' : ''}">
+      <div class="mylist-card selected">
         <div class="mylist-avatar ${avatarClass(p.role)}" onclick="showProfile(getParticipant('${id}'))">${initials(p.name)}</div>
         <div class="mylist-info" onclick="showProfile(getParticipant('${id}'))">
           <div class="mylist-name">${p.name}</div>
-          <div class="mylist-meta">${p.role}${p.year ? ' · ' + p.year : ''}</div>
-          <div class="mylist-title">${(p.title || '').substring(0, 65)}${(p.title || '').length > 65 ? '…' : ''}</div>
-          ${matchedTrack ? `<div class="mylist-track">${matchedTrack.icon} ${matchedTrack.name}</div>` : ''}
-          ${time ? `<div class="mylist-time">Logged at ${time}</div>` : ''}
+          <div class="mylist-meta">${p.role}${p.department ? ' · ' + p.department : ''}</div>
+          <div class="mylist-title">${(p.title || '').substring(0, 65)}${(p.title || '').length > 65 ? '\u2026' : ''}</div>
         </div>
         <div class="mylist-actions">
-          ${p.linkedin_url ? `<a class="ml-action-btn ml-li" href="${p.linkedin_url}" target="_blank" title="Connect on LinkedIn">in</a>` : ''}
-          ${matchedTrack ? `<button class="ml-action-btn ml-coffee ${selected ? 'on' : ''}" onclick="event.stopPropagation(); toggleCoffee('${id}')" title="${selected ? 'Remove request' : 'Request ' + matchedTrack.name}">${matchedTrack.icon}${selected ? '✓' : ''}</button>` : ''}
+          <button class="btn-undo-text" onclick="event.stopPropagation(); toggleCoffee('${id}')">Undo</button>
         </div>
       </div>`;
   }).join('');
 
-  if (coffeeSelections.size > 0) {
-    submitWrap.style.display = 'block';
-    document.getElementById('submit-btn').textContent =
-      `Submit ${coffeeSelections.size} connection request${coffeeSelections.size > 1 ? 's' : ''}`;
-  } else {
-    submitWrap.style.display = 'none';
-  }
+  submitWrap.style.display = 'block';
+  document.getElementById('submit-btn').textContent =
+    `Send ${ids.length} request${ids.length > 1 ? 's' : ''} to CRTEC`;
 }
 
 function submitCoffeeConsult() {
