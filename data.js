@@ -22,7 +22,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "https://linkedin.com/in/sarahchen-example",
     "photo_url": "",
     "email": "sarah.chen@usc.edu",
-    "bio": "Second-year PhD student interested in how the tumor microenvironment shapes immunotherapy response. Always happy to talk about breast cancer immunology or grad school in general."
+    "bio": "Second-year PhD student interested in how the tumor microenvironment shapes immunotherapy response. Always happy to talk about breast cancer immunology or grad school in general.",
+    "share_contact": "FALSE"
   },
   {
     "id": "time-02",
@@ -40,7 +41,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "priya.nair@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "FALSE"
   },
   {
     "id": "time-03",
@@ -58,7 +60,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "elena.vasquez@med.usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "time-04",
@@ -76,7 +79,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "miguel.santos@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "erc-01",
@@ -94,7 +98,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "james.okonkwo@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "erc-02",
@@ -112,7 +117,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "hannah.levine@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "erc-03",
@@ -130,7 +136,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "robert.kim@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "tacs-01",
@@ -148,7 +155,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "https://linkedin.com/in/aliciareyes-example",
     "photo_url": "",
     "email": "alicia.reyes@med.usc.edu",
-    "bio": "Second-year medical oncology fellow. Bridging bench findings and real clinic decisions is what I care about most — reach out if you want to talk translational immuno-oncology."
+    "bio": "Second-year medical oncology fellow. Bridging bench findings and real clinic decisions is what I care about most — reach out if you want to talk translational immuno-oncology.",
+    "share_contact": "TRUE"
   },
   {
     "id": "tacs-02",
@@ -166,7 +174,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "david.park@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "tacs-03",
@@ -184,7 +193,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "nadia.haddad@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "tacs-04",
@@ -202,7 +212,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "thomas.wright@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "ce-01",
@@ -220,7 +231,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "grace.liu@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "ce-02",
@@ -238,7 +250,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "ana.morales@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "ce-03",
@@ -256,7 +269,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "kevin.tran@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "ccr-01",
@@ -274,7 +288,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "https://linkedin.com/in/lourdesibarra-example",
     "photo_url": "",
     "email": "lourdes.ibarra@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "ccr-02",
@@ -292,7 +307,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "destiny.brooks@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "ccr-03",
@@ -310,7 +326,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "andre.flores@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "coe-01",
@@ -328,7 +345,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "maria.torres@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "coe-02",
@@ -346,7 +364,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "denise.whitfield@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "coe-03",
@@ -364,7 +383,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "rosa.jimenez@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "crtec-01",
@@ -382,7 +402,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "aisha.mensah@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "crtec-02",
@@ -400,7 +421,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "marcus.bell@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "crtec-03",
@@ -418,7 +440,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "tyler.nguyen@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "sr-01",
@@ -436,7 +459,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "wen.zhao@usc.edu",
-    "bio": "I direct the Genomics & Bioinformatics Shared Resource. Come find me if you are planning a sequencing experiment, even an early one — happy to talk through design before you commit budget."
+    "bio": "I direct the Genomics & Bioinformatics Shared Resource. Come find me if you are planning a sequencing experiment, even an early one — happy to talk through design before you commit budget.",
+    "share_contact": "TRUE"
   },
   {
     "id": "sr-02",
@@ -454,7 +478,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "patricia.nguyen@usc.edu",
-    "bio": ""
+    "bio": "",
+    "share_contact": "TRUE"
   },
   {
     "id": "cc-01",
@@ -472,7 +497,8 @@ const SAMPLE_DATA = [
     "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "ravi.anand@usc.edu"
+    "email": "ravi.anand@usc.edu",
+    "share_contact": "TRUE"
   },
   {
     "id": "cc-02",
@@ -490,6 +516,7 @@ const SAMPLE_DATA = [
     "mentoring": "TRUE",
     "linkedin_url": "",
     "photo_url": "",
-    "email": "simone.beck@med.usc.edu"
+    "email": "simone.beck@med.usc.edu",
+    "share_contact": "TRUE"
   }
 ];

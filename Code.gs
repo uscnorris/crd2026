@@ -35,7 +35,11 @@ const FORM_MAP = {
   summary:           'Poster Summary (1-2 sentences)',
   disease_area:      'Disease / focus area',      // checkbox (multi-select) — comes through comma-joined
   linkedin_url:      'LinkedIn URL',
-  consent:           'May we list you in the CRTEC/Cancer Research Day directory?'
+  // NOTE: this question governs CONTACT DISPLAY only — being listed in the
+  // directory is earned by presenting a poster or joining Coffee Consult.
+  // It must live in Section 3, the one section every path reaches, so that
+  // faculty and staff presenters (who skip Section 2) can answer it too.
+  consent:           'May we show your contact information on your directory profile?'
 };
 
 // The ONLY roles that see Section 2 and get asked the Coffee Consult
@@ -61,7 +65,7 @@ const SEND_CONFIRMATION = false;
 
 // ── Tab names + headers (setup() creates these) ──
 const TABS = {
-  Directory: ['id','name','role','year','department','poster_number','title','summary','bio','disease_area','research_program','clinical_input','mentoring','linkedin_url','photo_url','email'],
+  Directory: ['id','name','role','year','department','poster_number','title','summary','bio','disease_area','research_program','clinical_input','mentoring','linkedin_url','photo_url','email','share_contact'],
   Users:     ['session_id','name','role','program','timestamp'],
   Convos:    ['session_id','viewer_name','viewer_role','viewer_program','participant_id','participant_name','participant_role','participant_program','timestamp'],
   Coffee:    ['session_id','requester_name','requester_role','requester_program','participant_id','participant_name','participant_role','participant_program','track_id','track_name','track_aim','action','timestamp'],
@@ -97,7 +101,13 @@ function onFormSubmit(e) {
   const emailCol = headers.indexOf('email');
   const existingRow = findRowByEmail_(dir, emailCol, email);
 
-  const consented = !!get('consent');
+  // The consent question is a choice, not a yes/no box: "No, thank you." /
+  // "Email only" / "Email and LinkedIn profile". A bare truthiness check
+  // would treat "No, thank you." as consent, so parse the actual value.
+  const consentAnswer = get('consent');
+  const declined = /^\s*no\b/i.test(consentAnswer);
+  const consented = !!consentAnswer && !declined;
+  const shareLinkedIn = consented && /linkedin/i.test(consentAnswer);
   const presenting = /^y/i.test(get('presenting'));
   const role = get('role');
   const isCoffeeConsultRole = COFFEE_CONSULT_ROLES.includes(role);
@@ -105,13 +115,24 @@ function onFormSubmit(e) {
   const hasBio = !!get('bio');
 
   // Two ways into the directory:
-  //   1. You're presenting a poster.
+  //   1. You're presenting a poster. Submitting a poster IS the consent to
+  //      appear in the poster directory — the same name and title are on a
+  //      board in a public quad all afternoon, so no separate checkbox is
+  //      required. This matters because staff and senior faculty skip the
+  //      trainee section of the form and would otherwise never be asked.
   //   2. You're a Coffee Consult trainee WITHOUT a poster — allowed in so you
   //      can be matched, but only if you gave a bio / research interests,
   //      since that's all anyone would have to go on when matching you.
-  // Either way you must have consented to being listed.
   const coffeeOnlyListing = coffeeOptIn && hasBio;
-  const shouldBeListed = consented && (presenting || coffeeOnlyListing);
+  const shouldBeListed = presenting || coffeeOnlyListing;
+
+  // Contact details are a separate, higher bar. Name / poster / title are
+  // public by nature; an email address is not.
+  // NOTE: the email is ALWAYS stored — Coffee Consult identity verification
+  // looks people up by their registered email, and CRTEC needs it to arrange
+  // matches. The `share_contact` flag controls only whether the APP DISPLAYS
+  // it publicly on a profile.
+  const shareContact = consented;
 
   if (!shouldBeListed) {
     if (existingRow) dir.deleteRow(existingRow);   // opted out, no poster and no bio → remove stale entry
@@ -150,7 +171,8 @@ function onFormSubmit(e) {
   const row = [
     id, get('name'), role, get('year'), get('department'),
     posterNo, get('title'), get('summary'), get('bio'), get('disease_area'), researchProgram,
-    '', mentoringFlag, get('linkedin_url'), '', get('email')
+    '', mentoringFlag, (shareContact && shareLinkedIn) ? get('linkedin_url') : '', '', get('email'),
+    shareContact ? 'TRUE' : 'FALSE'
   ];
 
   if (existingRow) {

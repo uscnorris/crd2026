@@ -764,10 +764,16 @@ function showProfile(participant) {
 
   // ── Compact contact row: icon-only LinkedIn, plain email text. Replaces
   // the old full-width blue LinkedIn bar and boxed email field.
-  const contactRow = (participant.linkedin_url || participant.email)
+  // Contact details are shown only when the person opted in on the form.
+  // Their email is still on file (Coffee Consult matching needs it) — this
+  // controls public display only.
+  const sharesContact = String(participant.share_contact || '').toLowerCase() !== 'false';
+  const showEmail = sharesContact && participant.email;
+  const showLinkedIn = sharesContact && participant.linkedin_url;
+  const contactRow = (showEmail || showLinkedIn)
     ? `<div class="profile-contact">
-        ${participant.email ? `<a class="contact-email" href="mailto:${participant.email}">${participant.email}</a>` : ''}
-        ${participant.linkedin_url ? `<a class="contact-linkedin" href="${participant.linkedin_url}" target="_blank" title="Connect on LinkedIn" aria-label="Connect on LinkedIn">in</a>` : ''}
+        ${showEmail ? `<a class="contact-email" href="mailto:${participant.email}">${participant.email}</a>` : ''}
+        ${showLinkedIn ? `<a class="contact-linkedin" href="${participant.linkedin_url}" target="_blank" title="Connect on LinkedIn" aria-label="Connect on LinkedIn">in</a>` : ''}
        </div>`
     : '';
 
@@ -805,9 +811,9 @@ function showProfile(participant) {
       ${posterLine}
       ${bioBlock}
       <div class="profile-block">
-        ${participant.title
+        ${participant.poster_number
           ? `<div class="block-label">Poster</div>
-             <div class="profile-title">${participant.title}</div>
+             <div class="profile-title">${participant.title || '<span class=\'no-poster-note\'>Title to be confirmed</span>'}</div>
              <div class="profile-summary">${participant.summary || ''}</div>`
           : `<div class="block-label">Research interests</div>
              <p class="profile-summary no-poster-note">Not presenting a poster this year \u2014 here to connect through Coffee Consult.</p>`}
