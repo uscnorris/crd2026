@@ -130,11 +130,17 @@ function onFormSubmit(e) {
   // are in the directory to be matched, not to be found at a board, so they
   // stay blank and never take a slot in a section's numbering.
   let posterNo = '';
-  if (presenting) {
+  // Guard: a presenter with no Research Program answer has no section, and
+  // must NOT be given a malformed number like "-01". They're still listed;
+  // the poster number is filled in by CRTEC once their program is known.
+  const sectionLetter = rowLetterFor_(role, researchProgram, get('disease_area'));
+  if (presenting && sectionLetter) {
     if (existingRow) {
       posterNo = dir.getRange(existingRow, headers.indexOf('poster_number') + 1, 1, 1).getValue() || '';
     }
-    if (!posterNo) posterNo = nextPosterNumber_(dir, headers, rowLetterFor_(role, researchProgram, get('disease_area')));
+    if (!posterNo) posterNo = nextPosterNumber_(dir, headers, sectionLetter);
+  } else if (presenting && existingRow) {
+    posterNo = dir.getRange(existingRow, headers.indexOf('poster_number') + 1, 1, 1).getValue() || '';
   }
 
   const id = existingRow

@@ -83,7 +83,7 @@ const CONFIG = {
 
   // External links used on the landing page
   links: {
-    newsletter: "PASTE_YOUR_NEXT_IN_SCIENCE_SUBSCRIBE_URL_HERE",
+    newsletter: "https://preview.mailerlite.io/forms/2285190/191197669717181651/share",
     livestream: ""   // Livestream URL — powers the "Join the livestream" buttons (nav + Plan your visit).
                       // Leave blank until it's live; buttons show a graceful "check back" message until then.
   },

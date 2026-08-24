@@ -590,7 +590,7 @@ function renderCoffeeQuickFilter() {
   if (!wrap) return;
 
   const banner = usingSampleData
-    ? `<div class="sample-data-banner">\u26a0\ufe0f Showing sample/preview data, not real registrations \u2014 see console for why, or check config.js.</div>`
+    ? `<div class="sample-data-banner">\u26a0\ufe0f Preview data \u2014 these are example entries, not real registrations.</div>`
     : '';
 
   if (currentSegment !== 'coffee') { wrap.innerHTML = banner; return; }
@@ -606,7 +606,7 @@ function renderCoffeeQuickFilter() {
         <li>Find your side below \u2014 <span class="cc-key cc-key-research">research trainee</span> or <span class="cc-key cc-key-clinical">clinical trainee</span>.</li>
         <li>Browse the <strong>other</strong> side. You can only be matched across sides.</li>
         <li>Open a profile and tap <strong>Request Coffee Consult</strong>.</li>
-        <li>Confirm your registered email. CRTEC arranges the match and emails you both.</li>
+        <li>Confirm your registered email. CRTEC arranges the match and emails you both — coffee is on us.</li>
       </ol>
       <p class="coffee-explainer-foot">Not listed? Only trainees who opted in at registration appear here.
       ${canRegister ? `<a href="${url}" target="_blank" rel="noopener">Opt in on the registration form</a> \u2014 resubmit with the same email and you'll appear within a few minutes.` : 'Contact CRTEC to opt in.'}</p>
@@ -644,7 +644,7 @@ function renderDirectory() {
   document.getElementById('directory-list').innerHTML = results.map(p => {
     const requested = coffeeSelections.has(p.id);
     return `
-      <div class="participant-card ${requested ? 'talked' : ''} ${isCoffeeEligible(p) ? (coffeeSideOf(p) === 'B' ? 'card-clinical' : 'card-research') : ''}" onclick="showProfile(getParticipant('${p.id}'))">
+      <div class="participant-card ${requested ? 'talked' : ''} ${currentSegment === 'coffee' && isCoffeeEligible(p) ? (coffeeSideOf(p) === 'B' ? 'card-clinical' : 'card-research') : ''}" onclick="showProfile(getParticipant('${p.id}'))">
         <div class="card-avatar ${avatarClass(p.role)}">${initials(p.name)}</div>
         <div class="card-body">
           <div class="card-name-row">
@@ -658,7 +658,7 @@ function renderDirectory() {
               ? `<span class="chip">Poster ${p.poster_number}</span>`
               : '<span class="chip chip-quiet">No poster \u00b7 here to connect</span>'}
             ${p.disease_area ? `<span class="chip">${p.disease_area}</span>` : ''}
-            ${isCoffeeEligible(p) ? `<span class="chip chip-side">☕ ${sideLabel(coffeeSideOf(p))} trainee</span>` : ''}
+            ${currentSegment === 'coffee' && isCoffeeEligible(p) ? `<span class="chip chip-side">☕ ${sideLabel(coffeeSideOf(p))} trainee</span>` : ''}
           </div>
         </div>
       </div>`;
@@ -979,7 +979,8 @@ function confirmSelfByEmail() {
 
 function updateBadgeCounts() {
   const count = coffeeSelections.size;
-  document.getElementById('list-count-badge').textContent = count;
+  const legacyBadge = document.getElementById('list-count-badge');
+  if (legacyBadge) legacyBadge.textContent = count;
   const navCount = document.getElementById('nav-count');
   navCount.textContent = count;
   navCount.style.display = count > 0 ? 'inline' : 'none';
