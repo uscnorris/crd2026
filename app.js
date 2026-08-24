@@ -365,7 +365,7 @@ function registerNow() {
   if (url && url.indexOf('PASTE') !== 0 && /^https?:/i.test(url)) {
     window.open(url, '_blank');
   } else {
-    alert("Registration opens soon. Subscribe to Next in Science to be notified — or check back here.");
+    alert("Registration opens soon. Subscribe to Next in Science to be notified, or check back here.");
     goToSection('newsletter');
   }
 }
@@ -377,7 +377,7 @@ function joinLivestream() {
   if (url && url.indexOf('PASTE') !== 0 && /^https?:/i.test(url)) {
     window.open(url, '_blank');
   } else {
-    alert("The livestream link goes live the morning of the event — check back here on Oct 14, or watch for an email with the link.");
+    alert("The livestream link goes live the morning of the event. Check back here on Oct 14, or watch for an email with the link.");
   }
 }
 
@@ -590,7 +590,7 @@ function renderCoffeeQuickFilter() {
   if (!wrap) return;
 
   const banner = usingSampleData
-    ? `<div class="sample-data-banner">\u26a0\ufe0f Preview data \u2014 these are example entries, not real registrations.</div>`
+    ? `<div class="sample-data-banner">\u26a0\ufe0f Preview data. These are example entries, not real registrations.</div>`
     : '';
 
   if (currentSegment !== 'coffee') { wrap.innerHTML = banner; return; }
@@ -603,13 +603,13 @@ function renderCoffeeQuickFilter() {
   wrap.innerHTML = banner + `
     <div class="coffee-explainer">
       <ol class="cc-steps">
-        <li>Find your side below \u2014 <span class="cc-key cc-key-research">research trainee</span> or <span class="cc-key cc-key-clinical">clinical trainee</span>.</li>
-        <li>Browse the <strong>other</strong> side. You can only be matched across sides.</li>
+        <li>Identify yourself as a <span class="cc-key cc-key-research">research trainee</span> or a <span class="cc-key cc-key-clinical">clinical trainee</span>.</li>
+        <li>Browse the other group. Coffee Consult pairs one research trainee with one clinical trainee.</li>
         <li>Open a profile and tap <strong>Request Coffee Consult</strong>.</li>
-        <li>Confirm your registered email. CRTEC arranges the match and emails you both — coffee is on us.</li>
+        <li>Confirm your registered email. CRTEC arranges the match and emails you both. Coffee is on us.</li>
       </ol>
       <p class="coffee-explainer-foot">Not listed? Only trainees who opted in at registration appear here.
-      ${canRegister ? `<a href="${url}" target="_blank" rel="noopener">Opt in on the registration form</a> \u2014 resubmit with the same email and you'll appear within a few minutes.` : 'Contact CRTEC to opt in.'}</p>
+      ${canRegister ? `<a href="${url}" target="_blank" rel="noopener">Opt in on the registration form</a>. Resubmit with the same email and you will appear within a few minutes.` : 'Contact CRTEC to opt in.'}</p>
     </div>`;
 }
 
@@ -749,16 +749,16 @@ function showProfile(participant) {
       // Explain instead of offering a button that would just fail.
       connectCard = `<div class="request-blocked">
           ${t.icon} Coffee Consult pairs a <strong>research trainee</strong> with a <strong>clinical trainee</strong>.
-          You are both on the ${sideLabel(coffeeSideOf(participant)).toLowerCase()} side, so this pairing isn't available.
+          You are both ${sideLabel(coffeeSideOf(participant)).toLowerCase()} trainees, so this pairing is not available.
         </div>`;
     } else if (selected) {
       connectCard = `<div class="request-sent">
-           <span>${t.icon} Request sent — CRTEC will confirm your match</span>
+           <span>${t.icon} Request sent. CRTEC will confirm your match.</span>
            <button class="btn-undo-text" onclick="toggleCoffee('${participant.id}')">Undo</button>
          </div>`;
     } else {
       connectCard = `<button class="btn-coffee" onclick="toggleCoffee('${participant.id}')">${t.icon} Request Coffee Consult</button>
-         <p class="step-hint">This sends a request — you won't be automatically paired. CRTEC confirms every match and emails you both.</p>`;
+         <p class="step-hint">This sends a request. You will not be automatically paired; CRTEC confirms every match and emails you both.</p>`;
     }
   }
 
@@ -816,7 +816,7 @@ function showProfile(participant) {
              <div class="profile-title">${participant.title || '<span class=\'no-poster-note\'>Title to be confirmed</span>'}</div>
              <div class="profile-summary">${participant.summary || ''}</div>`
           : `<div class="block-label">Research interests</div>
-             <p class="profile-summary no-poster-note">Not presenting a poster this year \u2014 here to connect through Coffee Consult.</p>`}
+             <p class="profile-summary no-poster-note">Not presenting a poster this year. Here to connect through Coffee Consult.</p>`}
         <div class="profile-tags">
           ${participant.disease_area ? `<span class="chip">${participant.disease_area}</span>` : ''}
           ${participant.research_program ? `<span class="chip">${participant.research_program}</span>` : ''}
@@ -902,7 +902,7 @@ function toggleCoffee(id) {
   const target = allParticipants.find(x => x.id === id);
   const me = allParticipants.find(x => x.id === user.id);
   if (target && me && coffeeSideOf(me) && coffeeSideOf(target) === coffeeSideOf(me)) {
-    alert('Coffee Consult pairs a research trainee with a clinical trainee. You can only request someone from the other side.');
+    alert('Coffee Consult pairs a research trainee with a clinical trainee. You can only request someone from the other group.');
     return;
   }
   if (coffeeSelections.size >= CONFIG.max_selections) {
@@ -966,11 +966,11 @@ function confirmSelfByEmail() {
 
   const me = allParticipants.find(p => (p.email || '').trim().toLowerCase() === input);
   if (!me) {
-    errEl.innerHTML = 'We could not find that email in the directory. Coffee Consult is open to trainees who opted in when they registered \u2014 you can opt in or update your details using the registration form below, then try again in a few minutes.';
+    errEl.innerHTML = 'We could not find that email in the directory. Coffee Consult is open to trainees who opted in when they registered. You can opt in or update your details using the registration form below, then try again in a few minutes.';
     return;
   }
   if (!isCoffeeEligible(me)) {
-    errEl.innerHTML = 'That email is registered, but is not currently opted in to Coffee Consult. You can opt in using the registration form below \u2014 resubmitting updates your existing entry.';
+    errEl.innerHTML = 'That email is registered, but is not currently opted in to Coffee Consult. You can opt in using the registration form below. Resubmitting updates your existing entry.';
     return;
   }
   user = { id: me.id, name: me.name, role: me.role, program: me.research_program || me.department || '' };
