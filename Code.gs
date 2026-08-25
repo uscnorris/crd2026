@@ -81,7 +81,10 @@ function setup() {
     if (!sh) sh = ss.insertSheet(name);
     if (sh.getLastRow() === 0) sh.appendRow(TABS[name]);
   });
-  SpreadsheetApp.getUi && SpreadsheetApp.getUi().alert('Setup complete. Tabs created: ' + Object.keys(TABS).join(', '));
+  // Log instead of showing a dialog. A UI alert opens in the SPREADSHEET tab,
+  // so running setup() from the Apps Script editor would appear to hang while
+  // it waited for a click on a popup you cannot see.
+  Logger.log('Setup complete. Tabs ready: ' + Object.keys(TABS).join(', '));
 }
 
 // ── 1. Registration form → Directory tab ──
