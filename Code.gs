@@ -24,7 +24,7 @@ const FORM_MAP = {
   dietary:           'If joining for lunch, do you have any dietary restrictions?',
 
   // Section 2 — Trainee / Early-Stage Investigator only (see TRAINEE_ESI_ROLES)
-  year:              'Year (at career/academic stage as a trainee or early stage investigator)',
+  year:              'Year',
   pi_or_mentor:      'PI or Mentor name',
   other_mentor:      'Other mentor name (such as postdoc, PhD student, or other faculty)',
   coffee_optin:      'Would you like to participate in our Coffee Consult matching opportunity?',
@@ -90,7 +90,23 @@ function setup() {
 // ── 1. Registration form → Directory tab ──
 function onFormSubmit(e) {
   const v = e.namedValues || {};
-  const get = key => { const q = FORM_MAP[key]; return q && v[q] ? String(v[q][0]).trim() : ''; };
+  // Tolerant field lookup. Google Forms response headers include the question
+  // title AND any description text, plus stray trailing spaces. Requiring an
+  // exact match meant questions with helper text silently returned nothing.
+  // We normalise whitespace and match on prefix, so editing a description
+  // never breaks the mapping again.
+  const norm = t => String(t).replace(/\s+/g, ' ').trim().toLowerCase();
+  const answerKeys = Object.keys(v);
+  const get = key => {
+    const want = FORM_MAP[key];
+    if (!want) return '';
+    if (v[want] && v[want][0]) return String(v[want][0]).trim();   // exact hit
+    const target = norm(want);
+    // prefix match first, then contains, so short titles still resolve
+    let hit = answerKeys.find(k => norm(k).indexOf(target) === 0);
+    if (!hit) hit = answerKeys.find(k => norm(k).indexOf(target) !== -1);
+    return hit && v[hit] && v[hit][0] ? String(v[hit][0]).trim() : '';
+  };
 
   const email = get('email').toLowerCase();
   if (!email || !get('name')) return;
@@ -110,7 +126,11 @@ function onFormSubmit(e) {
   const consentAnswer = get('consent');
   const declined = /^\s*no\b/i.test(consentAnswer);
   const consented = !!consentAnswer && !declined;
-  const shareLinkedIn = consented && /linkedin/i.test(consentAnswer);
+  // The form now asks a simple Yes/No. Consent therefore covers BOTH email and
+  // LinkedIn. (The older wording offered "Email only" vs "Email and LinkedIn
+  // profile" — still honoured, so an "Email only" answer withholds LinkedIn.)
+  const emailOnly = /email\s*only/i.test(consentAnswer);
+  const shareLinkedIn = consented && !emailOnly;
   const presenting = /^y/i.test(get('presenting'));
   const role = get('role');
   const isCoffeeConsultRole = COFFEE_CONSULT_ROLES.includes(role);
