@@ -23,6 +23,29 @@ const CONFIG = {
   // Set to false once your sheet URL is pasted above
   use_sample_data: false,
 
+  // ── DAY-OF CONTROLS ─────────────────────────
+  // directory_live: set false while you are still collecting posters. The
+  // Directory tab then shows a friendly "posters are being added" message
+  // instead of an empty list, so an early visitor doesn't think nobody is
+  // coming. Flip to true once you have enough entries to look healthy.
+  directory_live: false,
+  directory_pending_message: "Posters are being added as registrations come in. Check back closer to the event to browse who is presenting.",
+
+  // Minimum entries before the directory will show at all, even when live.
+  // Belt-and-braces against a temporarily empty or failed data load.
+  directory_min_entries: 5,
+
+  // Cache the published sheet in the browser for this many minutes. Cuts
+  // repeat requests to Google on the day and keeps the directory working if
+  // a single fetch fails. Set 0 to disable.
+  cache_minutes: 3,
+
+  // Log every profile OPEN to the backend. This is by far the highest-volume
+  // write (one per profile viewed, per person) and the least valuable. Turn
+  // it off if the event is busy — conversation-free tracking of requests and
+  // sign-ins continues either way.
+  track_profile_views: false,
+
   // Max follow-up connection requests per person (across all tracks)
   max_selections: 2,
 

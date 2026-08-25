@@ -131,9 +131,29 @@ let usingSampleData = false;
 async function loadData() {
   if (!CONFIG.use_sample_data && CONFIG.sheet_url && CONFIG.sheet_url !== 'PASTE_YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
     try {
+      // Serve from a short-lived cache when possible. On event day this cuts
+      // repeat requests to Google dramatically and means a single slow or
+      // failed fetch does not empty the directory for that visitor.
+      const cacheMins = Number(CONFIG.cache_minutes || 0);
+      if (cacheMins > 0) {
+        try {
+          const raw = localStorage.getItem('crd2026_sheet_cache');
+          if (raw) {
+            const c = JSON.parse(raw);
+            if (c && c.csv && (Date.now() - c.at) < cacheMins * 60000) {
+              allParticipants = parseCSV(c.csv);
+              usingSampleData = false;
+              console.log('Sheet loaded from cache:', allParticipants.length);
+              decideStartView();
+              return;
+            }
+          }
+        } catch (e) { /* cache unusable, fall through to network */ }
+      }
       const resp = await fetch(CONFIG.sheet_url);
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const csv = await resp.text();
+      try { localStorage.setItem('crd2026_sheet_cache', JSON.stringify({ at: Date.now(), csv: csv })); } catch (e) {}
       const parsed = parseCSV(csv);
       if (parsed.length === 0) throw new Error('CSV parsed 0 rows — check column headers match exactly');
       allParticipants = parsed;
@@ -141,6 +161,22 @@ async function loadData() {
       console.log('Sheet loaded:', allParticipants.length, 'participants');
     } catch(e) {
       console.error('Sheet load failed:', e.message);
+      // Prefer the last good copy over sample data — stale real entries beat
+      // showing example people to a real attendee.
+      try {
+        const raw = localStorage.getItem('crd2026_sheet_cache');
+        if (raw) {
+          const c = JSON.parse(raw);
+          const stale = c && c.csv ? parseCSV(c.csv) : [];
+          if (stale.length) {
+            allParticipants = stale;
+            usingSampleData = false;
+            console.warn('Using cached sheet data after failed fetch.');
+            decideStartView();
+            return;
+          }
+        }
+      } catch (e2) { /* fall through to sample data */ }
       console.warn('Falling back to sample data. Common causes:\n' +
         '1. URL is /export?format=csv — use /pub?gid=...&single=true&output=csv instead\n' +
         '2. Sheet is not published (File → Share → Publish to web)\n' +
@@ -630,6 +666,24 @@ function toggleCoffeeQuickFilter() {
 }
 
 function renderDirectory() {
+  // Hold the directory back while posters are still being collected, so an
+  // early visitor sees an explanation rather than an empty list that reads
+  // as "nobody is coming".
+  const realEntries = allParticipants.filter(p => p && p.name).length;
+  const notLive = CONFIG.directory_live === false;
+  const tooFew = realEntries < Number(CONFIG.directory_min_entries || 0);
+  if (!usingSampleData && (notLive || tooFew)) {
+    document.getElementById('results-count').textContent = '';
+    document.getElementById('directory-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">\u23f3</div>
+        <p>${CONFIG.directory_pending_message || 'The directory will open closer to the event.'}</p>
+        ${(CONFIG.form_url && CONFIG.form_url.indexOf('PASTE') !== 0)
+          ? `<a class="btn-secondary" href="${CONFIG.form_url}" target="_blank" rel="noopener">Register or submit a poster</a>` : ''}
+      </div>`;
+    return;
+  }
+
   const results = getFilteredParticipants();
   const totalFilters = Object.values(activeFilters).reduce((n, s) => n + s.size, 0);
   document.getElementById('results-count').textContent =
@@ -828,8 +882,8 @@ function showProfile(participant) {
 
   showView('profile');
   history.replaceState(null, '', `?p=${participant.id}`);
-  // Track profile view silently
-  track({
+  // Track profile view silently (optional — highest-volume backend write)
+  if (CONFIG.track_profile_views !== false) track({
     action: 'view_profile',
     participant_id: participant.id,
     participant_name: participant.name,
