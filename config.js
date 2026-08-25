@@ -18,7 +18,7 @@ const CONFIG = {
 
   // GOOGLE SHEETS (directory data)
   // File → Share → Publish to web → Sheet1 → CSV → Publish → copy URL
-  sheet_url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQksITlntkPc60L__OSZomcBTOpjGXHI5kEEErmZLjFl3qe1KOPN6E80yExao-4El3fgYJ79PjI2ZGS/pub?gid=1334489619&single=true&output=csv",
+  sheet_url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQksITlntkPc60L__OSZomcBTOpjGXHI5kEEErmZLjFl3qe1KOPN6E80yExao-4El3fgYJ79PjI2ZGS/pub?gid=541125230&single=true&output=csv",
 
   // Set to false once your sheet URL is pasted above
   use_sample_data: false,
