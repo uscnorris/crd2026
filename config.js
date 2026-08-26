@@ -28,7 +28,7 @@ const CONFIG = {
   // Directory tab then shows a friendly "posters are being added" message
   // instead of an empty list, so an early visitor doesn't think nobody is
   // coming. Flip to true once you have enough entries to look healthy.
-  directory_live: false,
+  directory_live: true,
   directory_pending_message: "Posters are being added as registrations come in. Check back closer to the event to browse who is presenting.",
 
   // Minimum entries before the directory will show at all, even when live.
