@@ -28,7 +28,7 @@ const CONFIG = {
   // Directory tab then shows a friendly "posters are being added" message
   // instead of an empty list, so an early visitor doesn't think nobody is
   // coming. Flip to true once you have enough entries to look healthy.
-  directory_live: true,
+  directory_live: false,
   directory_pending_message: "Posters are being added as registrations come in. Check back closer to the event to browse who is presenting.",
 
   // Minimum entries before the directory will show at all, even when live.
@@ -86,10 +86,10 @@ const CONFIG = {
   // tag: optional pill. tbd: true dims the item and shows a "TBD" chip.
   // ───────────────────────────────────────────
   agenda: [
-    { time: "9:00 AM",  loc: "Pappas Quad",      title: "Check-in & coffee", desc: "Registration desk opens. Poster setup begins." },
+    { time: "9:00 AM",  loc: "Mayer Auditorium Lobby", title: "Check-in & coffee", desc: "Registration desk opens. Poster setup begins on Pappas Quad." },
     { time: "9:30 AM",  loc: "Mayer Auditorium", title: "Welcome & scientific talks", desc: "Research from across the Cancer Center.", tag: "Speakers TBD", tbd: true },
     { time: "11:00 AM", loc: "Mayer Auditorium", title: "Featured session: AI in Cancer Research", desc: "Plenary and panel on artificial intelligence in cancer research and care.", tag: "Panel TBD", tbd: true },
-    { time: "12:00 PM", loc: "Pappas Quad",      title: "Lunch & networking", desc: "Lunch is provided. Browse the directory and log conversations." },
+    { time: "12:00 PM", loc: "Pappas Quad",      title: "Lunch & networking", desc: "Lunch is provided. Browse the directory and connect with trainees on the other side of Coffee Consult." },
     { time: "12:45–2:45 PM", loc: "Pappas Quad", title: "Poster session & judging", desc: "Open poster session, with judging for trainee entries and the Patient Advocate poster walk." },
     { time: "2:45 PM",  loc: "Mayer Auditorium", title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." },
     { time: "All day",  loc: "In the app",       title: "Coffee Consult", desc: "A new trainee program pairing bench and clinic. Request a match any time during the day, or until 5 PM on Thursday, Oct 15.", tag: "New for 2026" }
