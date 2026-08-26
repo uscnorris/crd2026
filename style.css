@@ -855,22 +855,24 @@ body.in-app #profile-screen, body.in-app #mylist-screen { padding-bottom: 86px; 
 .norris-utility-inner { max-width: 1240px; margin: 0 auto; padding: 7px 24px; font-size: 13px; color: #4a4a4a; }
 
 .norris-header { background: #fff; }
-.norris-header-inner { max-width: 1240px; margin: 0 auto; padding: 20px 24px 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.norris-header-inner { max-width: 1240px; margin: 0 auto; padding: 28px 24px 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .norris-logo { display: block; text-decoration: none; }
-.norris-logo .brand-logo { max-height: 74px; width: auto; display: block; }
+.norris-logo .brand-logo { height: 92px; max-height: none; width: auto; display: block; }
 .norris-logo-text { font-family: Georgia, 'Times New Roman', serif; line-height: 1.12; color: #1a1a1a; }
 .nl-1, .nl-2 { display: block; font-size: 27px; }
 .nl-3 { display: block; font-size: 14px; margin-top: 3px; }
 .nl-usc, .nl-usc-sm { color: var(--cardinal); font-weight: 700; }
+.norris-donate-wrap { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
+.norris-search-ico { width: 20px; height: 20px; color: #2b2b2b; flex-shrink: 0; }
 .norris-donate {
-  background: var(--cardinal); color: #fff; font-weight: 700; font-size: 14px; letter-spacing: .04em;
-  padding: 12px 26px; text-decoration: none; flex-shrink: 0;
+  background: var(--cardinal); color: #fff; font-weight: 700; font-size: 15px; letter-spacing: .04em;
+  padding: 13px 30px; text-decoration: none; flex-shrink: 0;
 }
 .norris-donate:hover { background: var(--cardinal-dark); }
 
 .norris-nav { background: #fff; border-bottom: 1px solid #e0e0e0; }
-.norris-nav-inner { max-width: 1240px; margin: 0 auto; padding: 0 24px 14px; display: flex; gap: 30px; flex-wrap: wrap; }
-.norris-nav a { color: #2b2b2b; text-decoration: none; font-size: 16px; font-weight: 600; padding-bottom: 4px; }
+.norris-nav-inner { max-width: 1240px; margin: 0 auto; padding: 0 24px 18px; display: flex; gap: 34px; flex-wrap: wrap; }
+.norris-nav a { color: #2b2b2b; text-decoration: none; font-size: 17px; font-weight: 600; padding-bottom: 4px; }
 .norris-nav a:hover { color: var(--cardinal); }
 .norris-nav a.is-current { color: var(--cardinal); border-bottom: 3px solid var(--cardinal); }
 
