@@ -1178,3 +1178,13 @@ function avatarClass(role) {
   if (r.includes('community')) return 'avatar-community';
   return 'avatar-other';
 }
+
+// Norris global nav — hamburger toggle on mobile, matching the real Norris
+// site's mobile pattern (logo/Donate/search stacked, links hidden until tapped).
+function toggleNorrisNav() {
+  const nav = document.getElementById('norris-nav');
+  const btn = document.getElementById('norris-hamburger-btn');
+  const open = nav.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  btn.classList.toggle('is-open', open);
+}

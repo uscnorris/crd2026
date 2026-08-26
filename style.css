@@ -888,3 +888,33 @@ header.site-nav { border-top: none; background: var(--off-white); border-bottom:
   .norris-logo .brand-logo { max-height: 58px; }
 }
 @media print { .norris-utility, .norris-nav, .norris-donate { display: none !important; } }
+
+/* ── Norris global nav: hamburger on mobile, matching the real site ── */
+.norris-hamburger { display: none; }
+@media (max-width: 860px) {
+  /* Stack logo / Donate+search onto separate rows, full width, like the real site */
+  .norris-header-inner { flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 20px 16px; }
+  .norris-logo .brand-logo { height: 54px; }
+  .norris-donate-wrap { width: 100%; justify-content: flex-start; }
+
+  /* Hamburger button, centered under the header like the real site */
+  .norris-hamburger {
+    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+    width: 100%; padding: 10px 0 16px; background: none; border: none; cursor: pointer;
+  }
+  .norris-hamburger span { display: block; width: 26px; height: 2.5px; background: #1a1a1a; }
+  .norris-hamburger.is-open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+  .norris-hamburger.is-open span:nth-child(2) { opacity: 0; }
+  .norris-hamburger.is-open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+  /* Global nav links: hidden until the hamburger is tapped, then stack vertically */
+  .norris-nav { border-bottom: none; }
+  .norris-nav-inner {
+    display: none; flex-direction: column; gap: 0; padding: 0;
+  }
+  .norris-nav.open .norris-nav-inner { display: flex; border-top: 1px solid #e0e0e0; }
+  .norris-nav-inner a {
+    padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 17px;
+  }
+  .norris-nav-inner a.is-current { border-bottom: 3px solid var(--cardinal); border-bottom-width: 1px; }
+}
