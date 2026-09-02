@@ -1133,7 +1133,7 @@ function renderProgram() {
   if (facts) {
     facts.innerHTML = `
       <div class="fact"><div class="fact-big">4 × 4 ft</div><div class="fact-lbl">Maximum poster size</div></div>
-      <div class="fact"><div class="fact-big">3 × $100</div><div class="fact-lbl">Scientific award prizes<br><span class="fact-note">Trainees only</span></div></div>
+      <div class="fact"><div class="fact-big">3 × $100</div><div class="fact-lbl">Scientific award prizes<br><span class="fact-note">Trainees &amp; staff</span></div></div>
       <div class="fact"><div class="fact-big">Oct 2</div><div class="fact-lbl">Submission deadline</div></div>`;
   }
 

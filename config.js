@@ -87,10 +87,16 @@ const CONFIG = {
   // ───────────────────────────────────────────
   agenda: [
     { time: "9:00 AM",  loc: "Mayer Auditorium Lobby", title: "Check-in & coffee", desc: "Registration desk opens. Poster setup begins on Pappas Quad." },
-    { time: "9:30 AM",  loc: "Mayer Auditorium", title: "Welcome & scientific talks", desc: "Research from across the Cancer Center.", tag: "Speakers TBD", tbd: true },
-    { time: "11:00 AM", loc: "Mayer Auditorium", title: "Featured session: AI in Cancer Research", desc: "Plenary and panel on artificial intelligence in cancer research and care.", tag: "Panel TBD", tbd: true },
-    { time: "12:00 PM", loc: "Pappas Quad",      title: "Lunch & networking", desc: "Lunch is provided. Browse the directory and connect with trainees on the other side of Coffee Consult." },
-    { time: "12:45–2:45 PM", loc: "Pappas Quad", title: "Poster session & judging", desc: "Open poster session, with judging for trainee entries and the Patient Advocate poster walk." },
+    { time: "9:00–9:15 AM", loc: "Mayer Auditorium", title: "Welcome & introduction", desc: "Opening remarks from Caryn Lerman and Josh Neman." },
+    { time: "9:15–9:45 AM", loc: "Mayer Auditorium", title: "Machine learning for cancer discovery", desc: "Ruishan Liu, PhD, USC.", tag: "Tentative", tbd: true },
+    { time: "9:45–10:15 AM", loc: "Mayer Auditorium", title: "AI in the surgical suite", desc: "Giovanni Cacciamani, MD, USC — artificial intelligence in surgical oncology." },
+    { time: "10:15–10:45 AM", loc: "Mayer Auditorium", title: "Computational & data-driven oncology", desc: "Sheng Li, PhD, USC." },
+    { time: "10:45–11:00 AM", loc: "Mayer Auditorium", title: "Break", desc: "" },
+    { time: "11:00–11:30 AM", loc: "Mayer Auditorium", title: "AI-powered medical imaging", desc: "Vinay Duddalwar, MD, USC — radiomics and imaging analytics.", tag: "Tentative", tbd: true },
+    { time: "11:30 AM–12:00 PM", loc: "Mayer Auditorium", title: "Genetics, risk & precision counseling", desc: "Charité Ricker, MS, CGC, USC — cancer genetic counseling.", tag: "Tentative", tbd: true },
+    { time: "12:00–12:30 PM", loc: "Mayer Auditorium", title: "Community, equity & the reach of research", desc: "Lourdes Baezconde-Garbanati, PhD, and Bianca Rosales, USC — Community Outreach & Engagement (COE)." },
+    { time: "12:30 PM", loc: "Pappas Quad",      title: "Lunch & networking", desc: "Lunch is provided. Browse the directory and connect with trainees on the other side of Coffee Consult." },
+    { time: "12:45–2:45 PM", loc: "Pappas Quad", title: "Poster session & judging", desc: "Open poster session, with judging for trainee and staff entries and the Patient Advocate poster walk." },
     { time: "2:45 PM",  loc: "Mayer Auditorium", title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." },
     { time: "All day",  loc: "In the app",       title: "Coffee Consult", desc: "A new trainee program pairing bench and clinic. Request a match any time during the day, or until 5 PM on Thursday, Oct 15.", tag: "New for 2026" }
   ],
