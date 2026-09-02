@@ -236,8 +236,8 @@
         <div class="way-card">
           <span class="way-num">2</span>
           <div>
-            <h3>Give a talk</h3>
-            <p>Trainee speakers may be featured in the morning session and on the AI panel. Nominate yourself or a colleague through your PI or program leader, or email CRTEC at <strong>crtec@usc.edu</strong>.</p>
+            <h3>Volunteer</h3>
+            <p>Help the day run smoothly, from check-in and wayfinding to the poster session. A great way to meet people across the Cancer Center. Email CRTEC at <strong>crtec@usc.edu</strong> to sign up.</p>
           </div>
         </div>
       </div>
@@ -267,6 +267,14 @@
             <p class="cc-note"><strong>Note:</strong> The directory will be updated as registrations are received.</p>
           </div>
         </div>
+      </div>
+
+      <div class="trainee-signup">
+        <div>
+          <h3>Stay connected</h3>
+          <p class="p-wide">Sign up for the Cancer Research Training and Education Coordination (CRTEC) distribution list to receive our newsletter, <em>Next in Science</em>, and event invitations direct to your inbox.</p>
+        </div>
+        <a class="btn-solid trainee-signup-btn" id="trainee-news-btn" href="[[NEWSLETTER_LINK]]" target="_blank" rel="noopener">Join the list</a>
       </div>
     </div>
   </section>
@@ -409,9 +417,12 @@
 
   <!-- DIRECTORY -->
   <div id="directory-screen" class="screen">
-    <div class="segmented" id="dir-segments">
-      <button class="seg-btn active" data-seg="posters" onclick="setSegment('posters')">Poster Directory</button>
-      <button class="seg-btn" data-seg="coffee" onclick="setSegment('coffee')">☕ Coffee Consult</button>
+    <div class="segmented-wrap">
+      <span class="segmented-label">View:</span>
+      <div class="segmented" id="dir-segments" role="tablist">
+        <button class="seg-btn active" data-seg="posters" role="tab" aria-selected="true" onclick="setSegment('posters')">Poster Directory</button>
+        <button class="seg-btn" data-seg="coffee" role="tab" aria-selected="false" onclick="setSegment('coffee')">☕ Coffee Consult</button>
+      </div>
     </div>
     <div id="coffee-quickfilter-wrap"></div>
     <div class="search-filter-bar">

@@ -652,7 +652,9 @@ function renderCoffeeQuickFilter() {
 function setSegment(seg) {
   currentSegment = seg;
   document.querySelectorAll('#dir-segments .seg-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.seg === seg);
+    const on = b.dataset.seg === seg;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
   });
   coffeeQuickFilterOn = false;
   renderCoffeeQuickFilter();

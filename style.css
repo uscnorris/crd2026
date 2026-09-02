@@ -806,9 +806,22 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 body.in-app #profile-screen, body.in-app #mylist-screen { padding-bottom: 86px; }
 
 /* Segment control: All / Posters / Coffee Consult */
-.segmented { display: flex; gap: 4px; background: var(--off-white); border: 1px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 10px; }
-.seg-btn { flex: 1; padding: 8px 6px; background: none; border: none; border-radius: 7px; font-size: 13px; font-weight: 700; color: var(--text-mid); cursor: pointer; white-space: nowrap; }
+/* View toggle: two clearly button-like, switchable tabs */
+.segmented-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.segmented-label { font-size: 13px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: .04em; flex-shrink: 0; }
+.segmented { display: inline-flex; gap: 0; background: #fff; border: 2px solid var(--cardinal); border-radius: 30px; padding: 3px; }
+.seg-btn {
+  flex: 0 0 auto; padding: 9px 22px; background: none; border: none; border-radius: 26px;
+  font-size: 14px; font-weight: 700; color: var(--cardinal); cursor: pointer; white-space: nowrap;
+  transition: background .12s, color .12s;
+}
+.seg-btn:hover:not(.active) { background: var(--cardinal-light); }
 .seg-btn.active { background: var(--cardinal); color: #fff; }
+@media (max-width: 560px) {
+  .segmented-wrap { flex-direction: column; align-items: stretch; gap: 6px; }
+  .segmented { display: flex; }
+  .seg-btn { flex: 1; padding: 10px 8px; }
+}
 
 /* Quiet chip for "no poster" so it reads as context, not a warning */
 .chip-quiet { background: transparent; border-style: dashed; color: var(--text-light); font-weight: 600; }
@@ -918,3 +931,14 @@ header.site-nav { border-top: none; background: var(--off-white); border-bottom:
   }
   .norris-nav-inner a.is-current { border-bottom: 3px solid var(--cardinal); border-bottom-width: 1px; }
 }
+
+/* Trainee distribution-list signup (For trainees section) */
+.trainee-signup {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  margin-top: 28px; padding: 24px 28px; background: #fff; border: 1px solid var(--border);
+  border-left: 5px solid var(--gold); border-radius: var(--radius);
+}
+.trainee-signup h3 { margin: 0 0 6px; font-family: var(--font-serif); font-size: 20px; }
+.trainee-signup p { margin: 0; font-size: 15.5px; color: var(--text-mid); }
+.trainee-signup-btn { flex-shrink: 0; white-space: nowrap; }
+@media (max-width: 640px) { .trainee-signup { flex-direction: column; align-items: flex-start; } }
