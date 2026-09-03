@@ -942,3 +942,7 @@ header.site-nav { border-top: none; background: var(--off-white); border-bottom:
 .trainee-signup p { margin: 0; font-size: 15.5px; color: var(--text-mid); }
 .trainee-signup-btn { flex-shrink: 0; white-space: nowrap; }
 @media (max-width: 640px) { .trainee-signup { flex-direction: column; align-items: flex-start; } }
+
+/* Standalone number for the Stay connected item (way #4) */
+.trainee-signup { position: relative; }
+.way-num-standalone { flex-shrink: 0; align-self: flex-start; margin-right: 4px; }
