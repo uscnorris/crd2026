@@ -380,6 +380,7 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 
 /* "For trainees" — three ways to take part */
 .ways-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin:26px 0 0; align-items:stretch; }
+.ways-grid-3 { grid-template-columns:repeat(3,1fr); }
 .way-card { display:flex; gap:14px; background:#fff; border:1px solid var(--border);
   border-top:3px solid var(--cardinal); border-radius:var(--radius); padding:22px; }
 .way-card > div { display:flex; flex-direction:column; flex:1; }
@@ -943,6 +944,3 @@ header.site-nav { border-top: none; background: var(--off-white); border-bottom:
 .trainee-signup-btn { flex-shrink: 0; white-space: nowrap; }
 @media (max-width: 640px) { .trainee-signup { flex-direction: column; align-items: flex-start; } }
 
-/* Standalone number for the Stay connected item (way #4) */
-.trainee-signup { position: relative; }
-.way-num-standalone { flex-shrink: 0; align-self: flex-start; margin-right: 4px; }
