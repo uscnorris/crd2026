@@ -476,7 +476,7 @@ function renderAppAgenda() {
         <div class="agenda-item ${s.tbd ? 'is-tbd' : ''}">
           <div class="agenda-time">${s.time}${s.loc ? `<div class="agenda-loc">${s.loc}</div>` : ''}</div>
           <div class="agenda-body">
-            <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag">${s.tag}</span>` : ''}</div>
+            <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag${s.tag === 'Keynote' ? ' agenda-tag-keynote' : ''}">${s.tag}</span>` : ''}</div>
             <div class="agenda-desc">${s.desc || ''}</div>
           </div>
         </div>`).join('')}
@@ -1123,7 +1123,7 @@ function renderProgram() {
       <div class="agenda-item ${s.tbd ? 'is-tbd' : ''}">
         <div class="agenda-time">${s.time}${s.loc ? `<div class="agenda-loc">${s.loc}</div>` : ''}</div>
         <div class="agenda-body">
-          <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag">${s.tag}</span>` : ''}</div>
+          <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag${s.tag === 'Keynote' ? ' agenda-tag-keynote' : ''}">${s.tag}</span>` : ''}</div>
           <div class="agenda-desc">${s.desc || ''}</div>
         </div>
       </div>`).join('');
