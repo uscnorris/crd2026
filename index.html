@@ -93,6 +93,7 @@
     <div class="hero-inner">
       <div class="hero-eyebrow">4th Annual</div>
       <h1 class="hero-title">Cancer <em>Research</em> Day</h1>
+      <p class="hero-theme">AI across the cancer continuum</p>
       <div class="hero-datebar">
         <span class="hero-date">Wednesday, October 14, 2026</span>
         <span class="hero-time">9 AM – 3 PM</span>
@@ -125,9 +126,16 @@
   <!-- AGENDA -->
   <section class="band alt" id="agenda">
     <div class="band-inner">
-      <h2>Agenda</h2>
-      <p class="muted">Speakers and final times are confirmed closer to the event.</p>
+      <div class="theme-banner">
+        <span class="theme-eyebrow">This year's theme</span>
+        <span class="theme-title" id="theme-title"></span>
+      </div>
+      <h2>Featured speakers</h2>
+      <p class="muted">Our confirmed featured speakers are below. The full schedule with times will be posted closer to the event.</p>
+      <div id="program-speakers" class="speaker-list"></div>
+      <h2 class="agenda-flow-heading">The day at a glance</h2>
       <div id="program-agenda" class="agenda-print-list"></div>
+      <p class="muted venue-note" id="venue-note"></p>
     </div>
   </section>
 
@@ -191,7 +199,7 @@
       <button class="btn-solid" onclick="registerNow()">Register / Submit a Poster</button>
 
       <h3 class="sub-head">Awards</h3>
-      <p class="sub-note p-wide">The poster session is open to all. The judged competition for awards is <strong>open to trainees</strong> (students, postdoctoral fellows, clinical fellows, residents) <strong>and staff</strong>.</p>
+      <p class="sub-note p-wide">The poster session is open to all. The judged competition for awards is <strong>open to trainees</strong> (students, postdoctoral fellows, clinical fellows, residents) <strong>and staff</strong>. Posters are judged by faculty and cancer survivors.</p>
       <div class="awards">
         <div class="awards-lead">
           <span class="awards-prize">Three prizes of $100</span>
@@ -317,11 +325,6 @@
           <button class="btn-solid" onclick="joinLivestream()">Join the livestream</button>
         </div>
         <div class="visit-card">
-          <span class="visit-ico"><svg class="ico"><use href="#i-ce"/></svg></span>
-          <h3>Continuing education credit</h3>
-          <p id="ce-note">We are pursuing continuing education / CME credit for the day through the Keck School of Medicine CME office. Details and how to claim credit will be posted here and shared with registrants once confirmed.</p>
-        </div>
-        <div class="visit-card">
           <span class="visit-ico"><svg class="ico"><use href="#i-access"/></svg></span>
           <h3>Accessibility</h3>
           <p>The registration form asks about accommodations such as seating, interpreting, or materials. Email us any time.</p>
@@ -330,6 +333,11 @@
           <span class="visit-ico"><svg class="ico"><use href="#i-diet"/></svg></span>
           <h3>Food &amp; dietary needs</h3>
           <p>Lunch is provided on Pappas Quad. The registration form asks about dietary restrictions so we can plan for everyone.</p>
+        </div>
+        <div class="visit-card">
+          <span class="visit-ico"><svg class="ico"><use href="#i-mail"/></svg></span>
+          <h3>Trainee questions?</h3>
+          <p>Trainees can reach out to Grace Kukuk at <a href="mailto:crtec@usc.edu">crtec@usc.edu</a> with any questions about presenting, Coffee Consult, or getting involved.</p>
         </div>
       </div>
     </div>

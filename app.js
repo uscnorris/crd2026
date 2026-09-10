@@ -463,20 +463,27 @@ function wireRegistrationLinks() {
 function renderAppAgenda() {
   const wrap = document.getElementById('app-agenda-content');
   if (!wrap) return;
-  const ag = CONFIG.agenda || [];
+  const ag = CONFIG.agenda_flow || [];
   const info = CONFIG.info || {};
+  const speakers = CONFIG.featured_speakers || [];
 
   wrap.innerHTML = `
     <div class="app-agenda-header">
       <h2>${CONFIG.event_name || 'Agenda'}</h2>
       <div class="app-agenda-when">${CONFIG.event_date || ''} · ${CONFIG.event_time || ''}</div>
+      ${CONFIG.theme ? `<div class="app-agenda-theme">Theme: ${CONFIG.theme}</div>` : ''}
     </div>
+    ${speakers.length ? `<div class="app-agenda-speakers">
+      <div class="app-agenda-subhead">Featured speakers</div>
+      ${speakers.map(sp => `<div class="app-speaker">${sp.keynote ? '<strong>Keynote — </strong>' : ''}<strong>${sp.name}</strong><br><span>${sp.role || ''}</span></div>`).join('')}
+    </div>` : ''}
+    <div class="app-agenda-subhead">The day at a glance</div>
     <div class="agenda-print-list">
       ${ag.map(s => `
-        <div class="agenda-item ${s.tbd ? 'is-tbd' : ''}">
-          <div class="agenda-time">${s.time}${s.loc ? `<div class="agenda-loc">${s.loc}</div>` : ''}</div>
+        <div class="agenda-item">
+          <div class="agenda-time">${s.time}</div>
           <div class="agenda-body">
-            <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag${s.tag === 'Keynote' ? ' agenda-tag-keynote' : ''}">${s.tag}</span>` : ''}</div>
+            <div class="agenda-title">${s.title}</div>
             <div class="agenda-desc">${s.desc || ''}</div>
           </div>
         </div>`).join('')}
@@ -1116,18 +1123,37 @@ function submitCoffeeConsult() {
 // ── PROGRAM CONTENT (landing / print) ─────────
 
 function renderProgram() {
-  const ag = CONFIG.agenda || [];
+  // Theme
+  const themeEl = document.getElementById('theme-title');
+  if (themeEl && CONFIG.theme) themeEl.textContent = CONFIG.theme;
+
+  // Confirmed featured speakers (no time slots)
+  const spEl = document.getElementById('program-speakers');
+  if (spEl) {
+    spEl.innerHTML = (CONFIG.featured_speakers || []).map(sp => `
+      <div class="speaker-card ${sp.keynote ? 'is-keynote' : ''}">
+        ${sp.keynote ? '<span class="speaker-badge">Keynote</span>' : ''}
+        <div class="speaker-name">${sp.name}</div>
+        <div class="speaker-role">${sp.role || ''}</div>
+      </div>`).join('');
+  }
+
+  // Simple day flow (no per-talk times)
+  const ag = CONFIG.agenda_flow || [];
   const agEl = document.getElementById('program-agenda');
   if (agEl) {
     agEl.innerHTML = ag.map(s => `
-      <div class="agenda-item ${s.tbd ? 'is-tbd' : ''}">
-        <div class="agenda-time">${s.time}${s.loc ? `<div class="agenda-loc">${s.loc}</div>` : ''}</div>
+      <div class="agenda-item">
+        <div class="agenda-time">${s.time}</div>
         <div class="agenda-body">
-          <div class="agenda-title">${s.title}${s.tag ? `<span class="agenda-tag${s.tag === 'Keynote' ? ' agenda-tag-keynote' : ''}">${s.tag}</span>` : ''}</div>
+          <div class="agenda-title">${s.title}</div>
           <div class="agenda-desc">${s.desc || ''}</div>
         </div>
       </div>`).join('');
   }
+
+  const vn = document.getElementById('venue-note');
+  if (vn && CONFIG.venue_note) vn.textContent = CONFIG.venue_note;
 
   const facts = document.getElementById('program-posters');
   if (facts) {

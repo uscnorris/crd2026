@@ -32,7 +32,8 @@ const FORM_MAP = {
 
   // Section 3 — Poster submission
   title:             'Poster Title',
-  summary:           'Poster Summary (1-2 sentences)',
+  summary:           'Poster Abstract',
+  research_topic:    'Research Topic',
   disease_area:      'Disease / focus area',      // checkbox (multi-select) — comes through comma-joined
   linkedin_url:      'LinkedIn URL',
   // NOTE: this question governs CONTACT DISPLAY only — being listed in the
@@ -65,7 +66,7 @@ const SEND_CONFIRMATION = false;
 
 // ── Tab names + headers (setup() creates these) ──
 const TABS = {
-  Directory: ['id','name','role','year','department','poster_number','title','summary','bio','disease_area','research_program','clinical_input','mentoring','linkedin_url','photo_url','email','share_contact'],
+  Directory: ['id','name','role','year','department','poster_number','title','summary','bio','disease_area','research_program','research_topic','clinical_input','mentoring','linkedin_url','photo_url','email','share_contact'],
   Users:     ['session_id','name','role','program','timestamp'],
   Convos:    ['session_id','viewer_name','viewer_role','viewer_program','participant_id','participant_name','participant_role','participant_program','timestamp'],
   Coffee:    ['session_id','requester_name','requester_role','requester_program','participant_id','participant_name','participant_role','participant_program','track_id','track_name','track_aim','action','timestamp'],
@@ -177,7 +178,7 @@ function onFormSubmit(e) {
   // Guard: a presenter with no Research Program answer has no section, and
   // must NOT be given a malformed number like "-01". They're still listed;
   // the poster number is filled in by CRTEC once their program is known.
-  const sectionLetter = rowLetterFor_(role, researchProgram, get('disease_area'));
+  const sectionLetter = rowLetterFor_(role, researchProgram, get('disease_area'), get('research_topic'));
   if (presenting && sectionLetter) {
     if (existingRow) {
       posterNo = dir.getRange(existingRow, headers.indexOf('poster_number') + 1, 1, 1).getValue() || '';
@@ -194,6 +195,7 @@ function onFormSubmit(e) {
   const row = [
     id, get('name'), role, get('year'), get('department'),
     posterNo, get('title'), get('summary'), get('bio'), get('disease_area'), researchProgram,
+    get('research_topic'),
     '', mentoringFlag, (shareContact && shareLinkedIn) ? get('linkedin_url') : '', '', get('email'),
     shareContact ? 'TRUE' : 'FALSE'
   ];
@@ -283,10 +285,13 @@ const PROGRAM_TO_ROW = {
 // exact match on any one selection, not a substring match on the whole
 // string, so "Shared Resource/Core" doesn't accidentally match something
 // else that happens to contain similar words.
-function rowLetterFor_(role, researchProgram, diseaseArea) {
+function rowLetterFor_(role, researchProgram, diseaseArea, researchTopic) {
   const picks = (diseaseArea || '').split(',').map(s => s.trim());
   if (picks.includes(SHARED_RESOURCE_MARKER)) return 'S';
-  return PROGRAM_TO_ROW[researchProgram] || ''; // '' = not yet assigned a side (see note above)
+  // A poster is placed by its Research Topic (what the poster is about), which
+  // may differ from the presenter's home Research Program. Fall back to the
+  // home program if no topic was given.
+  return PROGRAM_TO_ROW[researchTopic] || PROGRAM_TO_ROW[researchProgram] || '';
 }
 
 // ── 2. App posts events → tracking tabs ──

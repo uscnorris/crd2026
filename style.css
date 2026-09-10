@@ -947,3 +947,26 @@ header.site-nav { border-top: none; background: var(--off-white); border-bottom:
 
 /* Keynote badge — cardinal, to mark the marquee session */
 .agenda-tag-keynote { background: var(--cardinal); color: #fff; }
+
+/* Theme emphasis */
+.hero-theme { font-family: var(--font-serif); font-style: italic; font-size: clamp(19px,3.2vw,26px); color: var(--cardinal); margin: 4px 0 16px; font-weight: 600; }
+.theme-banner { display: flex; flex-direction: column; gap: 4px; background: var(--cardinal); color: #fff; padding: 20px 26px; border-radius: var(--radius); margin-bottom: 30px; }
+.theme-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+.theme-title { font-family: var(--font-serif); font-size: clamp(22px,4vw,32px); font-weight: 700; }
+
+/* Featured speakers list */
+.speaker-list { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; margin: 20px 0 8px; }
+.speaker-card { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 18px 20px; position: relative; }
+.speaker-card.is-keynote { border-left-color: var(--cardinal); background: var(--cardinal-light); }
+.speaker-badge { display: inline-block; background: var(--cardinal); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 9px; border-radius: 20px; margin-bottom: 8px; }
+.speaker-name { font-family: var(--font-serif); font-size: 19px; font-weight: 700; margin-bottom: 3px; }
+.speaker-role { font-size: 14px; color: var(--text-mid); line-height: 1.5; }
+.agenda-flow-heading { margin-top: 36px; }
+.venue-note { margin-top: 16px; font-style: italic; }
+@media (max-width: 640px) { .speaker-list { grid-template-columns: 1fr; } }
+
+/* In-app agenda additions */
+.app-agenda-theme { font-size: 13px; color: var(--cardinal); font-weight: 700; margin-top: 4px; }
+.app-agenda-subhead { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-light); margin: 18px 0 10px; }
+.app-agenda-speakers .app-speaker { font-size: 14px; line-height: 1.5; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.app-agenda-speakers .app-speaker span { color: var(--text-mid); font-size: 13px; }

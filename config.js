@@ -85,21 +85,29 @@ const CONFIG = {
   // AGENDA — the whole-day digital program
   // tag: optional pill. tbd: true dims the item and shows a "TBD" chip.
   // ───────────────────────────────────────────
-  agenda: [
-    { time: "9:00 AM",  loc: "Mayer Auditorium Lobby", title: "Check-in & coffee", desc: "Registration desk opens. Poster setup begins on Pappas Quad." },
-    { time: "9:00–9:15 AM", loc: "Mayer Auditorium", title: "Welcome & introduction", desc: "Opening remarks." },
-    { time: "9:15–9:45 AM", loc: "Mayer Auditorium", title: "AI in the surgical suite", desc: "Giovanni Cacciamani, MD." },
-    { time: "9:45–10:15 AM", loc: "Mayer Auditorium", title: "Computational & data-driven oncology", desc: "Sheng Li, PhD." },
-    { time: "Time TBD", loc: "Mayer Auditorium", title: "AI & analytics in the health system", desc: "Nasim Eftekhari, MS — Chief AI and Analytics Officer and System Vice President, City of Hope.", tag: "Tentative", tbd: true },
-    { time: "10:15–10:45 AM", loc: "Mayer Auditorium", title: "Break", desc: "" },
-    { time: "10:45–11:45 AM", loc: "Mayer Auditorium", title: "Keynote: Automated machine learning for biomedical discovery", desc: "Jason H. Moore, PhD — Chair, Department of Computational Biomedicine, and Director, Center for Artificial Intelligence Research and Education, Cedars-Sinai.", tag: "Keynote" },
-    { time: "11:45 AM–12:15 PM", loc: "Mayer Auditorium", title: "Genetics, risk & precision counseling", desc: "Charité Ricker, MS, CGC.", tag: "Tentative", tbd: true },
-    { time: "12:15–12:45 PM", loc: "Mayer Auditorium", title: "Community outreach & the reach of research", desc: "Lourdes Baezconde-Garbanati, PhD — Community Outreach & Engagement (COE)." },
-    { time: "12:45 PM", loc: "Pappas Quad",      title: "Lunch & networking", desc: "Connect across the Cancer Center in person. Browse the directory to see who will be at the poster session." },
-    { time: "12:45–2:45 PM", loc: "Pappas Quad", title: "Poster session & judging", desc: "Open poster session, with judging for trainee and staff entries and the Patient Advocate poster walk." },
-    { time: "2:45 PM",  loc: "Mayer Auditorium", title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." },
-    { time: "All day",  loc: "In the app",       title: "Coffee Consult", desc: "A new trainee program pairing bench and clinic. Request a match any time during the day, or until 5 PM on Thursday, Oct 15.", tag: "New for 2026" }
+  // Public-facing agenda: a theme, the confirmed featured speakers (no time
+  // slots while the lineup is still being finalized), and the simple rhythm
+  // of the day. Add speakers to featured_speakers only once confirmed.
+  theme: "AI across the cancer continuum",
+
+  featured_speakers: [
+    { name: "Jason H. Moore, PhD", role: "Keynote · Chair, Department of Computational Biomedicine, and Director, Center for Artificial Intelligence Research and Education, Cedars-Sinai", keynote: true },
+    { name: "Giovanni Cacciamani, MD", role: "AI in the surgical suite" },
+    { name: "Sheng Li, PhD", role: "Computational & data-driven oncology" },
+    { name: "Lourdes Baezconde-Garbanati, PhD", role: "Community Outreach & Engagement (COE)" }
   ],
+
+  // The shape of the day (no per-talk times while the lineup is being set).
+  agenda_flow: [
+    { time: "9:00 AM",        title: "Check-in & coffee", desc: "Registration opens; poster setup begins." },
+    { time: "Morning",        title: "Welcome & featured talks", desc: "Keynote and scientific talks on AI across the cancer continuum." },
+    { time: "12:45 PM",       title: "Lunch & networking", desc: "Connect across the Cancer Center in person." },
+    { time: "12:45–2:45 PM",  title: "Poster session & judging", desc: "Open poster session, judged by faculty and cancer survivors, with the Patient Advocate poster walk." },
+    { time: "2:45 PM",        title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." }
+  ],
+
+  // Where the day happens (kept short so it isn't repeated on every line).
+  venue_note: "Talks in Mayer Auditorium (Keith Administration Building). Poster session and lunch on Pappas Quad.",
 
   // Practical info shown at the bottom of the Agenda view
   info: {

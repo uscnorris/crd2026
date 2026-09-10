@@ -23,7 +23,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "sarah.chen@usc.edu",
     "bio": "Second-year PhD student interested in how the tumor microenvironment shapes immunotherapy response. Always happy to talk about breast cancer immunology or grad school in general.",
-    "share_contact": "FALSE"
+    "share_contact": "FALSE",
+    "research_topic": "Tumor Immunology & Microenvironment (TIME)"
   },
   {
     "id": "time-02",
@@ -42,7 +43,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "priya.nair@usc.edu",
     "bio": "",
-    "share_contact": "FALSE"
+    "share_contact": "FALSE",
+    "research_topic": "Tumor Immunology & Microenvironment (TIME)"
   },
   {
     "id": "time-03",
@@ -61,7 +63,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "elena.vasquez@med.usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Tumor Immunology & Microenvironment (TIME)"
   },
   {
     "id": "time-04",
@@ -80,7 +83,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "miguel.santos@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Tumor Immunology & Microenvironment (TIME)"
   },
   {
     "id": "erc-01",
@@ -99,7 +103,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "james.okonkwo@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Epigenetic Regulation in Cancer (ERC)"
   },
   {
     "id": "erc-02",
@@ -118,7 +123,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "hannah.levine@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Epigenetic Regulation in Cancer (ERC)"
   },
   {
     "id": "erc-03",
@@ -137,7 +143,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "robert.kim@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Epigenetic Regulation in Cancer (ERC)"
   },
   {
     "id": "tacs-01",
@@ -156,7 +163,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "alicia.reyes@med.usc.edu",
     "bio": "Second-year medical oncology fellow. Bridging bench findings and real clinic decisions is what I care about most — reach out if you want to talk translational immuno-oncology.",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Translational and Clinical Sciences (TACS)"
   },
   {
     "id": "tacs-02",
@@ -175,7 +183,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "david.park@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Translational and Clinical Sciences (TACS)"
   },
   {
     "id": "tacs-03",
@@ -194,7 +203,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "nadia.haddad@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Translational and Clinical Sciences (TACS)"
   },
   {
     "id": "tacs-04",
@@ -213,7 +223,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "thomas.wright@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Translational and Clinical Sciences (TACS)"
   },
   {
     "id": "ce-01",
@@ -232,7 +243,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "grace.liu@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Epidemiology (CE)"
   },
   {
     "id": "ce-02",
@@ -251,7 +263,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "ana.morales@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Epidemiology (CE)"
   },
   {
     "id": "ce-03",
@@ -270,7 +283,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "kevin.tran@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Epidemiology (CE)"
   },
   {
     "id": "ccr-01",
@@ -289,7 +303,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "lourdes.ibarra@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Control Research (CCR)"
   },
   {
     "id": "ccr-02",
@@ -308,7 +323,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "destiny.brooks@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Control Research (CCR)"
   },
   {
     "id": "ccr-03",
@@ -327,7 +343,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "andre.flores@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Control Research (CCR)"
   },
   {
     "id": "coe-01",
@@ -346,7 +363,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "maria.torres@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": ""
   },
   {
     "id": "coe-02",
@@ -365,7 +383,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "denise.whitfield@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": ""
   },
   {
     "id": "coe-03",
@@ -384,7 +403,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "rosa.jimenez@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": ""
   },
   {
     "id": "crtec-01",
@@ -403,7 +423,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "aisha.mensah@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Control Research (CCR)"
   },
   {
     "id": "crtec-02",
@@ -422,7 +443,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "marcus.bell@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Epidemiology (CE)"
   },
   {
     "id": "crtec-03",
@@ -441,7 +463,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "tyler.nguyen@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Control Research (CCR)"
   },
   {
     "id": "sr-01",
@@ -460,7 +483,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "wen.zhao@usc.edu",
     "bio": "I direct the Genomics & Bioinformatics Shared Resource. Come find me if you are planning a sequencing experiment, even an early one — happy to talk through design before you commit budget.",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Epigenetic Regulation in Cancer (ERC)"
   },
   {
     "id": "sr-02",
@@ -479,7 +503,8 @@ const SAMPLE_DATA = [
     "photo_url": "",
     "email": "patricia.nguyen@usc.edu",
     "bio": "",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": "Cancer Epidemiology (CE)"
   },
   {
     "id": "cc-01",
@@ -498,7 +523,8 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "ravi.anand@usc.edu",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": ""
   },
   {
     "id": "cc-02",
@@ -517,6 +543,7 @@ const SAMPLE_DATA = [
     "linkedin_url": "",
     "photo_url": "",
     "email": "simone.beck@med.usc.edu",
-    "share_contact": "TRUE"
+    "share_contact": "TRUE",
+    "research_topic": ""
   }
 ];
