@@ -2,6 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+  // If this page is embedded (e.g. inside a Norris WordPress page via
+  // iframe), the REAL Norris header/nav already exists one level up — so
+  // this copy is a duplicate and must not render. Runs synchronously,
+  // before paint, to avoid a flash of the duplicate header.
+  try {
+    if (window.self !== window.top) {
+      document.documentElement.classList.add('in-iframe');
+    }
+  } catch (e) {
+    // Cross-origin frame access can throw; being inside a frame at all
+    // means the same duplicate-header risk, so treat it as embedded too.
+    document.documentElement.classList.add('in-iframe');
+  }
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cancer Research Day 2026 · USC Norris Comprehensive Cancer Center</title>
 <meta name="description" content="4th Annual Cancer Research Day at USC Norris. Wednesday, October 14, 2026. Hosted by Cancer Research Training &amp; Education Coordination (CRTEC). Talks, an AI featured session, a poster session open to the whole Cancer Center, and Coffee Consult connections. In person and virtual.">

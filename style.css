@@ -979,3 +979,11 @@ header.site-nav { border-top: none; background: var(--off-white); border-bottom:
 
 .trainee-poc { font-size: 15px; color: var(--text-mid); margin: -6px 0 4px; }
 .trainee-poc a { color: var(--cardinal); font-weight: 600; }
+
+/* Embedded mode (inside a Norris page via iframe): the real Norris header
+   already exists one level up, so hide this page's own replica entirely
+   and let the event sub-nav sit at the very top instead. */
+html.in-iframe .norris-utility,
+html.in-iframe .norris-header,
+html.in-iframe .norris-nav { display: none !important; }
+html.in-iframe header.site-nav { border-top: 5px solid var(--cardinal); }
