@@ -99,11 +99,11 @@ const CONFIG = {
 
   // The shape of the day (no per-talk times while the lineup is being set).
   agenda_flow: [
-    { time: "9:00 AM",        loc: "Mayer Auditorium Lobby (KAM)", title: "Check-in & coffee", desc: "Registration opens; poster setup begins." },
+    { time: "9:00 AM",        loc: "Mayer Auditorium Lobby (KAM)", title: "Check-in & continental breakfast", desc: "Registration opens; poster setup begins." },
     { time: "9:00 AM–12:45 PM", title: "Welcome, talks, keynote & Q&A panels", desc: "A morning of science on AI across the cancer continuum." },
     { time: "12:45 PM",       loc: "Pappas Quad", title: "Lunch & networking", desc: "" },
-    { time: "12:45–2:45 PM",  title: "Poster session", desc: "Judged by faculty and Survivorship Advisory Council members, with the Patient Advocate poster walk." },
-    { time: "2:45 PM",        title: "Awards & closing", desc: "Poster awards, Advocates' Choice, and closing remarks." }
+    { time: "12:45–2:45 PM",  title: "Poster session", desc: "Judged by faculty and Survivorship Advisory Council members, with the cancer survivor poster walk." },
+    { time: "2:45 PM",        title: "Awards & closing", desc: "Poster awards, Survivors' Choice, and closing remarks." }
   ],
 
 
