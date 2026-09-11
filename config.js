@@ -91,7 +91,7 @@ const CONFIG = {
   theme: "AI across the cancer continuum",
 
   featured_speakers: [
-    { name: "Jason H. Moore, PhD", title: "Chair, Dept. of Computational Biomedicine; Director, Center for AI Research & Education, Cedars-Sinai", topic: "Keynote", photo: "moore.jpg", keynote: true },
+    { name: "Jason H. Moore, PhD", title: "Chair, Dept. of Computational Biomedicine; Director, Center for AI Research & Education, Cedars-Sinai", topic: "Keynote · AI in biomedicine · Cedars-Sinai", photo: "moore.jpg", keynote: true },
     { name: "Giovanni Cacciamani, MD", title: "USC", topic: "AI in the surgical suite", photo: "cacciamani.jpg" },
     { name: "Sheng Li, PhD", title: "USC", topic: "Computational & data-driven oncology", photo: "li.jpg" },
     { name: "Lourdes Baezconde-Garbanati, PhD", title: "USC", topic: "Community Outreach & Engagement (COE)", photo: "baezconde.jpg" }
@@ -102,8 +102,8 @@ const CONFIG = {
     { time: "9:00 AM",        loc: "Mayer Auditorium Lobby (KAM)", title: "Check-in & continental breakfast", desc: "Registration opens; poster setup begins." },
     { time: "9:00 AM–12:45 PM", title: "Welcome, talks, keynote & Q&A panels", desc: "A morning of science on AI across the cancer continuum." },
     { time: "12:45 PM",       loc: "Pappas Quad", title: "Lunch & networking", desc: "" },
-    { time: "12:45–2:45 PM",  title: "Poster session", desc: "Judged by faculty and Survivorship Advisory Council members, with the cancer survivor poster walk." },
-    { time: "2:45 PM",        title: "Awards & closing", desc: "Poster awards, Survivors' Choice, and closing remarks." }
+    { time: "12:45–2:45 PM",  title: "Poster session", desc: "Judged competition, Shared Resources tabling, cancer survivor poster walk, and trainee Coffee Consult matching." },
+    { time: "2:45 PM",        title: "Awards & closing remarks", desc: "" }
   ],
 
 

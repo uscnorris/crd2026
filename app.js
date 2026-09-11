@@ -1130,7 +1130,7 @@ function renderProgram() {
       <div class="speaker-mini">
         <div class="speaker-mini-photo"${sp.photo ? ` style="background-image:url('${sp.photo}')"` : ''}></div>
         <div class="speaker-mini-name">${sp.name}</div>
-        <div class="speaker-mini-topic">${sp.keynote ? 'Keynote' : (sp.topic || '')}</div>
+        <div class="speaker-mini-topic">${sp.topic || (sp.keynote ? 'Keynote' : '')}</div>
       </div>`).join('');
   }
 
