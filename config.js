@@ -29,7 +29,7 @@ const CONFIG = {
   // instead of an empty list, so an early visitor doesn't think nobody is
   // coming. Flip to true once you have enough entries to look healthy.
   directory_live: false,
-  directory_pending_message: "Posters are being added as registrations come in. Check back closer to the event to browse who is presenting.",
+  directory_pending_message: "The directory will be updated with poster session submissions. Check back soon to browse who is presenting.",
 
   // Minimum entries before the directory will show at all, even when live.
   // Belt-and-braces against a temporarily empty or failed data load.

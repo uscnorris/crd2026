@@ -632,6 +632,11 @@ function renderCoffeeQuickFilter() {
   const wrap = document.getElementById('coffee-quickfilter-wrap');
   if (!wrap) return;
 
+  // While the directory is held pre-launch, show nothing here — no preview
+  // banner, no Coffee instructions — so viewers only ever see the pending
+  // message rendered by renderDirectory().
+  if (CONFIG.directory_live === false) { wrap.innerHTML = ''; return; }
+
   const banner = usingSampleData
     ? `<div class="sample-data-banner">\u26a0\ufe0f Preview data. These are example entries, not real registrations.</div>`
     : '';
@@ -676,12 +681,14 @@ function toggleCoffeeQuickFilter() {
 
 function renderDirectory() {
   // Hold the directory back while posters are still being collected, so an
-  // early visitor sees an explanation rather than an empty list that reads
-  // as "nobody is coming".
+  // early visitor sees an explanation rather than an empty list — or, worse,
+  // sample/preview data. When directory_live is false we show the pending
+  // message UNCONDITIONALLY (even if the sheet failed and we fell back to
+  // sample data), so viewers never see placeholder people before launch.
   const realEntries = allParticipants.filter(p => p && p.name).length;
   const notLive = CONFIG.directory_live === false;
-  const tooFew = realEntries < Number(CONFIG.directory_min_entries || 0);
-  if (!usingSampleData && (notLive || tooFew)) {
+  const tooFew = !usingSampleData && realEntries < Number(CONFIG.directory_min_entries || 0);
+  if (notLive || tooFew) {
     document.getElementById('results-count').textContent = '';
     document.getElementById('directory-list').innerHTML = `
       <div class="empty-state">
