@@ -481,7 +481,7 @@ function renderAppAgenda() {
     <div class="agenda-print-list">
       ${ag.map(s => `
         <div class="agenda-item">
-          <div class="agenda-time">${s.time}</div>
+          <div class="agenda-time">${s.time}${s.loc ? `<span class="agenda-loc-badge">${s.loc}</span>` : ''}</div>
           <div class="agenda-body">
             <div class="agenda-title">${s.title}</div>
             <div class="agenda-desc">${s.desc || ''}</div>
