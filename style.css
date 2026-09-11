@@ -333,7 +333,7 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 /* ── Bands ── */
 /* Every jump target clears the sticky nav, so section titles are never hidden */
 #program-mode [id] { scroll-margin-top:128px; }
-.band { padding:52px 0; }
+.band { padding:38px 0; }
 #why { padding-bottom:30px; }
 #why .why-grid { margin-bottom:0; }
 #agenda { padding-top:36px; }
@@ -460,7 +460,7 @@ header.site-nav { background:#fff; color:var(--text); border-top:5px solid var(-
 }
 
 @media (max-width:760px) {
-  .band { padding:38px 0; }
+  .band { padding:28px 0; }
   #program-mode [id] { scroll-margin-top:150px; }
   .nav-links { order:3; width:100%; margin-left:0; gap:16px; overflow-x:auto; padding-bottom:2px; -webkit-overflow-scrolling:touch; }
   .nav-links a { white-space:nowrap; font-size:14px; }
@@ -959,6 +959,8 @@ header.site-nav { border-top: none; background: var(--off-white); border-bottom:
 .speaker-mini-photo { width: 76px; height: 76px; border-radius: 50%; background-size: cover; background-position: center top; background-color: var(--off-white); box-shadow: 0 0 0 1px var(--border); margin-bottom: 10px; }
 .speaker-mini-name { font-size: 14px; font-weight: 700; line-height: 1.25; color: var(--text); }
 .speaker-mini-topic { font-size: 12.5px; color: var(--text-mid); line-height: 1.35; margin-top: 4px; }
+.keynote-flag { display: inline-block; background: var(--cardinal); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 1px 7px; border-radius: 20px; }
+.agenda-theme-inline { color: var(--cardinal); font-style: italic; font-weight: 700; }
 .speakers-soon { font-size: 13px; color: var(--text-light); margin-top: 20px; }
 @media (max-width: 560px) {
   .speaker-row { gap: 20px 18px; justify-content: flex-start; }

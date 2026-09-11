@@ -50,7 +50,7 @@ const CONFIG = {
   max_selections: 2,
 
   // Where connection requests get sent (Google Form URL — see README)
-  form_url: "https://forms.gle/NScGUCFhKD9d4qv19",
+  form_url: "https://docs.google.com/forms/d/e/1FAIpQLSejuB6fGgHYuU1IMp1Lk-_0tMmDbKGVRPNgjJP44fYYdcGnvg/viewform",
 
   // BASE URL for QR codes — your GitHub Pages URL
   base_url: "https://uscnorris.github.io/crd2026",
@@ -100,7 +100,7 @@ const CONFIG = {
   // The shape of the day (no per-talk times while the lineup is being set).
   agenda_flow: [
     { time: "9:00 AM",        loc: "Mayer Auditorium Lobby (KAM)", title: "Check-in & continental breakfast", desc: "Registration opens; poster setup begins." },
-    { time: "9:00 AM–12:45 PM", title: "Welcome, talks, keynote & Q&A panels", desc: "A morning of science on AI across the cancer continuum." },
+    { time: "9:00 AM–12:45 PM", title: "Welcome, talks, keynote & Q&A panels", desc: "" },
     { time: "12:45 PM",       loc: "Pappas Quad", title: "Lunch & networking", desc: "" },
     { time: "12:45–2:45 PM",  title: "Poster session", desc: "Judged competition, Shared Resources tabling, cancer survivor poster walk, and trainee Coffee Consult matching." },
     { time: "2:45 PM",        title: "Awards & closing remarks", desc: "" }
