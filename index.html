@@ -113,7 +113,7 @@
   <section class="band" id="why">
     <div class="band-inner">
       <h2>Why come</h2>
-      <p class="lead">One day a year, the whole Cancer Center is in one place: faculty, staff, trainees, and community partners.</p>
+      <p class="lead p-wide">A day to share your work, meet collaborators, and see what's happening across the Cancer Center.</p>
       <div class="why-grid">
         <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-landscape"/></svg></span><h3>See the whole landscape</h3><p>Basic, translational, clinical, population, and community research, side by side in a single afternoon.</p></div>
         <div class="why-card"><span class="why-ico"><svg class="ico"><use href="#i-science"/></svg></span><h3>State of the science</h3><p>Morning talks from across the Center, plus this year's featured session on <strong>AI in cancer research</strong>.</p></div>
@@ -126,12 +126,13 @@
   <!-- AGENDA -->
   <section class="band alt" id="agenda">
     <div class="band-inner">
-      <h2>Featured speakers</h2>
-      <p class="muted">Our confirmed featured speakers are below. The full schedule with times will be posted closer to the event.</p>
-      <div id="program-speakers" class="speaker-list"></div>
-      <h2 class="agenda-flow-heading">The day at a glance</h2>
+      <h2>Agenda</h2>
+      <div class="speakers-include">
+        <div class="speakers-include-label">Speakers include</div>
+        <div id="program-speakers" class="speaker-row"></div>
+        <p class="speakers-soon">Full schedule details coming soon.</p>
+      </div>
       <div id="program-agenda" class="agenda-print-list"></div>
-      <p class="muted venue-note" id="venue-note"></p>
     </div>
   </section>
 
@@ -157,7 +158,8 @@
       <p class="lead p-wide">The afternoon poster session is open to everyone at the Cancer Center: faculty, staff, trainees, and research centers, across every program.</p>
 
       <h3 class="sub-head">Submitting a poster</h3>
-      <p class="sub-note p-wide">Registration and poster submission use the same form, so one submission covers both.</p>
+      <p class="sub-note p-wide">One form covers both registration and your poster submission.</p>
+      <button class="btn-solid" onclick="registerNow()">Register / Submit a Poster</button>
       <div id="program-posters" class="fact-row"></div>
 
       <div class="quad-layout">
@@ -192,15 +194,14 @@
         </svg>
         <p class="p-wide quad-layout-caveat">Schematic only, not to scale. Board numbers are posted on-site.</p>
       </div>
-      <button class="btn-solid" onclick="registerNow()">Register / Submit a Poster</button>
 
       <h3 class="sub-head">Awards</h3>
-      <p class="sub-note p-wide">The poster session is open to all. The judged competition for awards is <strong>open to trainees</strong> (students, postdoctoral fellows, clinical fellows, residents) <strong>and staff</strong>. Posters are judged by faculty and cancer survivors.</p>
+      <p class="sub-note p-wide">Trainees and staff who present a poster are automatically entered in the judged competition. Posters are judged by faculty and members of the Survivorship Advisory Council.</p>
       <div class="awards">
         <div class="awards-lead">
           <span class="awards-prize">Three prizes of $100</span>
         </div>
-        <p class="p-wide sub-note" style="margin:10px 0 0">All trainees and staff presenting posters are automatically eligible for the judged competition.</p>
+        <p class="p-wide sub-note" style="margin:10px 0 0">One of the three winners is also named <strong>Advocates' Choice</strong>, selected by the Survivorship Advisory Council judges.</p>
         <h4>What judges look for</h4>
         <ul class="criteria">
           <li><strong>Scientific merit.</strong> The significance of the question and the soundness of the approach.</li>
@@ -340,7 +341,7 @@
     <div class="band-inner">
       <div class="closing-card">
         <h2>Register</h2>
-        <p class="lead">Attendance is free. One form covers everything: in person or virtual, poster submission, Coffee Consult, and any accessibility or dietary needs.</p>
+        <p class="lead">Free to attend, in person or virtual. One form covers everything.</p>
         <button class="btn-solid btn-lg" onclick="registerNow()">Register / Submit a Poster</button>
         <p class="fineprint" id="reg-fallback"></p>
 

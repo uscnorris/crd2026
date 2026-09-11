@@ -1123,17 +1123,14 @@ function submitCoffeeConsult() {
 // ── PROGRAM CONTENT (landing / print) ─────────
 
 function renderProgram() {
-  // Confirmed featured speakers (photo + name + title + topic, no time slots)
+  // Minimal speaker row (headshot, name, topic) — blends into the agenda
   const spEl = document.getElementById('program-speakers');
   if (spEl) {
     spEl.innerHTML = (CONFIG.featured_speakers || []).map(sp => `
-      <div class="speaker-card ${sp.keynote ? 'is-keynote' : ''}">
-        <div class="speaker-photo"${sp.photo ? ` style="background-image:url('${sp.photo}')"` : ''}></div>
-        <div class="speaker-info">
-          <span class="speaker-topic ${sp.keynote ? 'is-keynote-badge' : ''}">${sp.keynote ? 'Keynote' : (sp.topic || '')}</span>
-          <div class="speaker-name">${sp.name}</div>
-          <div class="speaker-title">${sp.title || ''}</div>
-        </div>
+      <div class="speaker-mini">
+        <div class="speaker-mini-photo"${sp.photo ? ` style="background-image:url('${sp.photo}')"` : ''}></div>
+        <div class="speaker-mini-name">${sp.name}</div>
+        <div class="speaker-mini-topic">${sp.keynote ? 'Keynote' : (sp.topic || '')}</div>
       </div>`).join('');
   }
 
@@ -1143,7 +1140,7 @@ function renderProgram() {
   if (agEl) {
     agEl.innerHTML = ag.map(s => `
       <div class="agenda-item">
-        <div class="agenda-time">${s.time}</div>
+        <div class="agenda-time">${s.time}${s.loc ? `<span class="agenda-loc-badge">${s.loc}</span>` : ''}</div>
         <div class="agenda-body">
           <div class="agenda-title">${s.title}</div>
           <div class="agenda-desc">${s.desc || ''}</div>
@@ -1151,8 +1148,6 @@ function renderProgram() {
       </div>`).join('');
   }
 
-  const vn = document.getElementById('venue-note');
-  if (vn && CONFIG.venue_note) vn.textContent = CONFIG.venue_note;
 
   const facts = document.getElementById('program-posters');
   if (facts) {
