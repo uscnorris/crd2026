@@ -475,7 +475,7 @@ function renderAppAgenda() {
     </div>
     ${speakers.length ? `<div class="app-agenda-speakers">
       <div class="app-agenda-subhead">Featured speakers</div>
-      ${speakers.map(sp => `<div class="app-speaker">${sp.keynote ? '<strong>Keynote — </strong>' : ''}<strong>${sp.name}</strong><br><span>${sp.role || ''}</span></div>`).join('')}
+      ${speakers.map(sp => `<div class="app-speaker">${sp.keynote ? '<strong>Keynote — </strong>' : (sp.topic ? '<em>' + sp.topic + '</em><br>' : '')}<strong>${sp.name}</strong>${sp.title ? '<br><span>' + sp.title + '</span>' : ''}</div>`).join('')}
     </div>` : ''}
     <div class="app-agenda-subhead">The day at a glance</div>
     <div class="agenda-print-list">
@@ -1123,18 +1123,17 @@ function submitCoffeeConsult() {
 // ── PROGRAM CONTENT (landing / print) ─────────
 
 function renderProgram() {
-  // Theme
-  const themeEl = document.getElementById('theme-title');
-  if (themeEl && CONFIG.theme) themeEl.textContent = CONFIG.theme;
-
-  // Confirmed featured speakers (no time slots)
+  // Confirmed featured speakers (photo + name + title + topic, no time slots)
   const spEl = document.getElementById('program-speakers');
   if (spEl) {
     spEl.innerHTML = (CONFIG.featured_speakers || []).map(sp => `
       <div class="speaker-card ${sp.keynote ? 'is-keynote' : ''}">
-        ${sp.keynote ? '<span class="speaker-badge">Keynote</span>' : ''}
-        <div class="speaker-name">${sp.name}</div>
-        <div class="speaker-role">${sp.role || ''}</div>
+        <div class="speaker-photo"${sp.photo ? ` style="background-image:url('${sp.photo}')"` : ''}></div>
+        <div class="speaker-info">
+          <span class="speaker-topic ${sp.keynote ? 'is-keynote-badge' : ''}">${sp.keynote ? 'Keynote' : (sp.topic || '')}</span>
+          <div class="speaker-name">${sp.name}</div>
+          <div class="speaker-title">${sp.title || ''}</div>
+        </div>
       </div>`).join('');
   }
 

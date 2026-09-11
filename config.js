@@ -91,18 +91,18 @@ const CONFIG = {
   theme: "AI across the cancer continuum",
 
   featured_speakers: [
-    { name: "Jason H. Moore, PhD", role: "Keynote · Chair, Department of Computational Biomedicine, and Director, Center for Artificial Intelligence Research and Education, Cedars-Sinai", keynote: true },
-    { name: "Giovanni Cacciamani, MD", role: "AI in the surgical suite" },
-    { name: "Sheng Li, PhD", role: "Computational & data-driven oncology" },
-    { name: "Lourdes Baezconde-Garbanati, PhD", role: "Community Outreach & Engagement (COE)" }
+    { name: "Jason H. Moore, PhD", title: "Chair, Dept. of Computational Biomedicine; Director, Center for AI Research & Education, Cedars-Sinai", topic: "Keynote", photo: "assets/speakers/moore.jpg", keynote: true },
+    { name: "Giovanni Cacciamani, MD", title: "USC", topic: "AI in the surgical suite", photo: "assets/speakers/cacciamani.jpg" },
+    { name: "Sheng Li, PhD", title: "USC", topic: "Computational & data-driven oncology", photo: "assets/speakers/li.jpg" },
+    { name: "Lourdes Baezconde-Garbanati, PhD", title: "USC", topic: "Community Outreach & Engagement (COE)", photo: "assets/speakers/baezconde.jpg" }
   ],
 
   // The shape of the day (no per-talk times while the lineup is being set).
   agenda_flow: [
     { time: "9:00 AM",        title: "Check-in & coffee", desc: "Registration opens; poster setup begins." },
-    { time: "Morning",        title: "Welcome & featured talks", desc: "Keynote and scientific talks on AI across the cancer continuum." },
-    { time: "12:45 PM",       title: "Lunch & networking", desc: "Connect across the Cancer Center in person." },
-    { time: "12:45–2:45 PM",  title: "Poster session & judging", desc: "Open poster session, judged by faculty and cancer survivors, with the Patient Advocate poster walk." },
+    { time: "Morning",        title: "Welcome & featured talks", desc: "Keynote and scientific talks on AI across the cancer continuum. Mayer Auditorium." },
+    { time: "12:45 PM",       title: "Lunch & networking", desc: "Connect across the Cancer Center in person. Pappas Quad." },
+    { time: "12:45–2:45 PM",  title: "Poster session & judging", desc: "Open poster session on Pappas Quad, judged by faculty and cancer survivors, with the Patient Advocate poster walk." },
     { time: "2:45 PM",        title: "Awards & closing", desc: "Poster awards, Advocate's Choice, and closing remarks." }
   ],
 
