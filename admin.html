@@ -93,6 +93,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 }
 .poster-cell:hover .poster-tooltip { display: block; }
 
+/* Quad square layout — mirrors the physical arrangement around Pappas Quad */
+.quad-map { display: grid; grid-template-columns: 140px 1fr 140px; grid-template-rows: auto 1fr auto; gap: 14px; align-items: center; }
+.quad-side { display: flex; gap: 8px; align-items: center; }
+.quad-side.side-top, .quad-side.side-bottom { grid-column: 2; justify-content: center; flex-wrap: wrap; }
+.quad-side.side-left { grid-column: 1; grid-row: 2; flex-direction: column; }
+.quad-side.side-right { grid-column: 3; grid-row: 2; flex-direction: column; }
+.quad-center { grid-column: 2; grid-row: 2; align-self: stretch; display: flex; align-items: center; justify-content: center;
+  background: #fff; border: 1px dashed var(--border); border-radius: 8px; color: var(--mid); font-weight: 600; }
+.side-label-block { text-align: center; margin-bottom: 6px; }
+.side-label-name { font-size: 12px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.side-label-sub { font-size: 10.5px; color: var(--mid); }
+.board-group { display: grid; grid-template-columns: repeat(2, 72px); grid-template-rows: repeat(2, 56px); gap: 3px;
+  padding: 4px; border: 2px solid rgba(0,0,0,.15); border-radius: 8px; background: rgba(0,0,0,.02); }
+.side-top .board-group, .side-bottom .board-group { }
+.side-left .board-group, .side-right .board-group { grid-template-columns: repeat(2, 72px); }
+.table-row { display: grid; grid-template-columns: repeat(2, 72px); gap: 6px; justify-content: center; }
+@media (max-width: 900px) {
+  .quad-map { grid-template-columns: 1fr; }
+  .quad-side.side-left, .quad-side.side-right, .quad-side.side-top, .quad-side.side-bottom { grid-column: 1; flex-direction: row; flex-wrap: wrap; }
+  .quad-center { grid-row: auto; }
+}
+
 /* HEATMAP — ROLE MATRIX */
 .matrix-wrap { overflow-x: auto; }
 .role-matrix { border-collapse: collapse; font-size: 12px; }
@@ -208,7 +230,7 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
 <!-- HEATMAPS TAB -->
 <div id="tab-heatmap" class="page">
   <div class="alert-info" id="heatmap-note">
-    <strong>Floor map:</strong> Poster positions are arranged in the grid below. Click any poster for details. Update the <code>POSTER_LAYOUT</code> array in this file to match the actual room layout before the event.
+    <strong>Floor map:</strong> Matches the real layout around Pappas Quad — KAM side (Shared Resources, 8 tables), and the Library, HMR, and MCH sides on boards holding 4 posters each. Empty slots are reserved capacity, not gaps. Click any poster for details. Adjust <code>BOARDS_PER_SIDE</code> and <code>QUAD_SIDES</code> in this file if the real count changes.
   </div>
 
   <!-- FLOOR MAP HEATMAP -->
@@ -312,21 +334,58 @@ h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px;
 // ── POSTER LAYOUT ──────────────────────────────
 // Edit this to match the actual room layout.
 // rows: array of rows, each row is an array of poster numbers (or null for empty space)
-const POSTER_LAYOUT = [
-  ['A-01','A-02','A-03','A-04','A-05','A-06','A-07','A-08','A-09','A-10','A-11','A-12'],
-  [null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null ],
-  ['B-01','B-02','B-03','B-04','B-05','B-06','B-07','B-08','B-09','B-10','B-11','B-12'],
-  [null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null ],
-  ['C-01','C-02','C-03','C-04','C-05','C-06','C-07','C-08','C-09','C-10','C-11','C-12'],
-  [null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null ],
-  ['D-01','D-02','D-03','D-04','D-05','D-06','D-07','D-08','D-09','D-10','D-11','D-12'],
-  [null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null ],
-  ['E-01','E-02','E-03','E-04','E-05','E-06','E-07','E-08','E-09','E-10','E-11','E-12'],
-  [null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null ],
-  ['F-01','F-02','F-03','F-04','F-05','F-06','F-07','F-08','F-09','F-10','F-11','F-12'],
-  [null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null,  null ],
-  ['G-01','G-02','G-03','H-01','H-02','H-03','H-04','I-01','I-02','J-01','J-02','J-03'],
+// ── PHYSICAL LAYOUT ──────────────────────────────
+// Matches the actual planned setup around Pappas Quad, and the same
+// section letters used sitewide (config.js poster_rows / Code.gs
+// PROGRAM_TO_ROW) — this is a visualization of the SAME sections, not a
+// separate numbering scheme. Orientation matches the public site's
+// schematic: KAM side (downhill) left, Library side (north) top, HMR side
+// bottom, MCH side (uphill) right.
+//
+// KAM side: Shared Resources on TABLES (one poster per table, not double-
+// sided boards) — 8 tables total: 1 per Shared Resource, plus 3 for staff
+// or student organizations.
+//
+// The other three sides: boards holding 4 posters each (2 boards placed
+// back-to-back, 2 posters per face). Anticipated ~65 posters total across
+// these sides; 6 boards (24 slots) budgeted per side gives a small buffer
+// over that estimate. Adjust BOARDS_PER_SIDE below if the real count
+// tracks meaningfully higher or lower once registration closes.
+const BOARDS_PER_SIDE = 6;
+const SLOTS_PER_BOARD = 4;
+
+const QUAD_SIDES = [
+  { id: 'kam',     label: 'KAM side',     sub: 'Shared Resources — tables', mode: 'tables', color: '#990000', prefixes: ['S'], slotCount: 8 },
+  { id: 'library', label: 'Library side', sub: 'north',                    mode: 'boards', color: '#c9a227', prefixes: ['A', 'B'] },
+  { id: 'hmr',     label: 'HMR side',     sub: '',                         mode: 'boards', color: '#7a0000', prefixes: ['C'] },
+  { id: 'mch',     label: 'MCH side',     sub: 'uphill',                   mode: 'boards', color: '#FFCC00', prefixes: ['D', 'E'] },
 ];
+
+// Build the slot list for one side: real poster numbers on record slot in
+// first (by registration order), then empty/reserved slots pad out to the
+// side's planned capacity so the map shows true fullness, not just who's
+// signed up so far.
+function buildSideSlots(side, realNumbers) {
+  if (side.mode === 'tables') {
+    const slots = [];
+    for (let i = 1; i <= side.slotCount; i++) slots.push(side.prefixes[0] + '-' + String(i).padStart(2, '0'));
+    return [slots]; // one row of individual tables, no board grouping
+  }
+  // Boards: split the side's total slot budget evenly across its prefixes,
+  // grouped 4-per-board for the "2 boards, printed front and back" visual.
+  const totalSlots = BOARDS_PER_SIDE * SLOTS_PER_BOARD;
+  const perPrefix = Math.ceil(totalSlots / side.prefixes.length);
+  const allNumbers = [];
+  side.prefixes.forEach(pfx => {
+    for (let i = 1; i <= perPrefix; i++) allNumbers.push(pfx + '-' + String(i).padStart(2, '0'));
+  });
+  // Group into boards of 4
+  const boards = [];
+  for (let i = 0; i < allNumbers.length; i += SLOTS_PER_BOARD) {
+    boards.push(allNumbers.slice(i, i + SLOTS_PER_BOARD));
+  }
+  return boards;
+}
 
 // ── STATE ──────────────────────────────────────
 let DATA = { users:[], convos:[], coffee:[], views:[], survey:[] };
@@ -562,32 +621,60 @@ function heatTextColor(val, max) {
   return pct >= 0.4 ? 'white' : '#333';
 }
 
+function renderCell(num, vals, max, layerLabel) {
+  const val = vals[num] || 0;
+  const p = Object.values(participantMap).find(x => x.poster_number === num);
+  const filled = !!p;
+  const bg = filled ? heatColor(val, max) : '#fafafa';
+  const tc = filled ? heatTextColor(val, max) : '#bbb';
+  const name = p ? p.name.split(' ').slice(-1)[0] : '';
+  const tip = p
+    ? `${p.name} · Poster ${num}<br>${p.title ? p.title.substring(0,60)+'…' : ''}<br>${layerLabel}: ${val}`
+    : `${num} · reserved (not yet assigned)`;
+  const border = filled ? '1.5px solid rgba(0,0,0,.1)' : '1.5px dashed rgba(0,0,0,.15)';
+  return `<div class="poster-cell" style="background:${bg};color:${tc};border:${border};">
+      <div class="poster-num" style="color:${tc}">${num}</div>
+      ${val > 0 ? `<div class="poster-heat" style="color:${tc}">${val}</div>` : ''}
+      ${name ? `<div class="poster-name" style="color:${tc}">${name}</div>` : ''}
+      <div class="poster-tooltip">${tip}</div>
+    </div>`;
+}
+
+function renderSide(side, vals, max, layerLabel, axisClass) {
+  const groups = buildSideSlots(side, []);
+  const labelBlock = `<div class="side-label-block">
+      <div class="side-label-name" style="color:${side.color}">${side.label}</div>
+      ${side.sub ? `<div class="side-label-sub">${side.sub}</div>` : ''}
+    </div>`;
+
+  if (side.mode === 'tables') {
+    const cells = groups[0].map(num => renderCell(num, vals, max, layerLabel)).join('');
+    return `<div class="quad-side ${axisClass}">
+        <div>${labelBlock}<div class="table-row">${cells}</div></div>
+      </div>`;
+  }
+  // Boards: render each group of 4 as one bordered "board" unit
+  const boardEls = groups.map(g => `<div class="board-group">${g.map(num => renderCell(num, vals, max, layerLabel)).join('')}</div>`).join('');
+  return `<div class="quad-side ${axisClass}">
+      <div>${labelBlock}<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">${boardEls}</div></div>
+    </div>`;
+}
+
 function renderFloorMap() {
   const vals = getHeatValues();
   const max = Math.max(1, ...Object.values(vals));
   const layerLabel = currentLayer === 'views' ? 'views' : currentLayer === 'convos' ? 'conversations' : 'time score';
 
+  const byId = Object.fromEntries(QUAD_SIDES.map(s => [s.id, s]));
   const container = document.getElementById('poster-grid-container');
-  container.innerHTML = `<div style="display:grid;grid-template-columns:repeat(${POSTER_LAYOUT[0].length},72px);gap:6px;">` +
-    POSTER_LAYOUT.flatMap(row =>
-      row.map(num => {
-        if (!num) return `<div style="width:72px;height:56px;"></div>`;
-        const val = vals[num] || 0;
-        const p = Object.values(participantMap).find(x => x.poster_number === num);
-        const name = p ? p.name.split(' ').slice(-1)[0] : '';
-        const bg = heatColor(val, max);
-        const tc = heatTextColor(val, max);
-        const tip = p
-          ? `${p.name} · Poster ${num}<br>${p.title ? p.title.substring(0,60)+'…' : ''}<br>${layerLabel}: ${val}`
-          : `Poster ${num} · ${layerLabel}: ${val}`;
-        return `<div class="poster-cell" style="background:${bg};color:${tc};">
-          <div class="poster-num" style="color:${tc}">${num}</div>
-          ${val > 0 ? `<div class="poster-heat" style="color:${tc}">${val}</div>` : ''}
-          ${name ? `<div class="poster-name" style="color:${tc}">${name}</div>` : ''}
-          <div class="poster-tooltip">${tip}</div>
-        </div>`;
-      })
-    ).join('') + '</div>';
+  container.innerHTML = `
+    <div class="quad-map">
+      ${renderSide(byId.library, vals, max, layerLabel, 'side-top')}
+      ${renderSide(byId.kam, vals, max, layerLabel, 'side-left')}
+      <div class="quad-center">Pappas Quad</div>
+      ${renderSide(byId.mch, vals, max, layerLabel, 'side-right')}
+      ${renderSide(byId.hmr, vals, max, layerLabel, 'side-bottom')}
+    </div>`;
 }
 
 function renderRoleMatrix() {

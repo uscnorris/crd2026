@@ -987,3 +987,25 @@ html.in-iframe .norris-utility,
 html.in-iframe .norris-header,
 html.in-iframe .norris-nav { display: none !important; }
 html.in-iframe header.site-nav { border-top: 5px solid var(--cardinal); }
+
+/* Embedded mode: this page reports its height to the parent, which sizes
+   the iframe to fit — so this page itself should never show its own
+   scrollbar. (Standalone visits are untouched; html/body overflow default
+   applies normally there.) */
+html.in-iframe, html.in-iframe body { overflow: visible; }
+/* Break a feedback loop: body's min-height:100vh (below) is meant to make
+   the standalone app feel full-screen. But once the resize script sets the
+   IFRAME's height to match content, that height becomes the iframe's own
+   viewport — so 100vh now equals whatever the iframe was LAST sized to,
+   locking body at that height forever regardless of actual content. When
+   embedded, content must size itself with no vh dependency at all. */
+html.in-iframe body { min-height: 0; }
+/* The bottom tab bar is normally position:fixed, pinned to the real device
+   viewport — correct for a standalone full-screen app. But inside an
+   iframe, "fixed" is relative to the IFRAME'S OWN box height, which our
+   resize script controls — so a fixed bottom-nav computes its position
+   against whatever height was last reported, extending scrollHeight and
+   causing the same reported height to be confirmed forever. In embedded
+   mode the outer Norris page already owns scrolling, so the bar can simply
+   sit at the natural end of the content instead of floating. */
+html.in-iframe .bottom-nav { position: static; border-top: 1px solid var(--border); }

@@ -17,6 +17,44 @@
     document.documentElement.classList.add('in-iframe');
   }
 </script>
+<script>
+  // Auto-resize reporting: tells whatever embeds this page (in an iframe)
+  // its real content height, so the EMBEDDER can size the iframe to fit —
+  // avoiding a fixed-height box with its own internal scrollbar stacked
+  // inside the outer page's scrollbar ("nested scrolling"). This page never
+  // sizes itself; it only reports height. The embedding page decides what
+  // to do with that number (see the embed snippet that reads these).
+  (function () {
+    if (window.self === window.top) return; // not embedded — nothing to report
+    var lastSent = 0;
+    function reportHeight() {
+      // document.documentElement.scrollHeight is spec'd to return the LARGER
+      // of actual content height or this frame's own current viewport height.
+      // Since we set the iframe's box height ourselves, that becomes this
+      // frame's viewport — so documentElement.scrollHeight can never report
+      // smaller than whatever we last set, a one-way ratchet. document.body
+      // doesn't have that special-cased floor, so it shrinks correctly too.
+      var h = document.body.scrollHeight;
+      if (Math.abs(h - lastSent) < 2) return; // skip no-op reports
+      lastSent = h;
+      try {
+        window.parent.postMessage({ type: 'crd2026-resize', height: h }, '*');
+      } catch (e) {}
+    }
+    // Fires on ANY layout change — mode switches (landing ↔ directory app),
+    // opening a profile, filtering, images loading, etc. — without needing
+    // to hook every place in app.js that changes what's on screen.
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(reportHeight).observe(document.documentElement);
+    }
+    window.addEventListener('load', reportHeight);
+    window.addEventListener('resize', reportHeight);
+    // Catch late-loading content (fonts, images) that ResizeObserver might
+    // fire for slightly before layout has fully settled.
+    setTimeout(reportHeight, 300);
+    setTimeout(reportHeight, 1200);
+  })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cancer Research Day 2026 · USC Norris Comprehensive Cancer Center</title>
 <meta name="description" content="4th Annual Cancer Research Day at USC Norris. Wednesday, October 14, 2026. Hosted by Cancer Research Training &amp; Education Coordination (CRTEC). Talks, an AI featured session, a poster session open to the whole Cancer Center, and Coffee Consult connections. In person and virtual.">
