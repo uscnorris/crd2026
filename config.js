@@ -9,7 +9,7 @@ const CONFIG = {
   event_name: "Cancer Research Day 2026",
   event_tagline: "4th Annual · USC Norris Comprehensive Cancer Center",
   event_date: "Wednesday, October 14, 2026",
-  event_time: "9 AM – 3 PM",
+  event_time: "8:30 AM – 3 PM",
   event_location: "Mayer Auditorium & Pappas Quad",
 
   // APPS SCRIPT BACKEND (event tracking)
@@ -99,7 +99,7 @@ const CONFIG = {
 
   // The shape of the day (no per-talk times while the lineup is being set).
   agenda_flow: [
-    { time: "9:00 AM",        loc: "Mayer Auditorium Lobby (KAM)", title: "Check-in & continental breakfast", desc: "Registration opens; poster setup begins." },
+    { time: "8:30 AM",        loc: "Mayer Auditorium Lobby (KAM)", title: "Check-in & continental breakfast", desc: "Registration opens; poster setup begins." },
     { time: "9:00 AM–12:45 PM", title: "Welcome, talks, keynote & Q&A panels", desc: "" },
     { time: "12:45 PM",       loc: "Pappas Quad", title: "Lunch & networking", desc: "" },
     { time: "12:45–2:45 PM",  title: "Poster session", desc: "Judged competition, Shared Resources tabling, cancer survivor poster walk, and trainee Coffee Consult matching." },

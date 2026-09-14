@@ -1130,6 +1130,14 @@ function submitCoffeeConsult() {
 // ── PROGRAM CONTENT (landing / print) ─────────
 
 function renderProgram() {
+  // Single source of truth for the event time — was previously duplicated
+  // as static text in the hero and footer, which meant a schedule change
+  // (like moving check-in earlier) could silently miss those two spots.
+  const heroTime = document.getElementById('hero-time');
+  if (heroTime && CONFIG.event_time) heroTime.textContent = CONFIG.event_time;
+  const footerTime = document.getElementById('footer-time');
+  if (footerTime && CONFIG.event_time) footerTime.textContent = CONFIG.event_time;
+
   // Minimal speaker row (headshot, name, topic) — blends into the agenda
   const spEl = document.getElementById('program-speakers');
   if (spEl) {
