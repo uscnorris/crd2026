@@ -585,10 +585,12 @@ function showView(view) {
 
 // ── FILTER PANEL ──────────────────────────────
 
+// Two filters only: Role and Research Program. Disease / focus area was a
+// free-text field — it produced 33 one-off options nobody could scan — so it
+// is gone; the search box still matches on it.
 function buildFilterPanel() {
   buildOptionGroup('role-options', 'role', ROLES);
   buildOptionGroup('program-options', 'program', (CONFIG.research_programs && CONFIG.research_programs.length) ? CONFIG.research_programs : PROGRAMS);
-  buildOptionGroup('disease-options', 'disease', (CONFIG.disease_areas && CONFIG.disease_areas.length) ? CONFIG.disease_areas : DISEASES);
 }
 
 // Rebuild program/disease filters from the values actually present in the data,
@@ -596,10 +598,12 @@ function buildFilterPanel() {
 function refreshDataDrivenFilters() {
   if (!allParticipants || !allParticipants.length) return;
   const uniq = key => [...new Set(allParticipants.map(p => (p[key] || '').trim()).filter(Boolean))].sort();
-  const progs = uniq('research_program');
-  const dis = uniq('disease_area');
+  // "Not applicable or unknown" is a registration-form answer, not a program —
+  // it is never something a visitor wants to filter by.
+  const skip = /^(not applicable|n\/a|unknown|none)/i;
+  const progs = uniq('research_program').filter(p => !skip.test(p));
   if (progs.length) buildOptionGroup('program-options', 'program', progs);
-  if (dis.length) buildOptionGroup('disease-options', 'disease', dis);
+  activeFilters.disease.clear();
 }
 
 function buildOptionGroup(containerId, group, options) {
@@ -695,7 +699,20 @@ function getFilteredParticipants() {
     if (currentSegment === 'posters' && !p.poster_number) return false;
     if (currentSegment === 'coffee' && !isCoffeeEligible(p)) return false;
     return true;
-  });
+  }).sort(byPosterNumber);
+}
+
+// Sheet row order is arrival order, which looks random to a visitor. Posters
+// sort by board number so the list matches the walk around the quad and the
+// printed packet; anyone without a board (Coffee-Consult-only entries) follows,
+// alphabetically by surname.
+function byPosterNumber(a, b) {
+  const na = parseInt(a.poster_number, 10), nb = parseInt(b.poster_number, 10);
+  const va = isNaN(na), vb = isNaN(nb);
+  if (!va && !vb) return na - nb;
+  if (va !== vb) return va ? 1 : -1;
+  const sur = s => String(s || '').trim().split(/\s+/).pop().toLowerCase();
+  return sur(a.name).localeCompare(sur(b.name)) || String(a.name).localeCompare(String(b.name));
 }
 
 // Renders the "Show my Coffee Consult matches" chip above the search bar.
@@ -776,8 +793,11 @@ function renderDirectory() {
 
   const results = getFilteredParticipants();
   const totalFilters = Object.values(activeFilters).reduce((n, s) => n + s.size, 0);
+  const numbered = results.filter(r => !isNaN(parseInt(r.poster_number, 10))).length;
   document.getElementById('results-count').textContent =
-    `${results.length} participant${results.length !== 1 ? 's' : ''}${totalFilters > 0 ? ' — filters active' : ''}`;
+    `${results.length} participant${results.length !== 1 ? 's' : ''}` +
+    (numbered ? ' \u00b7 in poster-number order' : '') +
+    (totalFilters > 0 ? ' \u2014 filters active' : '');
 
   if (results.length === 0) {
     document.getElementById('directory-list').innerHTML =

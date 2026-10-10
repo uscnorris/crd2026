@@ -60,6 +60,27 @@
 <meta name="description" content="4th Annual Cancer Research Day at USC Norris. Wednesday, October 14, 2026. Hosted by Cancer Research Training &amp; Education Coordination (CRTEC). Talks, an AI featured session, a poster session open to the whole Cancer Center, and Coffee Consult connections. In person and virtual.">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <link rel="stylesheet" href="style.css?v=36">
+<style>
+  /* Quad map inside the directory (added with the Oct 9 update) */
+  .quadmap{margin:10px 0 4px;border:1px solid #ded5ce;border-radius:10px;background:#fff;overflow:hidden}
+  .quadmap>summary{cursor:pointer;padding:11px 14px;font-weight:650;font-size:14.5px;color:#990000;background:#f7f3f0;list-style:none}
+  .quadmap>summary::-webkit-details-marker{display:none}
+  .quadmap>summary::before{content:"\25b8";display:inline-block;margin-right:7px;transition:transform .15s}
+  .quadmap[open]>summary::before{transform:rotate(90deg)}
+  .quadmap-inner{padding:10px 12px 14px;background:#fff}
+  .quadmap-note{margin:8px 0 0;font-size:13px;color:#4a423c;line-height:1.45}
+
+  /* Legibility pass — overrides style.css, which sets several of these
+     below the WCAG AA 4.5:1 threshold at very small sizes. */
+  :root{ --text-light:#6B6257; }
+  .filter-panel-title{font-size:16px;font-weight:700;color:#1b1512}
+  .filter-section-label{font-size:11.5px;color:#44403C;letter-spacing:.06em;margin-bottom:8px}
+  .foption{font-size:13px;padding:7px 13px;color:#332F2B;border:1.5px solid #8A7F76;background:#fff}
+  .foption.selected{background:#8A0010 !important;border-color:#8A0010 !important;color:#fff !important}
+  .chip-quiet{color:#5C554E}
+  .results-count{color:#4A423C;font-size:13.5px}
+  .quad-layout-note,.quad-layout-caveat{color:#4A423C}
+</style>
 </head>
 <body>
 
@@ -212,35 +233,44 @@
 
       <div class="quad-layout">
         <div class="quad-layout-label">Where posters are set up</div>
-        <p class="p-wide quad-layout-note">Posters are grouped by topic around Pappas Quad. Your section letter (the letter before the dash in your poster number) tells you which side to look on.</p>
-        <svg class="quad-svg" viewBox="0 0 420 330" role="img" aria-label="Schematic of Pappas Quad. Keith Administration Building (KAM) side on the left: Shared Resources, Section S. Norris Medical Library side along the top: Sections A and B. Hoffman Medical Research (HMR) side along the bottom: Section C. McKibben Hall (MCH) side on the right, uphill: Sections D and E.">
-          <rect x="104" y="74" width="212" height="182" fill="#faf8f4" stroke="#d9d4cc" stroke-width="2"/>
-          <text x="210" y="158" text-anchor="middle" class="quad-center">Pappas<tspan x="210" dy="18">Quad</tspan></text>
-
-          <rect x="104" y="14" width="212" height="46" rx="6" fill="#c9a227"/>
-          <text x="210" y="32" text-anchor="middle" class="quad-side-label quad-side-label-dark">Norris Medical Library</text>
-          <text x="210" y="46" text-anchor="middle" class="quad-side-sub quad-side-sub-dark">Sections A–B</text>
-          <text x="210" y="57" text-anchor="middle" class="quad-side-sub quad-side-sub-dark">north</text>
-
-          <rect x="104" y="270" width="212" height="46" rx="6" fill="#7a0000"/>
-          <text x="210" y="290" text-anchor="middle" class="quad-side-label">Hoffman Medical Research</text>
-          <text x="210" y="304" text-anchor="middle" class="quad-side-sub">HMR · Section C</text>
-
-          <rect x="6" y="74" width="80" height="182" rx="6" fill="#990000"/>
-          <text x="46" y="165" text-anchor="middle" class="quad-side-label" transform="rotate(-90 46 165)">
-            <tspan x="46" dy="-8">Keith Administration</tspan>
-            <tspan x="46" dy="13" class="quad-side-sub">KAM · downhill</tspan>
-            <tspan x="46" dy="12" class="quad-side-sub">Shared Resources, S</tspan>
-          </text>
-
-          <rect x="334" y="74" width="80" height="182" rx="6" fill="#FFCC00"/>
-          <text x="374" y="165" text-anchor="middle" class="quad-side-label quad-side-label-dark" transform="rotate(90 374 165)">
-            <tspan x="374" dy="-8">McKibben Hall</tspan>
-            <tspan x="374" dy="13" class="quad-side-sub quad-side-sub-dark">MCH · uphill</tspan>
-            <tspan x="374" dy="12" class="quad-side-sub quad-side-sub-dark">Sections D–E</tspan>
-          </text>
-        </svg>
-        <p class="p-wide quad-layout-caveat">Schematic only, not to scale. Board numbers are posted on-site.</p>
+        <p class="p-wide quad-layout-note">Posters are grouped by research program around Pappas Quad. Your poster number tells you which side to look on &mdash; numbers run in order clockwise.</p>
+        <div class="quadmap-inner">
+        <svg viewBox="0 0 700 460" width="100%" style="max-width:690px;display:block;margin:0 auto"
+     role="img" aria-label="Schematic of Pappas Quad showing the four poster sides and the staff table">
+  <rect x="170" y="78" width="370" height="300" fill="#f7f3f0" stroke="#b9ada4" stroke-width="2"/>
+  <text x="355" y="224" text-anchor="middle" font-family="Georgia,serif" font-size="21" fill="#9c8d83">PAPPAS QUAD</text>
+  <rect x="170" y="48" width="370" height="30" fill="#990000"/>
+  <text x="355" y="68" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#fff">LIBRARY SIDE &#183; 8&#8211;31</text>
+  <text x="355" y="36" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000">Tumor Immunology &amp; Microenvironment 8&#8211;31</text>
+  <rect x="540" y="78" width="30" height="300" fill="#990000"/>
+  <text x="555" y="228" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#fff"
+        transform="rotate(90 555 228)">McKIBBEN SIDE &#183; 32&#8211;54</text>
+  <text x="592" y="146" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000"
+        transform="rotate(90 592 146)">Tumor Immunology 32&#8211;38</text>
+  <text x="592" y="300" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000"
+        transform="rotate(90 592 300)">Epigenetic Regulation 42&#8211;54</text>
+  <rect x="170" y="378" width="370" height="30" fill="#990000"/>
+  <text x="355" y="398" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#fff">HOFFMAN SIDE &#183; 56&#8211;79</text>
+  <text x="222" y="426" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000">Translational 56&#8211;59</text>
+  <text x="355" y="426" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000">Epidemiology 61&#8211;70</text>
+  <text x="490" y="426" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000">Cancer Control 72&#8211;79</text>
+  <rect x="140" y="78" width="30" height="300" fill="#990000"/>
+  <text x="155" y="180" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#fff"
+        transform="rotate(-90 155 180)">KAM SIDE &#183; 1&#8211;7, 80&#8211;82</text>
+  <text x="114" y="186" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000"
+        transform="rotate(-90 114 186)">Shared Resources &amp; Programs</text>
+  <rect x="140" y="300" width="30" height="78" fill="#FFCC00" stroke="#8a6a00" stroke-width="1.5"/>
+  <text x="155" y="339" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#5c0000"
+        transform="rotate(-90 155 339)">STAFF TABLE</text>
+  <rect x="58" y="308" width="50" height="62" fill="#ebe4df" stroke="#b9ada4"/>
+  <line x1="70" y1="308" x2="70" y2="370" stroke="#9c8d83"/>
+  <line x1="83" y1="308" x2="83" y2="370" stroke="#9c8d83"/>
+  <line x1="96" y1="308" x2="96" y2="370" stroke="#9c8d83"/>
+  <text x="83" y="388" text-anchor="middle" font-family="Arial" font-size="11.5" font-weight="bold" fill="#4a423c">STAIRS</text>
+  <text x="83" y="403" text-anchor="middle" font-family="Arial" font-size="11.5" fill="#4a423c">up from KAM</text>
+</svg>
+        </div>
+        <p class="p-wide quad-layout-caveat">Schematic only, not to scale. Board numbers are posted on the boards. Poster presenters check in at the table by the KAM steps.</p>
       </div>
 
       <h3 class="sub-head">Awards</h3>
@@ -275,7 +305,7 @@
     <div class="band-inner">
       <h2>For trainees</h2>
       <p class="lead p-wide">Students, postdoctoral fellows, and clinical fellows can take part in four ways, not just attend.</p>
-      <p class="p-wide trainee-poc">Questions? Reach out to Grace Kukuk at <a href="mailto:crtec@usc.edu">crtec@usc.edu</a>.</p>
+      <p class="p-wide trainee-poc">Questions? Reach out to Grace Kukuk at <a href="mailto:norriscrtec@usc.edu">norriscrtec@usc.edu</a>.</p>
 
       <div class="ways-grid ways-grid-3">
         <div class="way-card">
@@ -290,7 +320,7 @@
           <span class="way-num">2</span>
           <div>
             <h3>Volunteer</h3>
-            <p>Help the day run smoothly, from check-in and wayfinding to the poster session. A great way to meet people across the Cancer Center. Email CRTEC at <strong>crtec@usc.edu</strong> to sign up.</p>
+            <p>Help the day run smoothly, from check-in and wayfinding to the poster session. A great way to meet people across the Cancer Center. Email CRTEC at <strong>norriscrtec@usc.edu</strong> to sign up.</p>
           </div>
         </div>
         <div class="way-card">
@@ -320,12 +350,12 @@
               <dt>What you talk about</dt>
               <dd>The clinical reasoning behind the science: what a finding would mean at the bedside, and what questions the clinic actually needs answered.</dd>
               <dt>How you get matched</dt>
-              <dd>Open the Coffee Consult tab in the directory, find someone on the other side, and request a match by 5 PM the next day, Oct 15. CRTEC arranges every match, so nobody is cold-contacting anyone.</dd>
+              <dd>Coffee Consult pairs people who opted in when they registered; sign-ups are now closed. If you opted in, open the Coffee Consult tab in the directory, find someone on the other side, and request a match by 5 PM Thursday, Oct 15. CRTEC arranges every match, so nobody is cold-contacting anyone.</dd>
               <dt>What happens next</dt>
               <dd>CRTEC confirms your match and emails you both to arrange a time. Coffee is on us.</dd>
             </dl>
             <a class="way-link" href="#" onclick="openDirectory(); return false;">Browse who is taking part →</a>
-            <p class="cc-note"><strong>Note:</strong> The directory will be updated as registrations are received.</p>
+            <p class="cc-note"><strong>Note:</strong> Coffee Consult sign-ups closed with registration. The directory shows everyone taking part.</p>
           </div>
         </div>
       </div>
@@ -418,7 +448,7 @@
         <div class="footer-title">Hosted by CRTEC</div>
         Cancer Research Training &amp; Education Coordination<br>
         USC Norris Comprehensive Cancer Center<br>
-        <a id="footer-contact" href="mailto:crtec@usc.edu">crtec@usc.edu</a>
+        <a id="footer-contact" href="mailto:norriscrtec@usc.edu">norriscrtec@usc.edu</a>
       </div>
     </div>
   </footer>
@@ -451,9 +481,7 @@
       <p id="selfpicker-error" class="selfpicker-error"></p>
       <button class="btn-primary" onclick="confirmSelfByEmail()">Continue</button>
       <p class="selfpicker-foot">
-        Not registered for Coffee Consult yet?
-        <a id="selfpicker-register-link" href="#" target="_blank" rel="noopener">Open the registration form</a>
-        Resubmitting with the same email updates your entry, and you will appear here within a few minutes.
+        Use the email address you registered with. Coffee Consult sign-ups are closed, so if your email is not recognised you are not on the list this year.
       </p>
     </div>
   </div>
@@ -479,6 +507,46 @@
         <span class="filter-icon">⊞</span><span id="filter-toggle-label">Filter</span>
       </button>
     </div>
+    <details class="quadmap" id="quadmap">
+      <summary>Map of Pappas Quad &mdash; where the boards are</summary>
+      <div class="quadmap-inner">
+      <svg viewBox="0 0 700 460" width="100%" style="max-width:690px;display:block;margin:0 auto"
+     role="img" aria-label="Schematic of Pappas Quad showing the four poster sides and the staff table">
+  <rect x="170" y="78" width="370" height="300" fill="#f7f3f0" stroke="#b9ada4" stroke-width="2"/>
+  <text x="355" y="224" text-anchor="middle" font-family="Georgia,serif" font-size="21" fill="#9c8d83">PAPPAS QUAD</text>
+  <rect x="170" y="48" width="370" height="30" fill="#990000"/>
+  <text x="355" y="68" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#fff">LIBRARY SIDE &#183; 8&#8211;31</text>
+  <text x="355" y="36" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000">Tumor Immunology &amp; Microenvironment 8&#8211;31</text>
+  <rect x="540" y="78" width="30" height="300" fill="#990000"/>
+  <text x="555" y="228" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#fff"
+        transform="rotate(90 555 228)">McKIBBEN SIDE &#183; 32&#8211;54</text>
+  <text x="592" y="146" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000"
+        transform="rotate(90 592 146)">Tumor Immunology 32&#8211;38</text>
+  <text x="592" y="300" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000"
+        transform="rotate(90 592 300)">Epigenetic Regulation 42&#8211;54</text>
+  <rect x="170" y="378" width="370" height="30" fill="#990000"/>
+  <text x="355" y="398" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#fff">HOFFMAN SIDE &#183; 56&#8211;79</text>
+  <text x="222" y="426" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000">Translational 56&#8211;59</text>
+  <text x="355" y="426" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000">Epidemiology 61&#8211;70</text>
+  <text x="490" y="426" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000">Cancer Control 72&#8211;79</text>
+  <rect x="140" y="78" width="30" height="300" fill="#990000"/>
+  <text x="155" y="180" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#fff"
+        transform="rotate(-90 155 180)">KAM SIDE &#183; 1&#8211;7, 80&#8211;82</text>
+  <text x="114" y="186" text-anchor="middle" font-family="Arial" font-size="12" fill="#6b0000"
+        transform="rotate(-90 114 186)">Shared Resources &amp; Programs</text>
+  <rect x="140" y="300" width="30" height="78" fill="#FFCC00" stroke="#8a6a00" stroke-width="1.5"/>
+  <text x="155" y="339" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#5c0000"
+        transform="rotate(-90 155 339)">STAFF TABLE</text>
+  <rect x="58" y="308" width="50" height="62" fill="#ebe4df" stroke="#b9ada4"/>
+  <line x1="70" y1="308" x2="70" y2="370" stroke="#9c8d83"/>
+  <line x1="83" y1="308" x2="83" y2="370" stroke="#9c8d83"/>
+  <line x1="96" y1="308" x2="96" y2="370" stroke="#9c8d83"/>
+  <text x="83" y="388" text-anchor="middle" font-family="Arial" font-size="11.5" font-weight="bold" fill="#4a423c">STAIRS</text>
+  <text x="83" y="403" text-anchor="middle" font-family="Arial" font-size="11.5" fill="#4a423c">up from KAM</text>
+</svg>
+        <p class="quadmap-note">Board numbers run in order clockwise around the quad. Poster presenters check in at the table by the KAM steps.</p>
+      </div>
+    </details>
     <div class="results-count" id="results-count"></div>
     <div class="card-list" id="directory-list"><div class="loading-state">Loading participants…</div></div>
   </div>
@@ -487,13 +555,12 @@
   <div id="filter-panel" class="filter-panel" style="display:none">
     <div class="filter-panel-header">
       <button class="filter-close" onclick="closeFilterPanel()">✕</button>
-      <span class="filter-panel-title">Filter participants</span>
+      <span class="filter-panel-title">Filter</span>
       <button class="filter-clear" onclick="clearAllFilters()">Clear all</button>
     </div>
     <div class="filter-panel-body">
       <div class="filter-section"><div class="filter-section-label">Role</div><div class="filter-option-grid" id="role-options"></div></div>
       <div class="filter-section"><div class="filter-section-label">Research Program</div><div class="filter-option-grid" id="program-options"></div></div>
-      <div class="filter-section"><div class="filter-section-label">Disease / Focus Area</div><div class="filter-option-grid" id="disease-options"></div></div>
       <div class="filter-section"><div class="filter-section-label">Coffee Consult</div><div class="filter-option-grid" id="clinical-options">
         <button class="foption" data-group="clinical" data-val="true" onclick="toggleFilter(this)">☕ Open to Coffee Consult</button>
       </div></div>
