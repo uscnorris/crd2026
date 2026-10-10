@@ -23,12 +23,31 @@ const CONFIG = {
   // Set to false once your sheet URL is pasted above
   use_sample_data: false,
 
+  // ── EXTRA DIRECTORY ENTRIES ─────────────────
+  // Shared Resources, program tables and anyone whose poster reached us on the
+  // paper list rather than through the registration form. These have no row in
+  // the Google Sheet, so the app appends them to whatever the sheet returns.
+  // Same field names as the sheet's column headers. Remove an entry here once
+  // its real row exists in the sheet, or it will appear twice.
+  extra_entries: [
+    { id: "sr-fcim",  name: "Flow Cytometry and Immune Monitoring Core (FCIM)", role: "Shared Resource", poster_number: "1",  board_location: "KAM side", research_program: "Shared Resources & Programs", title: "Flow Cytometry and Immune Monitoring Core (FCIM)" },
+    { id: "sr-lbc",   name: "Liquid Biopsy Core (LBC)",                          role: "Shared Resource", poster_number: "2",  board_location: "KAM side", research_program: "Shared Resources & Programs", title: "Liquid Biopsy Core (LBC)" },
+    { id: "sr-tpc",   name: "Translational Pathology Core (TPC)",                role: "Shared Resource", poster_number: "4",  board_location: "KAM side", research_program: "Shared Resources & Programs", title: "Translational Pathology Core (TPC)" },
+    { id: "sr-dsc",   name: "Data Science Core (DSC)",                           role: "Shared Resource", poster_number: "5",  board_location: "KAM side", research_program: "Shared Resources & Programs", title: "Data Science Core (DSC)" },
+    { id: "sr-prc",   name: "Population Research Core (PRC)",                    role: "Shared Resource", poster_number: "6",  board_location: "KAM side", research_program: "Shared Resources & Programs", title: "Population Research Core (PRC)" },
+    { id: "sr-pmsr",  name: "Preclinical Models Shared Resource (PMSR)",         role: "Shared Resource", poster_number: "7",  board_location: "KAM side", research_program: "Shared Resources & Programs", title: "Preclinical Models Shared Resource (PMSR)" },
+    { id: "sr-care2", name: "CaRE2 / BioRepository",                             role: "Shared Resource", poster_number: "80", board_location: "KAM side", research_program: "Shared Resources & Programs", title: "CaRE2 / BioRepository", department: "Jose Aparicio" },
+    { id: "sr-ciso",  name: "Clinical Investigations Support Office (CISO)",     role: "Shared Resource", poster_number: "81", board_location: "KAM side", research_program: "Shared Resources & Programs", title: "Clinical Investigations Support Office (CISO)" },
+    { id: "sr-sorf",  name: "SORF — Summer Oncology Research Fellowship",        role: "Shared Resource", poster_number: "82", board_location: "KAM side", research_program: "Shared Resources & Programs", title: "SORF: The NIH-supported USC/CHLA Summer Oncology Research Fellowship Program", department: "Daikota Barnett" },
+    { id: "p-seshadri", name: "Sriram Seshadri", role: "Master's Student", poster_number: "34", board_location: "McKibben side", research_program: "Tumor Immunology & Microenvironment", department: "Quantitative and Computational Biology/MacLean Lab", title: "Learning Equations of Tumor Growth from Noisy, Agent-Based Snapshots", summary: "We used weak SINDy to learn interpretable partial differential equations of cell density fields for a hypoxic tumor from noisy, spatiotemporal snapshots of an agent-based model." }
+  ],
+
   // ── DAY-OF CONTROLS ─────────────────────────
   // directory_live: set false while you are still collecting posters. The
   // Directory tab then shows a friendly "posters are being added" message
   // instead of an empty list, so an early visitor doesn't think nobody is
   // coming. Flip to true once you have enough entries to look healthy.
-  directory_live: false,
+  directory_live: true,
   directory_pending_message: "The directory will be updated with poster session submissions. Check back soon to browse who is presenting.",
 
   // Minimum entries before the directory will show at all, even when live.
@@ -92,16 +111,16 @@ const CONFIG = {
   // institution, topic, photo). Talk titles are shown as the speaker gave them,
   // without quotes. Omit `photo` to show initials until a headshot is added.
   agenda_flow: [
-    { time: "8:30 AM",           loc: "Mayer Auditorium Lobby (KAM)", title: "Check-in & continental breakfast", desc: "Registration opens; poster setup begins." },
+    { time: "8:30 AM",           loc: "Mayer Auditorium Lobby (KAM)", title: "Check-in & continental breakfast", desc: "Registration opens. Poster presenters check in at the table by the KAM steps, then set up on Pappas Quad." },
     { time: "9:00–9:15 AM",      speaker: { name: "Josh Neman", degrees: "PhD", position: "Associate Director, Cancer Research Training and Education Coordination (CRTEC)", institution: "USC Norris Comprehensive Cancer Center", topic: "Welcome and introduction", photo: "neman.jpg" } },
     { time: "9:15–9:40 AM",      speaker: { name: "Sheng Li", degrees: "PhD", position: "Associate Professor and Co-Leader, Epigenetic Regulation in Cancer Program", institution: "USC Norris Comprehensive Cancer Center", topic: "Computational and data-driven oncology", photo: "li.jpg" } },
     { time: "9:40–10:05 AM",     speaker: { name: "Giovanni Cacciamani", degrees: "MD", position: "Director, USC Artificial Intelligence Center for Surgical and Clinical Applications in Urology", institution: "USC Norris Comprehensive Cancer Center", topic: "Surgical AI: urologic oncology, medical imaging, clinical decision-making, and patient communication", photo: "cacciamani.jpg" } },
     { time: "10:05–10:40 AM",    speaker: { name: "Jason H. Moore", degrees: "PhD", position: "Director, Center for AI Research and Education", institution: "Cedars-Sinai", topic: "Agentic AI for In Silico Cancer Research", photo: "moore.jpg", keynote: true } },
-    { time: "10:40–10:55 AM",    title: "Discussion panel", desc: "Sheng Li, Giovanni Cacciamani, and Jason H. Moore. Moderated by a trainee." },
-    { time: "10:55–11:10 AM",    title: "Break", desc: "" },
+    { time: "10:40–11:00 AM",    title: "Discussion panel", desc: "Sheng Li, Giovanni Cacciamani, and Jason H. Moore. Moderated by Nana Gyabaah-Kessie." },
+    { time: "11:00–11:10 AM",    title: "Break", desc: "" },
     { time: "11:10–11:35 AM",    speaker: { name: "Charité N. Ricker", degrees: "MS, CGC", position: "Genetic Counselor and Assistant Professor of Clinical Medicine", institution: "USC Norris Comprehensive Cancer Center", topic: "Access to Genetic Testing in Underserved Patients With Cancer", photo: "ricker.jpg" } },
     { time: "11:35 AM–12:00 PM", speaker: { name: "Lourdes Baezconde-Garbanati", degrees: "PhD, MPH", position: "Associate Director, Community Outreach and Engagement", institution: "USC Norris Comprehensive Cancer Center", topic: "The role of Community Outreach & Engagement (COE) in the era of AI", photo: "baezconde.jpg" } },
-    { time: "12:00–12:15 PM",    title: "Discussion panel", desc: "Charité N. Ricker and Lourdes Baezconde-Garbanati. Moderated by a trainee." },
+    { time: "12:00–12:15 PM",    title: "Discussion panel", desc: "Charité N. Ricker and Lourdes Baezconde-Garbanati. Moderated by Amiya Tucker and Kelsie Campbell." },
     { time: "12:15–1:00 PM",     loc: "Pappas Quad", title: "Lunch & networking", desc: "" },
     { time: "1:00–2:45 PM",      loc: "Pappas Quad", title: "Poster session", desc: "Poster competition, Shared Resources, survivor poster walk, and Coffee Consult." },
     { time: "2:45–3:00 PM",      title: "Poster awards & closing remarks", desc: "" }
@@ -113,7 +132,7 @@ const CONFIG = {
     location: "Keith Administration Building (KAM) – Mayer Auditorium, and Pappas Quad",
     address: "1975 Zonal Ave, Los Angeles, CA 90033",
     wifi: "USC Guest",
-    contact_email: "crtec@usc.edu",
+    contact_email: "norriscrtec@usc.edu",
     parking: "Biggy Parking Structure, 1334 Biggy St. Flat rate of $10 for USC Norris patients, $20 for general visitors."
   },
 

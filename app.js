@@ -90,6 +90,7 @@ window.addEventListener('DOMContentLoaded', () => {
   buildFilterPanel();
   loadData();
   checkForProfileDeepLink();
+  checkForHashDeepLink();
   // Expand FAQ answers for print, restore afterward
   window.addEventListener('beforeprint', () => {
     document.querySelectorAll('.faq details').forEach(d => { d.dataset.wasOpen = d.open ? '1' : '0'; d.open = true; });
@@ -118,6 +119,15 @@ function saveState() {
   } catch(e) {}
 }
 
+// #directory and #coffee open the app straight into that view, so the link
+// can be shared or put on the Norris website without landing people on the
+// program page first.
+function checkForHashDeepLink() {
+  const h = (window.location.hash || '').toLowerCase().replace('#', '');
+  if (h === 'directory' || h === 'posters') { window._pendingView = 'directory'; }
+  else if (h === 'coffee' || h === 'coffeeconsult') { window._pendingView = 'coffee'; }
+}
+
 function checkForProfileDeepLink() {
   const params = new URLSearchParams(window.location.search);
   const profileId = params.get('p');
@@ -141,7 +151,7 @@ async function loadData() {
           if (raw) {
             const c = JSON.parse(raw);
             if (c && c.csv && (Date.now() - c.at) < cacheMins * 60000) {
-              allParticipants = parseCSV(c.csv);
+              allParticipants = withExtraEntries(parseCSV(c.csv));
               usingSampleData = false;
               console.log('Sheet loaded from cache:', allParticipants.length);
               decideStartView();
@@ -154,7 +164,7 @@ async function loadData() {
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const csv = await resp.text();
       try { localStorage.setItem('crd2026_sheet_cache', JSON.stringify({ at: Date.now(), csv: csv })); } catch (e) {}
-      const parsed = parseCSV(csv);
+      const parsed = withExtraEntries(parseCSV(csv));
       if (parsed.length === 0) throw new Error('CSV parsed 0 rows — check column headers match exactly');
       allParticipants = parsed;
       usingSampleData = false;
@@ -167,7 +177,7 @@ async function loadData() {
         const raw = localStorage.getItem('crd2026_sheet_cache');
         if (raw) {
           const c = JSON.parse(raw);
-          const stale = c && c.csv ? parseCSV(c.csv) : [];
+          const stale = c && c.csv ? withExtraEntries(parseCSV(c.csv)) : [];
           if (stale.length) {
             allParticipants = stale;
             usingSampleData = false;
@@ -192,19 +202,64 @@ async function loadData() {
   decideStartView();
 }
 
+// Splits the WHOLE csv into rows of fields in one pass. A quoted field may
+// contain commas AND line breaks — abstracts routinely do — so the file can
+// never be split on '\n' first: that tears one record into fragments and the
+// tail arrives as a junk participant. "" inside a quoted field is a literal
+// quote. Tolerates CRLF and a trailing newline.
+function parseCSVRows(csv) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < csv.length; i++) {
+    const ch = csv[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (csv[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += ch;
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ',') {
+      row.push(field); field = '';
+    } else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && csv[i + 1] === '\n') i++;
+      row.push(field); field = '';
+      if (row.length > 1 || row[0] !== '') rows.push(row);
+      row = [];
+    } else field += ch;
+  }
+  row.push(field);
+  if (row.length > 1 || row[0] !== '') rows.push(row);
+  return rows;
+}
+
 function parseCSV(csv) {
-  const lines = csv.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,'').toLowerCase().replace(/ /g,'_'));
-  return lines.slice(1).map(line => {
-    const vals = parseCSVLine(line);
+  const rows = parseCSVRows(csv);
+  if (!rows.length) return [];
+  const headers = rows[0].map(h => h.trim().toLowerCase().replace(/ /g, '_'));
+  return rows.slice(1).map(vals => {
     const obj = {};
     headers.forEach((h, i) => {
-      let v = (vals[i] || '').trim().replace(/^"|"$/g,'');
+      let v = (vals[i] || '').trim();
       if (h === 'clinical_input') v = v.toLowerCase() === 'true' || v === '1' || v.toLowerCase() === 'yes';
       obj[h] = v;
     });
     return obj;
   }).filter(r => r.name);
+}
+
+// Entries that live in config.js rather than the sheet (Shared Resources,
+// program tables, paper-list submissions). Appended to every sheet load,
+// skipping any poster_number the sheet already supplies so a later real row
+// silently wins instead of duplicating.
+function withExtraEntries(rows) {
+  const extras = Array.isArray(CONFIG.extra_entries) ? CONFIG.extra_entries : [];
+  if (!extras.length) return rows;
+  const taken = new Set(rows.map(r => String(r.poster_number || '').trim()).filter(Boolean));
+  const add = extras
+    .filter(e => e && e.name && !taken.has(String(e.poster_number || '').trim()))
+    .map(e => Object.assign({ clinical_input: false, mentoring: '', summary: '', bio: '' }, e));
+  return rows.concat(add);
 }
 
 function parseCSVLine(line) {
@@ -355,6 +410,12 @@ function decideStartView() {
   wireRegistrationLinks();
   // Deep link to a profile → jump straight into the directory
   if (window._pendingProfile) { openDirectory(); return; }
+  if (window._pendingView) {
+    const v = window._pendingView; window._pendingView = null;
+    openDirectory();
+    if (v !== 'directory') showView(v);
+    return;
+  }
   showProgramMode();
 }
 
