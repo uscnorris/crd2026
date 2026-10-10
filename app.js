@@ -90,7 +90,7 @@ window.addEventListener('DOMContentLoaded', () => {
   buildFilterPanel();
   loadData();
   checkForProfileDeepLink();
-  checkForHashDeepLink();
+  checkForViewDeepLink();
   // Expand FAQ answers for print, restore afterward
   window.addEventListener('beforeprint', () => {
     document.querySelectorAll('.faq details').forEach(d => { d.dataset.wasOpen = d.open ? '1' : '0'; d.open = true; });
@@ -119,13 +119,18 @@ function saveState() {
   } catch(e) {}
 }
 
-// #directory and #coffee open the app straight into that view, so the link
-// can be shared or put on the Norris website without landing people on the
-// program page first.
-function checkForHashDeepLink() {
-  const h = (window.location.hash || '').toLowerCase().replace('#', '');
-  if (h === 'directory' || h === 'posters') { window._pendingView = 'directory'; }
-  else if (h === 'coffee' || h === 'coffeeconsult') { window._pendingView = 'coffee'; }
+// Deep links for QR codes. ?view=directory and ?view=coffee open the app
+// straight into that view; the matching #hashes work too. A hash alone is
+// ambiguous — the landing page already has elements with id="directory" and
+// id="coffee" — so ?view= is what the printed QR codes use.
+// Coffee Consult is a SEGMENT inside the directory screen, not a screen of
+// its own, so it is reached with setSegment, never showView.
+function checkForViewDeepLink() {
+  let v = '';
+  try { v = (new URLSearchParams(window.location.search).get('view') || '').toLowerCase(); } catch (e) {}
+  if (!v) v = (window.location.hash || '').toLowerCase().replace('#', '');
+  if (v === 'directory' || v === 'posters') window._pendingView = 'posters';
+  else if (v === 'coffee' || v === 'coffeeconsult') window._pendingView = 'coffee';
 }
 
 function checkForProfileDeepLink() {
@@ -413,7 +418,7 @@ function decideStartView() {
   if (window._pendingView) {
     const v = window._pendingView; window._pendingView = null;
     openDirectory();
-    if (v !== 'directory') showView(v);
+    setSegment(v);
     return;
   }
   showProgramMode();
@@ -829,7 +834,7 @@ function renderDirectory() {
             <span class="card-name">${p.name}</span>
             ${requested ? '<span class="talked-badge">☕ Requested</span>' : ''}
           </div>
-          <div class="card-meta">${p.role}${p.year ? ' · ' + p.year : ''}${p.department ? ' · ' + p.department : ''}</div>
+          <div class="card-meta">${p.role}${p.department ? ' · ' + p.department : ''}</div>
           <div class="card-title">${p.title || ''}</div>
           <div class="card-tags">
             ${p.poster_number
@@ -985,7 +990,7 @@ function showProfile(participant) {
     const side = quadSide(participant.board_location, participant.poster_number);
     posterLine = `<div class="profile-location">
         <span class="location-badge">Poster ${participant.poster_number}</span>
-        <span class="location-text">${side ? side + ' of Pappas Quad \u00b7 the number is posted on the board' : ''}</span>
+        <span class="location-text">${side ? side + ' of Pappas Quad' : ''}</span>
       </div>`;
   }
 
@@ -1004,7 +1009,7 @@ function showProfile(participant) {
         <div class="profile-avatar ${avatarClass(participant.role)}">${initials(participant.name)}</div>
         <div class="profile-hero-info">
           <div class="profile-name">${participant.name}</div>
-          <div class="profile-meta">${participant.role}${participant.year ? ' · ' + participant.year : ''}</div>
+          <div class="profile-meta">${participant.role}</div>
           <div class="profile-dept">${participant.department || ''}</div>
         </div>
       </div>
