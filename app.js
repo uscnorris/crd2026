@@ -588,6 +588,14 @@ function showView(view) {
 // Two filters only: Role and Research Program. Disease / focus area was a
 // free-text field — it produced 33 one-off options nobody could scan — so it
 // is gone; the search box still matches on it.
+// Faculty and Faculty (Early Stage Investigator) are one bucket in the filter
+// — two buttons for one or two people each was noise. Cards and profiles still
+// show whichever title the person registered under.
+function roleGroup(role) {
+  const r = String(role || '').trim();
+  return /^faculty/i.test(r) ? 'Faculty' : r;
+}
+
 function buildFilterPanel() {
   buildOptionGroup('role-options', 'role', ROLES);
   buildOptionGroup('program-options', 'program', (CONFIG.research_programs && CONFIG.research_programs.length) ? CONFIG.research_programs : PROGRAMS);
@@ -603,6 +611,12 @@ function refreshDataDrivenFilters() {
   const skip = /^(not applicable|n\/a|unknown|none)/i;
   const progs = uniq('research_program').filter(p => !skip.test(p));
   if (progs.length) buildOptionGroup('program-options', 'program', progs);
+  // Roles come from the data too. The hardcoded ROLES list had drifted from
+  // what the form actually records ("Staff / Other" vs "Staff/Other", a
+  // "Community Member" option nobody uses, no "Shared Resource"), so several
+  // filter buttons matched nothing at all and returned an empty directory.
+  const roles = [...new Set(allParticipants.map(p => roleGroup(p.role)).filter(Boolean))].sort();
+  if (roles.length) buildOptionGroup('role-options', 'role', roles);
   activeFilters.disease.clear();
 }
 
@@ -691,7 +705,7 @@ function getFilteredParticipants() {
         .join(' ').toLowerCase();
       if (!haystack.includes(currentSearch)) return false;
     }
-    if (activeFilters.role.size > 0 && !activeFilters.role.has(p.role)) return false;
+    if (activeFilters.role.size > 0 && !activeFilters.role.has(roleGroup(p.role))) return false;
     if (activeFilters.program.size > 0 && !activeFilters.program.has(p.research_program)) return false;
     if (activeFilters.disease.size > 0 && !activeFilters.disease.has(p.disease_area)) return false;
     if (activeFilters.clinical.size > 0 && activeFilters.clinical.has('true') && !isCoffeeEligible(p)) return false;
@@ -819,7 +833,7 @@ function renderDirectory() {
           <div class="card-title">${p.title || ''}</div>
           <div class="card-tags">
             ${p.poster_number
-              ? `<span class="chip">Poster ${p.poster_number}</span>`
+              ? `<span class="chip chip-poster">Poster ${p.poster_number}${quadSide(p.board_location, p.poster_number) ? ' \u00b7 ' + quadSide(p.board_location, p.poster_number) : ''}</span>`
               : '<span class="chip chip-quiet">No poster \u00b7 here to connect</span>'}
             ${p.disease_area ? `<span class="chip">${p.disease_area}</span>` : ''}
             ${currentSegment === 'coffee' && isCoffeeEligible(p) ? `<span class="chip chip-side">☕ ${sideLabel(coffeeSideOf(p))} trainee</span>` : ''}
@@ -827,6 +841,28 @@ function renderDirectory() {
         </div>
       </div>`;
   }).join('');
+}
+
+// The sheet and the config entries spell the side differently ("Keith
+// Administration" vs "KAM side"); both collapse to one short label.
+function quadSide(v, posterNumber) {
+  // The BOARD NUMBER is authoritative. The sheet's board_location column is
+  // stale — it still has McKibben and Hoffman the way round they were before
+  // the sides were swapped — so it is only consulted when there is no number.
+  const n = parseInt(posterNumber, 10);
+  if (!isNaN(n)) {
+    if (n <= 7 || n >= 80) return 'KAM side';
+    if (n <= 31) return 'Library side';
+    if (n <= 54) return 'McKibben side';
+    return 'Hoffman side';
+  }
+  const s = String(v || '').toLowerCase();
+  if (!s) return '';
+  if (s.indexOf('keith') === 0 || s.indexOf('kam') === 0) return 'KAM side';
+  if (s.indexOf('norris medical') === 0 || s.indexOf('library') === 0) return 'Library side';
+  if (s.indexOf('mckibben') === 0) return 'McKibben side';
+  if (s.indexOf('hoffman') === 0 || s.indexOf('hmr') === 0) return 'Hoffman side';
+  return String(v).trim();
 }
 
 function getParticipant(id) {
@@ -944,11 +980,12 @@ function showProfile(participant) {
   // ── Poster location: one line, one badge — not two competing colors.
   let posterLine = '';
   if (participant.poster_number) {
-    const sectionLetter = participant.poster_number.split('-')[0];
-    const sectionInfo = (CONFIG.poster_rows && CONFIG.poster_rows[sectionLetter]) || '';
+    // Boards are plain numbers now, so the old letter-prefix lookup never
+    // resolved and every profile fell back to "ask at check-in".
+    const side = quadSide(participant.board_location, participant.poster_number);
     posterLine = `<div class="profile-location">
         <span class="location-badge">Poster ${participant.poster_number}</span>
-        <span class="location-text">${sectionInfo || 'Ask at check-in for help finding this poster.'}${sectionInfo ? ' · board # posted on-site' : ''}</span>
+        <span class="location-text">${side ? side + ' of Pappas Quad \u00b7 the number is posted on the board' : ''}</span>
       </div>`;
   }
 

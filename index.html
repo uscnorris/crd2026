@@ -80,6 +80,11 @@
   .chip-quiet{color:#5C554E}
   .results-count{color:#4A423C;font-size:13.5px}
   .quad-layout-note,.quad-layout-caveat{color:#4A423C}
+
+  .chip-poster{background:#FBF3E3;border-color:#C9A227;color:#5A3E00;font-weight:700}
+
+  /* Print Agenda now serves the one-page PDF, so the control is a link */
+  a.btn-print{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 </style>
 </head>
 <body>
@@ -154,7 +159,7 @@
       <a href="#visit" onclick="return goToSection('visit')">Plan your visit</a>
     </nav>
     <div class="nav-actions">
-      <button class="btn-outline btn-print" onclick="window.print()">Print Agenda</button>
+      <a class="btn-outline btn-print" href="CRD2026_Agenda.pdf" target="_blank" rel="noopener" download="CRD2026_Agenda.pdf">Print Agenda</a>
     </div>
   </div>
 </header>
