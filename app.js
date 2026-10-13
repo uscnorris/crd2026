@@ -1343,24 +1343,28 @@ function toggleNorrisNav() {
   btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   btn.classList.toggle('is-open', open);
 }
-/* ──────────────────────────────────────────────────────────────────────────
+   /* ──────────────────────────────────────────────────────────────────────────
    CRD 2026 — deep links into the directory
    Add to the END of app.js (after setSegment / openDirectory are defined).
 
    What it enables:
-     …github.io/crd2026#coffee     → directory, Coffee Consult view
-     …github.io/crd2026#directory  → directory, Poster Directory view
-     …github.io/crd2026#requests   → My Coffee Consult Requests
+     …github.io/crd2026#coffee-consult    → directory, Coffee Consult view
+     …github.io/crd2026#poster-directory  → directory, Poster Directory view
+     …github.io/crd2026#my-requests       → My Coffee Consult Requests
+
+   These three hashes are deliberately NOT ids used anywhere in index.html.
+   A hash that matches an existing id (#coffee, #directory, #posters, #agenda,
+   #trainees, #visit, #register) makes the browser scroll the landing page to
+   that element instead, which is not what we want here.
 
    Safe to add as-is: it only runs when a hash it recognises is present, so
    every existing link and button behaves exactly as it does today.
    ────────────────────────────────────────────────────────────────────────── */
 (function () {
   var ROUTES = {
-    '#coffee':    { view: 'directory', segment: 'coffee'  },
-    '#directory': { view: 'directory', segment: 'posters' },
-    '#posters':   null,  // already used by the program page; leave it alone
-    '#requests':  { view: 'mylist',    segment: null      }
+    '#coffee-consult':   { view: 'directory', segment: 'coffee'  },
+    '#poster-directory': { view: 'directory', segment: 'posters' },
+    '#my-requests':      { view: 'mylist',    segment: null      }
   };
 
   function applyHash() {
@@ -1380,7 +1384,9 @@ function toggleNorrisNav() {
   }
 
   // On first load. The delay lets data.js finish populating the list, so the
-  // Coffee Consult filter has something to filter.
+  // Coffee Consult filter has something to filter. If the list is loaded by a
+  // slow fetch rather than an inline array, raise 0 to 300, or call applyHash()
+  // at the end of whatever function finishes loading the participants.
   function onReady() { setTimeout(applyHash, 0); }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', onReady);
