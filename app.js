@@ -766,8 +766,7 @@ function renderCoffeeQuickFilter() {
         <li>Open a profile and tap <strong>Request Coffee Consult</strong>.</li>
         <li>Confirm your registered email. CRTEC arranges the match and emails you both. Coffee is on us.</li>
       </ol>
-      <p class="coffee-explainer-foot">Not listed? Only trainees who opted in at registration appear here.
-      ${canRegister ? `<a href="${url}" target="_blank" rel="noopener">Opt in on the registration form</a>. Resubmit with the same email and you will appear within a few minutes.` : 'Contact CRTEC to opt in.'}</p>
+           <p class="coffee-explainer-foot">Not listed? Only people who opted in at registration appear here, and registration is now closed. Clinicians can still be added: check in at the staff table on Pappas Quad.</p>
     </div>`;
 }
 
