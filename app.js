@@ -1343,3 +1343,51 @@ function toggleNorrisNav() {
   btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   btn.classList.toggle('is-open', open);
 }
+/* ──────────────────────────────────────────────────────────────────────────
+   CRD 2026 — deep links into the directory
+   Add to the END of app.js (after setSegment / openDirectory are defined).
+
+   What it enables:
+     …github.io/crd2026#coffee     → directory, Coffee Consult view
+     …github.io/crd2026#directory  → directory, Poster Directory view
+     …github.io/crd2026#requests   → My Coffee Consult Requests
+
+   Safe to add as-is: it only runs when a hash it recognises is present, so
+   every existing link and button behaves exactly as it does today.
+   ────────────────────────────────────────────────────────────────────────── */
+(function () {
+  var ROUTES = {
+    '#coffee':    { view: 'directory', segment: 'coffee'  },
+    '#directory': { view: 'directory', segment: 'posters' },
+    '#posters':   null,  // already used by the program page; leave it alone
+    '#requests':  { view: 'mylist',    segment: null      }
+  };
+
+  function applyHash() {
+    var route = ROUTES[(window.location.hash || '').toLowerCase()];
+    if (!route) return false;
+
+    // Switch from the program page into the directory app.
+    if (typeof openDirectory === 'function') openDirectory();
+    if (route.view !== 'directory' && typeof showView === 'function') {
+      showView(route.view);
+    }
+    // setSegment also repaints the list and the segmented control.
+    if (route.segment && typeof setSegment === 'function') {
+      setSegment(route.segment);
+    }
+    return true;
+  }
+
+  // On first load. The delay lets data.js finish populating the list, so the
+  // Coffee Consult filter has something to filter.
+  function onReady() { setTimeout(applyHash, 0); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+  } else {
+    onReady();
+  }
+
+  // When someone pastes a new hash into the address bar, or uses Back.
+  window.addEventListener('hashchange', applyHash);
+})();
