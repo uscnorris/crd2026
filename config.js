@@ -152,7 +152,7 @@ const CONFIG = {
     { time: "11:35 AM–12:00 PM", speaker: { name: "Lourdes Baezconde-Garbanati", degrees: "PhD, MPH", position: "Associate Director, Community Outreach and Engagement", institution: "USC Norris Comprehensive Cancer Center", topic: "The Use of AI in Optimizing Community and Participant Engagement in Cancer Research and Education", photo: "baezconde.jpg" } },
     { time: "12:00–12:15 PM",    title: "Discussion panel", desc: "Charité N. Ricker and Lourdes Baezconde-Garbanati. Moderated by Amiya Tucker, PhD student, and Kelsie Campbell, PhD candidate." },
     { time: "12:15–1:00 PM",     loc: "Pappas Quad", title: "Lunch & networking", desc: "" },
-    { time: "1:00–2:45 PM",      loc: "Pappas Quad", title: "Poster session", desc: "Poster competition, Shared Resources, survivor poster walk, and Coffee Consult. No poster? Meet other Coffee Consult trainees at the Coffee Consult table, McKibben/Hoffman corner, 1:00–1:30 or 2:00–2:30 PM." },
+    { time: "1:00–2:45 PM",      loc: "Pappas Quad", title: "Poster session", desc: "Poster competition, Shared Resources, survivor poster walk, and Coffee Consult." },
     { time: "2:45–3:00 PM",      title: "Poster awards & closing remarks", desc: "" }
   ],
 
